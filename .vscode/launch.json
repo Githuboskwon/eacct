@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-ApiServerApplication<apiServer-ije-eacct-back>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.iljin.apiServer.ApiServerApplication",
+      "projectName": "apiServer-ije-eacct-back",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

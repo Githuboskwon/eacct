@@ -1,0 +1,49 @@
+stages:
+  - Stop the service
+  - Build
+  - Copy
+  - Start the service
+
+job 1:
+  stage: Stop the service
+  only:
+    - master
+  script:
+    - sudo systemctl stop ije-eacct-back.service
+
+
+job 2:
+  stage: Build
+  only:
+    - master
+  cache:
+    paths:
+      - build/*
+  script:
+    - gradle clean compileQuerydsl
+    - gradle pathingJar
+    - gradle bootJar
+
+job 3:
+  stage: Copy
+  only:
+    - master
+  cache:
+    paths:
+      - build/*
+  script:
+    - sudo rm -rf /data/apps/ije-eacct/eacct-back.jar
+    - sudo rm -rf /data/apps/ije-eacct/eacct-back-pathing.jar
+    - pwd
+    - sudo cp ./build/libs/eacct-back.jar /data/apps/ije-eacct/eacct-back.jar
+    - sudo cp ./build/libs/eacct-back-pathing.jar /data/apps/ije-eacct/eacct-back-pathing.jar
+
+job 4:
+  stage: Start the service
+  only:
+    - master
+  cache:
+    paths:
+      - build/*
+  script:
+    - sudo systemctl start ije-eacct-back.service

@@ -1,0 +1,41 @@
+stages:
+  - libs
+  - build
+  - deploy
+
+npm:
+  stage: libs
+  only:
+    - master
+  cache:
+    paths:
+      - node_modules
+  script:
+    #### 7 >= npm version : 종속성 설치 무시 명령어 (--save : dependency 항목에 저장)
+    - npm install --save --legacy-peer-deps
+
+build:
+  stage: build
+  only:
+    - master
+  cache:
+    paths:
+      - dist
+  script:
+    ## sass migration 
+    ## @requires: Requires a global installation of sass-migrator on your web server.
+    ############# npm install -g sass-migrator #############
+    - sass-migrator division **/*.scss
+    - npm run build:staging
+
+deploy:
+  stage: deploy
+  only:
+    - master
+  cache:
+    paths:
+      - dist
+  script:
+    - sudo rm -rf /etc/nginx/ije-eacct-front
+    - sudo cp -r dist /etc/nginx/ije-eacct-front
+    - sudo nginx -s reload

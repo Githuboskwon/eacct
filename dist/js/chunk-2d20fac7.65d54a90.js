@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d20fac7"],{b542:function(n,e,u){"use strict";u.r(e);var t=function(){var n=this,e=n._self._c;return e("div",[n._v("\n  New OAuth2.0 User enroll form\n  ")])},r=[],l={name:"OAuthNewUser.vue",mounted(){}},o=l,s=u("2877"),c=Object(s["a"])(o,t,r,!1,null,null,null);e["default"]=c.exports}}]);

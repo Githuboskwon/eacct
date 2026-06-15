@@ -1,0 +1,610 @@
+{
+    "data" : [
+        {
+            "type": "COMMON",
+            "buttons" : [
+                {"name" : "예산조회", "type" : "primary", "action": "budgtSelect", "act_type":"popup", "size": "small", "icon": "el-icon-search", "hide":false, "sort": 1},
+                {"name" : "행추가", "type" : "info", "action": "rowAdd", "act_type":"event", "size": "small", "icon": "el-icon-plus", "hide":false, "sort": 5},
+                {"name" : "행삭제", "type" : "danger", "action": "rowDel", "act_type":"event", "size": "small", "icon": "el-icon-delete", "hide":false, "sort": 6},
+                {"name" : "행복사", "type" : "info", "action": "rowCopy", "act_type":"event", "size": "small", "icon":"el-icon-document-copy", "hide":false, "sort": 4},
+                {"name" : "엑셀저장", "type" : "success", "action": "excelDwn", "act_type":"event", "size": "small", "icon":"el-icon-document-checked", "hide":false, "sort": 7},
+                {"name" : "라인부가세코드 삭제", "type" : "danger", "action": "lineVatCodeDel", "act_type":"popup", "size": "small", "icon": "", "hide":false, "sort": 2}
+            ],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "supplyAmount", "headerName": "공급가액", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "vatAmount", "headerName": "부가세액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "usedAmt", "headerName": "합계", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "description", "headerName": "적요", "type": "", "width":"700", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "attributeCategoryName", "headerName": "관리항목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxFlag", "headerName": "공제여부", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "EXPEND",
+            "buttons" : [
+                {"name" : "예산조회", "type" : "primary", "action": "budgtSelect", "act_type":"popup", "size": "small", "icon": "el-icon-search", "sort": 1},
+                {"name" : "라인부가세코드 삭제", "type" : "danger", "action": "lineVatCodeDel", "act_type":"popup", "size": "small", "icon": "", "sort": 2},
+                {"name" : "엑셀저장", "type" : "success", "action": "excelDwn", "act_type":"event", "size": "small", "icon":"el-icon-document-checked", "sort": 7}
+            ],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+
+                {"field": "description", "headerName": "적요", "width": "600", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "attributeCategory", "headerName": "관리항목", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxFlag", "headerName": "공제여부", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "TRAFFIC",
+            "buttons" : [
+                {"name" : "예산조회", "type" : "primary", "action": "budgtSelect", "act_type":"popup", "size": "small", "icon": "el-icon-search", "sort": 1},
+                {"name" : "라인부가세코드 삭제", "type" : "danger", "action": "lineVatCodeDel", "act_type":"popup", "size": "small", "icon": "", "sort": 2},
+                {"name" : "행추가", "type" : "info", "action": "rowAdd", "act_type":"event", "size": "small", "icon": "el-icon-plus", "hide":false, "sort": 3},
+                {"name" : "행삭제", "type" : "danger", "action": "rowDel", "act_type":"event", "size": "small", "icon": "el-icon-delete", "hide":false, "sort": 4},
+                {"name" : "행복사", "type" : "info", "action": "rowCopy", "act_type":"event", "size": "small", "icon":"el-icon-document-copy", "hide":false, "sort": 5}
+            ],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "width": "150", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "usedDt", "headerName": "사용일자", "type": "", "editable": true, "layout" : "date", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "fromArea", "headerName": "장소코드", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "distanceGubun", "headerName": "시내/외", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "fromAreaText", "headerName": "출발-도착지", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "bigo", "headerName": "출발목적", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "distance", "headerName": "거리", "width": "110", "type": "", "editable": false, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "trafficType", "headerName": "교통수단", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "oilBungae", "headerName": "유종", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "oilPrice", "headerName": "유류단가", "width": "110", "type": "", "editable": false, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "mileage", "headerName": "연비", "type": "", "editable": false, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "oilAmt", "headerName": "유류금액", "type": "", "editable": false, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "etcType1", "headerName": "기타교통비1", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "etcAmt1", "headerName": "기타금액1", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "etcChitGubunName1", "headerName": "현금1", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "etcType2", "headerName": "기타교통비2", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns4": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "etcChitGubunName2", "headerName": "현금2", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "etcAmt2", "headerName": "기타금액2", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "etcType3", "headerName": "기타교통비3", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "etcAmt3", "headerName": "기타금액3", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "etcChitGubunName3", "headerName": "현금3", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "sumAmt", "headerName": "합계금액", "type": "", "editable": false, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}}
+            ],
+            "columns5": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxFlag", "headerName": "공제여부", "type": "", "editable": false, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "TRIP",
+            "buttons" : [
+                {"name" : "예산조회", "type" : "primary", "action": "budgtSelect", "act_type":"popup", "size": "small", "icon": "el-icon-search", "sort": 1},
+                {"name" : "카드사용분추가", "type" : "info", "action": "cardUsedHst", "act_type":"popup", "size": "small", "icon":"el-icon-document-copy", "hide":false, "sort": 2},
+                {"name" : "행추가", "type" : "info", "action": "rowAdd", "act_type":"event", "size": "small", "icon": "el-icon-plus", "hide":false, "sort": 3},
+                {"name" : "행삭제", "type" : "danger", "action": "rowDel", "act_type":"event", "size": "small", "icon": "el-icon-delete", "hide":false, "sort": 4},
+                {"name" : "행복사", "type" : "info", "action": "rowCopy", "act_type":"event", "size": "small", "icon":"el-icon-document-copy", "hide":false, "sort": 5},
+                {"name" : "엑셀저장", "type" : "success", "action": "excelDwn", "act_type":"event", "size": "small", "icon":"el-icon-document-checked", "sort": 6}
+            ],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "c_type", "headerName": "구분", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "amtType", "headerName": "용도", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "subTrxTypeName", "headerName": "유형", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "width": "300", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "description", "headerName": "적요", "type": "", "width": "400",  "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "supplyAmount", "headerName": "공급가액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "vatAmount", "headerName": "부가세액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "usedAmt", "headerName": "합계", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "attributeCategoryName", "headerName": "관리항목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxFlag", "headerName": "공제여부", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "cardUsedNo", "headerName": "카드사용승인번호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns4": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "globalAttribute8", "headerName": "법인카드번호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute13", "headerName": "가맹점사업자번호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute15", "headerName": "가맹점상호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute16", "headerName": "가맹점업종", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute18", "headerName": "사용일자", "type": "", "editable": false, "layout" : "date", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "globalAttribute19", "headerName": "매입일자", "type": "", "editable": false, "layout" : "date", "hide": false}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "BOND",
+            "buttons" : [
+                {"name" : "예산조회", "type" : "primary", "action": "budgtSelect", "act_type":"popup", "size": "small", "icon": "el-icon-search", "sort": 1},
+                {"name" : "라인부가세코드 삭제", "type" : "danger", "action": "lineVatCodeDel", "act_type":"popup", "size": "small", "icon": "", "sort": 2},
+                {"name" : "행추가", "type" : "info", "action": "rowAdd", "act_type":"event", "size": "small", "icon": "el-icon-plus", "hide":false, "sort": 3},
+                {"name" : "행삭제", "type" : "danger", "action": "rowDel", "act_type":"event", "size": "small", "icon": "el-icon-delete", "hide":false, "sort": 4},
+                {"name" : "행복사", "type" : "info", "action": "rowCopy", "act_type":"event", "size": "small", "icon":"el-icon-document-copy", "hide":false, "sort": 5}
+            ],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "supplyAmount", "headerName": "공급가액", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "vatAmount", "headerName": "부가세액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "usedAmt", "headerName": "합계", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "description", "headerName": "적요", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "attributeCategoryName", "headerName": "관리항목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxFlag", "headerName": "공제여부", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "AWT",
+            "buttons" : [
+                {"name" : "예산조회", "type" : "primary", "action": "budgtSelect", "act_type":"popup", "size": "small", "icon": "el-icon-search", "sort": 1},
+                {"name" : "라인부가세코드 삭제", "type" : "danger", "action": "lineVatCodeDel", "act_type":"popup", "size": "small", "icon": "", "sort": 2},
+                {"name" : "행추가", "type" : "info", "action": "rowAdd", "act_type":"event", "size": "small", "icon": "el-icon-plus", "hide":false, "sort": 3},
+                {"name" : "행삭제", "type" : "danger", "action": "rowDel", "act_type":"event", "size": "small", "icon": "el-icon-delete", "hide":false, "sort": 4},
+                {"name" : "행복사", "type" : "info", "action": "rowCopy", "act_type":"event", "size": "small", "icon":"el-icon-document-copy", "hide":false, "sort": 5}
+            ],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "supplyAmount", "headerName": "공급가액", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "afterTaxAmount", "headerName": "실지급액", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "usedAmt", "headerName": "합계", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "description", "headerName": "적요", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "attributeCategoryName", "headerName": "관리항목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxFlag", "headerName": "공제여부", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "ETCAWT",
+            "buttons" : [
+                {"name" : "예산조회", "type" : "primary", "action": "budgtSelect", "act_type":"popup", "size": "small", "icon": "el-icon-search", "sort": 1},
+                {"name" : "라인부가세코드 삭제", "type" : "danger", "action": "lineVatCodeDel", "act_type":"popup", "size": "small", "icon": "", "sort": 2},
+                {"name" : "행추가", "type" : "info", "action": "rowAdd", "act_type":"event", "size": "small", "icon": "el-icon-plus", "hide":false, "sort": 3},
+                {"name" : "행삭제", "type" : "danger", "action": "rowDel", "act_type":"event", "size": "small", "icon": "el-icon-delete", "hide":false, "sort": 4},
+                {"name" : "행복사", "type" : "info", "action": "rowCopy", "act_type":"event", "size": "small", "icon":"el-icon-document-copy", "hide":false, "sort": 5}
+            ],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "withholdingTaxCode", "headerName": "원천세코드", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "supplyAmount", "headerName": "공급가액", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "afterTaxAmount", "headerName": "실지급액", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "usedAmt", "headerName": "합계", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "description", "headerName": "적요", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "attributeCategoryName", "headerName": "관리항목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxFlag", "headerName": "공제여부", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "CARD",
+            "buttons" : [
+                {"name" : "예산조회", "type" : "primary", "action": "budgtSelect", "act_type":"popup", "size": "small", "icon": "el-icon-search", "sort": 1},
+                {"name" : "법인카드사용내역", "type" : "info", "action": "cardUsedHst", "act_type":"popup", "size": "small", "icon":"el-icon-document-copy", "hide":false, "sort": 2},
+                {"name" : "행삭제", "type" : "danger", "action": "rowDel", "act_type":"event", "size": "small", "icon": "el-icon-delete", "hide":false, "sort": 3},
+                {"name" : "엑셀저장", "type" : "success", "action": "excelDwn", "act_type":"event", "size": "small", "icon":"el-icon-document-checked", "hide":false, "sort": 4}
+            ],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "width": "300", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "description", "headerName": "적요", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute15", "headerName": "가맹점상호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "globalAttribute16", "headerName": "가맹점업종", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "globalAttribute18", "headerName": "사용일자", "type": "", "editable": false, "layout" : "date", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "supplyAmount", "headerName": "공급가액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "vatAmount", "headerName": "부가세액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "usedAmt", "headerName": "합계", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "attributeCategoryName", "headerName": "관리항목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxFlag", "headerName": "공제여부", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "cardUsedNo", "headerName": "사용번호", "type": "", "width": "400", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns4": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "globalAttribute8", "headerName": "법인카드번호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "globalAttribute13", "headerName": "가맹점사업자번호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "globalAttribute14", "headerName": "법인카드승인번호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "ACARD",
+            "buttons" : [
+                {"name" : "예산조회", "type" : "primary", "action": "budgtSelect", "act_type":"popup", "size": "small", "icon": "el-icon-search", "sort": 1},
+                {"name" : "항공권카드내역", "type" : "info", "action": "acardUsedHst", "act_type":"popup", "size": "small", "icon":"el-icon-document-copy", "hide":false, "sort": 2},
+                {"name" : "행삭제", "type" : "danger", "action": "rowDel", "act_type":"event", "size": "small", "icon": "el-icon-delete", "hide":false, "sort": 3},
+                {"name" : "엑셀저장", "type" : "success", "action": "excelDwn", "act_type":"event", "size": "small", "icon":"el-icon-document-checked", "hide":false, "sort": 4}
+            ],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "width": "300", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "description", "headerName": "적요", "width": "600", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "supplyAmount", "headerName": "공급가액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "vatAmount", "headerName": "부가세액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "usedAmt", "headerName": "합계", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "attributeCategoryName", "headerName": "관리항목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxFlag", "headerName": "공제여부", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "cardUsedNo", "headerName": "사용번호", "type": "", "width": "400", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "globalAttribute8", "headerName": "법인카드번호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns4": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "globalAttribute13", "headerName": "가맹점사업자번호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute14", "headerName": "법인카드승인번호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute15", "headerName": "가맹점상호", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute16", "headerName": "가맹점업종", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute18", "headerName": "사용일자", "type": "", "editable": false, "layout" : "date", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "MCARD",
+            "buttons" : [
+                {"name" : "예산조회", "type" : "primary", "action": "budgtSelect", "act_type":"popup", "size": "small", "icon": "el-icon-search", "sort": 1},
+                {"name" : "행추가", "type" : "info", "action": "rowAdd", "act_type":"event", "size": "small", "icon": "el-icon-plus", "hide":false, "sort": 2},
+                {"name" : "행삭제", "type" : "danger", "action": "rowDel", "act_type":"event", "size": "small", "icon": "el-icon-delete", "hide":false, "sort": 3},
+                {"name" : "엑셀저장", "type" : "success", "action": "excelDwn", "act_type":"event", "size": "small", "icon":"el-icon-document-checked", "hide":false, "sort": 4}
+            ],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "description", "headerName": "적요", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "supplyAmount", "headerName": "공급가액", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "vatAmount", "headerName": "부가세액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "usedAmt", "headerName": "합계", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "attributeCategoryName", "headerName": "관리항목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxFlag", "headerName": "공제여부", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "cardUsedNo", "headerName": "사용번호", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "globalAttribute8", "headerName": "법인카드번호", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "globalAttribute13", "headerName": "가맹점사업자번호", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "left"}}
+            ],
+            "columns4": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "globalAttribute14", "headerName": "법인카드승인번호", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute15", "headerName": "가맹점상호", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute16", "headerName": "가맹점업종", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}},
+                {"field": "globalAttribute18", "headerName": "사용일자", "type": "", "editable": true, "layout" : "date", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "globalAttribute19", "headerName": "매입일자", "type": "", "editable": true, "layout" : "date", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "PO",
+            "buttons" : [],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "poHeaderNum", "headerName": "PO번호", "type": "", "width":"200", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "poLineNum", "headerName": "PO라인번호", "width":"110", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "itemCode", "headerName": "품목코드", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "description", "headerName": "자재품명", "type": "", "width":"500",  "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "quantityInvoiced", "headerName": "수량", "width":"110", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "unitPrice", "headerName": "단가", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "supplyAmount", "headerName": "공급가액", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "vatAmount", "headerName": "부가세액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "usedAmt", "headerName": "이용금액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "width":"300", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "attributeCategoryName", "headerName": "관리항목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "IM",
+            "buttons" : [],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "poHeaderNum", "headerName": "PO번호", "type": "", "width":"200", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "poLineNum", "headerName": "PO라인번호", "width":"110", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "itemCode", "headerName": "품목코드", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "description", "headerName": "자재품명", "type": "", "width":"500",  "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "quantityInvoiced", "headerName": "수량", "width":"110", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "unitPrice", "headerName": "단가", "type": "", "editable": true, "layout" : "number", "hide": false, "cellStyle": {"textAlign": "right"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "supplyAmount", "headerName": "공급가액", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "vatAmount", "headerName": "부가세액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "usedAmt", "headerName": "이용금액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "width":"300", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "attributeCategoryName", "headerName": "관리항목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        },
+        {
+            "type": "HR",
+            "buttons" : [
+                {"name" : "예산조회", "type" : "primary", "action": "budgtSelect", "act_type":"popup", "size": "small", "icon": "el-icon-search", "hide":false, "sort": 1},
+                {"name" : "행추가", "type" : "info", "action": "rowAdd", "act_type":"event", "size": "small", "icon": "el-icon-plus", "hide":false, "sort": 5},
+                {"name" : "행삭제", "type" : "danger", "action": "rowDel", "act_type":"event", "size": "small", "icon": "el-icon-delete", "hide":false, "sort": 6},
+                {"name" : "행복사", "type" : "info", "action": "rowCopy", "act_type":"event", "size": "small", "icon":"el-icon-document-copy", "hide":false, "sort": 4},
+                {"name" : "엑셀저장", "type" : "success", "action": "excelDwn", "act_type":"event", "size": "small", "icon":"el-icon-document-checked", "hide":false, "sort": 7},
+                {"name" : "라인부가세코드 삭제", "type" : "danger", "action": "lineVatCodeDel", "act_type":"popup", "size": "small", "icon": "", "hide":false, "sort": 2}
+            ],
+            "columns1": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "cctrNm", "headerName": "예산부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "deptNm", "headerName": "귀속부서", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "acctNm", "headerName": "계정과목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "pjtNm", "headerName": "프로젝트", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taskNm", "headerName": "태스크", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "productNm", "headerName": "제품군", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "columns2": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "supplyAmount", "headerName": "공급가액", "type": "", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "vatAmount", "headerName": "부가세액", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "usedAmt", "headerName": "합계", "type": "", "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "right"}},
+                {"field": "description", "headerName": "적요", "type": "", "width": "600", "editable": true, "layout" : "", "hide": false, "cellStyle": {"textAlign": "left"}}
+            ],
+            "columns3": [
+                {"field": "slipSeq", "headerName": "순번", "width": "80", "type": "", "suppressMenu": true, "editable": false, "layout" : "", "hide": false, "cellStyle": {"textAlign": "center"}},
+
+                {"field": "attributeCategoryName", "headerName": "관리항목", "type": "", "editable": true, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxNm", "headerName": "세금코드", "type": "", "editable": false, "layout" : "popup", "hide": false, "cellStyle": {"textAlign": "center"}},
+                {"field": "taxFlag", "headerName": "공제여부", "type": "", "editable": true, "layout" : "select", "hide": false, "cellStyle": {"textAlign": "center"}}
+            ],
+            "gridOptions": {
+                "suppressRowClickSelection": true
+            },
+            "defaultColDef": {
+                "filter":true, 
+                "sortable": true
+            }
+        }
+    ]
+}

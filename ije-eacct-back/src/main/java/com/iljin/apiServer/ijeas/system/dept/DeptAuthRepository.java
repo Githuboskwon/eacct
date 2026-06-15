@@ -1,0 +1,15 @@
+package com.iljin.apiServer.ijeas.system.dept;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+
+@Repository
+public interface DeptAuthRepository extends JpaRepository<DeptAuth, DeptAuthKey> {
+
+    List<DeptAuth> findByEmpNo(String empNo);
+
+}

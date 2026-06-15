@@ -1,0 +1,20 @@
+{
+    "data" : [
+        {"key": "SV", "value": "저장됨"},
+        {"key": "VE", "value": "검증오류"},
+        {"key": "VC", "value": "검증됨"},
+        {"key": "AP", "value": "결재중"},
+        {"key": "AR", "value": "결재반려"},
+        {"key": "CP", "value": "검인중"},
+        {"key": "CR", "value": "검인반려"},
+        {"key": "CC", "value": "검인됨"},
+        {"key": "IE", "value": "이관오류"},
+        {"key": "IC", "value": "이관완료"},
+        {"key": "SD", "value": "전표삭제"},
+        {"key": "FP", "value": "검인중(ERP)"},
+        {"key": "FH", "value": "검인보류(ERP)"},
+        {"key": "FC", "value": "검인됨(ERP)"},
+        {"key": "FR", "value": "검인반려(ERP)"},
+        {"key": "SC", "value": "전표취소"}
+    ]
+}

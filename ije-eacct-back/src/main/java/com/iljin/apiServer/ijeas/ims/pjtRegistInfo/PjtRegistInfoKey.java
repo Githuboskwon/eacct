@@ -1,0 +1,22 @@
+package com.iljin.apiServer.ijeas.ims.pjtRegistInfo;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class PjtRegistInfoKey implements Serializable {
+    private static final long serialVersionUID = -3590296339283933122L;
+
+    String orgId;
+    String projectId;
+    String projectCode;
+    String taskNumber;
+    String projectManageNo;
+    String degree;
+
+}
