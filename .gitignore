@@ -1,0 +1,3 @@
+# 하위 저장소에서 분리하며 보관한 .git 백업 (필요 시 복구용)
+/_git_backup_front
+/_git_backup_back
