@@ -1,7 +1,3 @@
-# 하위 저장소에서 분리하며 보관한 .git 백업 (필요 시 복구용)
-/_git_backup_front
-/_git_backup_back
-
 # 시크릿: Firebase 서비스 계정 키 (절대 커밋 금지)
 ije-eacct-back/src/main/resources/ij-eas-415a0-firebase-adminsdk-88yn0-a3c441acba.json
 /_secret_backup_firebase-adminsdk.json
