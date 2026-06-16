@@ -79,7 +79,8 @@ import {
 import debug from '@/libs/debug'
 
 import SlipTable from '@/components/slip/SlipTable.vue'
-import GridED from '@/components/slip/GridED.vue'
+// import GridED from '@/components/slip/GridED.vue'  // (PoC) DHTMLX 원본 — 롤백 시 이 줄 복구
+import GridED from '@/components/slip/GridED_Ag.vue'   // (PoC) ag-grid 전환본 연결
 import GridRO from '@/components/slip/GridRO.vue'
 
 import EvidAtchPop from '@/components/EvidAtchPop.vue'
