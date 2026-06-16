@@ -336,7 +336,8 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
   - columnDefs(부서/계정/제품 검색버튼 cellRenderer + 계정명/제품/차변금액/적요 인라인 편집)
   - 자동검색(`@cell-editing-stopped` → `findAccount`/`findProduct`, 단건 자동·다건 팝업), `@cell-value-changed`로 차변=acctAmt 동기
   - 셀 잠금(C_ITEM/D_TAX → `editable(fn)`+`cellStyle`), 합계 푸터(`pinnedBottomRowData` 차/대변), 행추가·삭제(mixin `add_row`/splice), 초기화(`reset_rows`), 엑셀(`exportDataAsExcel`), Tab 순환(PoC 패턴)
-- **TODO(다음 증분):** `config_E6`(유종/유가/거리), `config_E2`/`E5`(보조계정·예산잔액 `rmdAmt`), `config_E1`+`E1_2`(법인카드 2그리드: 카드정보·스캔증빙)
+- **증분 2 = `config_E6`(출장/교통비) 완성:** 교통비유형/유종 **select 셀(코드→명, `select-cell-renderer` 재사용)**, 사용일자/출발·도착지/출장목적 편집, 유류대(tpsTypeCd='10') 시 **거리·유가표로 사용금액 자동계산**(`computeOil`, 월별 `/api/oilPrice/list` 캐시), 편집 잠금규칙(유류대=거리편집/그외=금액편집), 사용일자 변경 시 지급예정일·대변행 동기(`syncUseDt`), 금액 변경 시 공급가/세액 재계산(`recalcE6Totals`), 합계 푸터(사용금액 합).
+- **TODO(다음 증분):** `config_E2`/`E5`(보조계정 캐스케이드·예산잔액 `rmdAmt`), `config_E1`+`E1_2`(법인카드 2그리드: 카드정보·스캔증빙)
 - 검증: ESLint 통과. ⚠️ 슬립 컨텍스트(value.slipDetails) 필요해 단독 라우트 검증 불가 → **`slip-basic.js` 연결 후 슬립유형별 런타임 검증**(증분 완료 시점).
 
 ---
@@ -348,7 +349,7 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 4. [x] **(완료 2026-06-16)** 런타임 확인 — `/apprRuleSet`·`/apprMndSet`·`/apprLineMng` 정상 동작 확인 (※ `ApprMndPop` 사원검색 팝업은 `/apprMndSet` 신규/수정 흐름에서 추가 확인 권장)
 5. [x] **(완료 2026-06-16)** 저위험 정리 — 죽은 `DhxGrid` import 27개 파일 일괄 제거 + 죽은 파일 `PopupGrid.vue` 삭제 (그리드 동작 변화 없음, DhxGrid no-undef/구문오류 0)
 6. [x] **(완료 2026-06-16)** 편집형 전표 `GridED` ag-grid PoC — 4대 난관 전부 검증(독립 컴포넌트 `poc/GridEDPoc.vue`, `/gridEdPoc`). 기술적 전환 가능 확인, 공수는 config 4종 분량에서 발생 (§8.8)
-7. [~] **(진행 2026-06-16)** A그룹 진행 — `GridRO` 전환 완료(§8.9) / `GridED` 본전환 **착수: `GridED_Ag.vue` 증분1=config_def 완성**(§8.10). 다음 증분: E6 → E2/E5 → E1, 이후 `slip-basic.js` 연결 + 슬립유형별 런타임 검증 → `SlipGr`/`SlipCrdLstModal`/`BdgReq` 등
+7. [~] **(진행 2026-06-16)** A그룹 진행 — `GridRO` 전환 완료(§8.9) / `GridED` 본전환 진행: `GridED_Ag.vue` **증분1=config_def, 증분2=config_E6 완성**(§8.10). 다음 증분: E2/E5 → E1, 이후 `slip-basic.js` 연결 + 슬립유형별 런타임 검증 → `SlipGr`/`SlipCrdLstModal`/`BdgReq` 등
 8. [ ] 검색 `_new` 변형(활성 DHTMLX 그리드) 전환 — A그룹과 함께 (Account_new/Cctr_new/Emp_new/IO_new/Vendor_new) + 직접호출(`Account/Cctr/Emp/Vendor/Product/Expend/ErpAccountPop`)
 8. [ ] 0단계 잔여: 미사용 의존성 9종 제거 + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
 9. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정

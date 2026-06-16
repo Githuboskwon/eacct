@@ -41,6 +41,7 @@ import ErpCctr from '@/components/ErpCctr_Ag.vue'
 import Account from '@/components/Account_Ag.vue'
 import Product from '@/components/Product_Ag.vue'
 import SlipMngItemPop from '@/components/SlipMngItemPop.vue'
+import SelectCellRenderer from '@/components/agGrid/select-cell-renderer'
 import mixin from '@/mixin/slip-common'
 import mixin2 from '@/mixin'
 import mixinSlip from '@/mixin/slip'
@@ -76,19 +77,22 @@ export default {
       rcpYn: 'N',
       gridApi: null,
       columnApi: null,
+      options: { TPS_TYPE_CD: [], OIL_KIND_CD: [] }, // 교통비유형/유종 코드
+      oilPrice: {}, // 월(YYYYMM)별 유가표 캐시
       gridOptions: {
         context: { parent: this },
         tabToNextCell: (params) => this.nextEditableCell(params)
       },
       defaultColDef: { resizable: true, sortable: false, filter: false },
-      frameworkComponents: { searchBtn: SearchBtnRenderer }
+      frameworkComponents: { searchBtn: SearchBtnRenderer, select: SelectCellRenderer }
     }
   },
   computed: {
     columnDefs() {
-      // 증분 1: config_def 만 구현. (E6/E2/E5/E1 은 추후)
+      // 증분: config_def(일반) + config_E6(출장/교통비) 구현. (E2/E5/E1 은 추후)
       switch (this.slipType) {
         case 'E6':
+          return this.makeE6Cols()
         case 'E1':
         case 'E2':
         case 'E5':
@@ -98,8 +102,15 @@ export default {
           return this.makeDefCols()
       }
     },
-    // 합계 푸터 (DHTMLX attachHeader #stat_total 대체): 차변=비대변 합, 대변=대변 합 (acctAmt 기준)
+    // 합계 푸터 (DHTMLX attachHeader #stat_total 대체)
     pinnedBottomRowData() {
+      if (this.slipType === 'E6') {
+        // E6: 사용금액(D_ITEM acctAmt) 합계
+        const sum = this.data.filter(x => [x.dcCd, x.lnTypeCd].join('_') === 'D_ITEM')
+          .reduce((a, x) => a + this.$numeral(x.acctAmt).value(), 0)
+        return [{ stptPlc: '합계', acctAmt: sum, __total: true }]
+      }
+      // def/기타: 차변=비대변 합, 대변=대변 합 (acctAmt 기준)
       const debit = this.data.filter(x => [x.dcCd, x.lnTypeCd].join('_') !== 'C_ITEM')
         .reduce((a, x) => a + this.$numeral(x.acctAmt).value(), 0)
       const credit = this.data.filter(x => [x.dcCd, x.lnTypeCd].join('_') === 'C_ITEM')
@@ -115,6 +126,17 @@ export default {
         this.data = value.slipDetails || []
         this.datad = value.slipDetails2 || []
       }
+    }
+  },
+  created() {
+    if (this.slipType === 'E6') {
+      this.$http.get('/api/code/detail', { params: { groupCd: 'TPS_TYPE_CD' } }).then(r => { this.options.TPS_TYPE_CD = r.data })
+      this.$http.get('/api/code/detail', { params: { groupCd: 'OIL_KIND_CD' } }).then(r => { this.options.OIL_KIND_CD = r.data })
+      // 현재 데이터에 등장하는 월의 유가표 선로드
+      this.$nextTick(() => {
+        const months = Array.from(new Set((this.data || []).filter(x => x.useDt).map(x => this.$moment(x.useDt).format('YYYYMM'))))
+        months.forEach(m => this.loadOilPrice(m))
+      })
     }
   },
   methods: {
@@ -172,9 +194,31 @@ export default {
     },
     onCellValueChanged(params) {
       if (params.node && params.node.rowPinned) return
-      if (params.colDef.field === 'debitAmt') {
-        params.data.acctAmt = params.data.debitAmt = this.$numeral(params.newValue || 0).value()
-        if (this.gridApi) this.gridApi.refreshCells({ force: true })
+      const row = params.data
+      const f = params.colDef.field
+
+      // ── config_E6 (출장/교통비) ──
+      if (this.slipType === 'E6') {
+        if (f === 'tpsTypeCd') {
+          if (row.tpsTypeCd === '10') { row.acctAmt = 0; row.tpsDst = 0; row.oilKindCd = 'GSL' }
+          else { row.tpsDst = undefined; row.oilUpc = undefined; row.oilEff = undefined; row.acctAmt = 0; row.oilKindCd = undefined }
+        } else if (f === 'tpsDst' || f === 'oilKindCd') {
+          this.computeOil(row)
+        } else if (f === 'useDt') {
+          const ym = row.useDt ? this.$moment(row.useDt).format('YYYYMM') : null
+          this.loadOilPrice(ym).then(() => { this.computeOil(row); this.refresh() })
+          this.syncUseDt()
+        } else if (f === 'acctAmt') {
+          this.recalcE6Totals()
+        }
+        this.refresh()
+        return
+      }
+
+      // ── config_def (일반) ──
+      if (f === 'debitAmt') {
+        row.acctAmt = row.debitAmt = this.$numeral(params.newValue || 0).value()
+        this.refresh()
       }
     },
     // ===== 검색 팝업 (셀 검색버튼 클릭) =====
@@ -295,6 +339,81 @@ export default {
     },
     saveExcel() {
       if (this.gridApi) this.gridApi.exportDataAsExcel({ fileName: '전표세부항목' })
+    },
+    // ===== config_E6 (출장/교통비) =====
+    makeE6Cols() {
+      const that = this
+      const notLocked = (p) => !that.isLocked(p.data) && !(p.node && p.node.rowPinned)
+      const editAmt = (p) => notLocked(p) && p.data && p.data.tpsTypeCd !== '10' // 유류대(10)면 거리로 자동계산
+      const editDst = (p) => notLocked(p) && p.data && p.data.tpsTypeCd === '10'
+      const lockStyle = (p) => {
+        if (p.node && p.node.rowPinned) return { textAlign: 'right', fontWeight: 'bold', color: '#c00' }
+        return that.isLocked(p.data) ? { backgroundColor: '#f5f5f5', color: '#999' } : null
+      }
+      const cell = (align) => (p) => Object.assign({ textAlign: align || 'left' }, lockStyle(p) || {})
+      const selCell = (key) => ({
+        cellRenderer: 'select', editable: notLocked,
+        cellRendererParams: { options: that.options[key] || [], detailCd: 'detailCd', detailNm: 'detailNm' }
+      })
+      return [
+        { headerName: 'No.', valueGetter: p => p.node.rowPinned ? '' : p.node.rowIndex + 1, width: 45, cellStyle: cell('center') },
+        { headerName: '사용일자', field: 'useDt', width: 100, editable: notLocked, cellStyle: cell('center'), valueFormatter: p => p.value ? that.$moment(p.value).format('YYYY-MM-DD') : '' },
+        { headerName: '출발지', field: 'stptPlc', width: 70, editable: notLocked, cellStyle: cell('left') },
+        { headerName: '도착지', field: 'dstnPlc', width: 70, editable: notLocked, cellStyle: cell('left') },
+        { headerName: '출장목적', field: 'biztrpObj', width: 100, editable: notLocked, cellStyle: cell('left') },
+        Object.assign({ headerName: '교통비유형', field: 'tpsTypeCd', width: 100, cellStyle: cell('center') }, selCell('TPS_TYPE_CD')),
+        { headerName: '거리', field: 'tpsDst', width: 70, editable: editDst, cellStyle: cell('right'), valueFormatter: that.fmtAmt, valueParser: p => that.$numeral(p.newValue).value() },
+        Object.assign({ headerName: '유종', field: 'oilKindCd', width: 90, cellStyle: cell('center') }, selCell('OIL_KIND_CD')),
+        {
+          headerName: '유류단가/연비', field: 'oilUpc', width: 100, cellStyle: cell('center'),
+          valueGetter: p => {
+            const v = p.data || {}
+            return (v.oilUpc && v.oilEff) ? `${that.$numeral(v.oilUpc).format('0,0')} / ${that.$numeral(v.oilEff).format('0,0')}` : ''
+          }
+        },
+        { headerName: '사용금액', field: 'acctAmt', width: 90, editable: editAmt, cellStyle: cell('right'), valueFormatter: that.fmtAmt, valueParser: p => that.$numeral(p.newValue).value() },
+        { headerName: '계정코드', field: 'acctCd', width: 60, cellStyle: cell('center') },
+        { headerName: '계정명', field: 'acctNm', flex: 1, minWidth: 100, editable: notLocked, cellStyle: cell('left') },
+        { headerName: '', field: 'acctSrch', width: 40, cellStyle: cell('center'), cellRenderer: 'searchBtn', cellRendererParams: { kind: 'account' } }
+      ]
+    },
+    loadOilPrice(ym) {
+      if (!ym || this.oilPrice[ym] !== undefined) return Promise.resolve()
+      return this.$http.post('/api/oilPrice/list', { baseYm: ym })
+        .then(r => { this.$set(this.oilPrice, ym, r.data) })
+        .catch(() => { this.$set(this.oilPrice, ym, []) })
+    },
+    computeOil(row) {
+      if (!row || row.tpsTypeCd !== '10') return
+      const ym = row.useDt ? this.$moment(row.useDt).format('YYYYMM') : null
+      const list = ym ? (this.oilPrice[ym] || []) : []
+      const found = list.filter(x => x.oilKindCd === row.oilKindCd)[0]
+      if (found) {
+        row.oilUpc = found.oilUpce
+        row.oilEff = found.oilEff
+        const d = this.$numeral(row.tpsDst).value()
+        const upc = this.$numeral(row.oilUpc).value()
+        const eff = this.$numeral(row.oilEff).value()
+        try { row.supAmt = row.acctAmt = Math.floor(d / eff * upc) } catch (e) { row.supAmt = row.acctAmt = 0 }
+        if (!isFinite(row.acctAmt)) { row.supAmt = row.acctAmt = 0 }
+      }
+    },
+    syncUseDt() {
+      const ditems = this.data.filter(x => [x.dcCd, x.lnTypeCd].join('_') === 'D_ITEM').filter(x => x.useDt)
+      if (!ditems.length) return
+      const max = String(Math.max.apply(null, ditems.map(x => Number(x.useDt))))
+      this.$parent.value.payDueDt = max
+      this.data.filter(x => [x.dcCd, x.lnTypeCd].join('_') === 'C_ITEM').forEach(x => { x.useDt = max })
+    },
+    recalcE6Totals() {
+      const ditems = this.data.filter(x => [x.dcCd, x.lnTypeCd].join('_') === 'D_ITEM')
+      if (!ditems.length) return
+      const totAmt = ditems.map(x => this.$numeral(x.acctAmt).value()).reduce((a, v) => a + v, 0)
+      const taxRt = (this.$parent.value.taxRt || 0) / 100.0
+      const taxAmt = Math.floor(taxRt * totAmt / (1 + taxRt))
+      this.$parent.value.totAmt = totAmt
+      this.$parent.value.supAmt = totAmt - taxAmt
+      this.$parent.value.taxAmt = taxAmt
     },
     // ===== Tab: 편집 가능 셀로만 순환 (PoC 검증 패턴) =====
     nextEditableCell(params) {
