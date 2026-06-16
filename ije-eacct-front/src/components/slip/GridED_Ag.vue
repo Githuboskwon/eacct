@@ -39,6 +39,7 @@ import Vue from 'vue'
 import { AgGridVue } from 'ag-grid-vue'
 import ErpCctr from '@/components/ErpCctr_Ag.vue'
 import Account from '@/components/Account_Ag.vue'
+import AccountSub from '@/components/ErpAccountSub_Ag.vue'
 import Product from '@/components/Product_Ag.vue'
 import SlipMngItemPop from '@/components/SlipMngItemPop.vue'
 import SelectCellRenderer from '@/components/agGrid/select-cell-renderer'
@@ -79,6 +80,8 @@ export default {
       columnApi: null,
       options: { TPS_TYPE_CD: [], OIL_KIND_CD: [] }, // 교통비유형/유종 코드
       oilPrice: {}, // 월(YYYYMM)별 유가표 캐시
+      budget: {}, // 잔여예산 캐시 (postDt_deptCd_acctCd_acctCdSub)
+      budgetLock: {}, // 예산 조회 중복방지
       gridOptions: {
         context: { parent: this },
         tabToNextCell: (params) => this.nextEditableCell(params)
@@ -93,10 +96,11 @@ export default {
       switch (this.slipType) {
         case 'E6':
           return this.makeE6Cols()
-        case 'E1':
         case 'E2':
         case 'E5':
-          // TODO: 슬립유형별 컬럼/로직 이관 전까지는 기본 컬럼으로 표시
+          return this.makeE2Cols()
+        case 'E1':
+          // TODO: 법인카드(2그리드) 이관 전까지는 기본 컬럼으로 표시
           return this.makeDefCols()
         default:
           return this.makeDefCols()
@@ -104,6 +108,8 @@ export default {
     },
     // 합계 푸터 (DHTMLX attachHeader #stat_total 대체)
     pinnedBottomRowData() {
+      // E2/E5: 합계 푸터 없음 (원본 attachHeader([],[]))
+      if (this.slipType === 'E2' || this.slipType === 'E5') return null
       if (this.slipType === 'E6') {
         // E6: 사용금액(D_ITEM acctAmt) 합계
         const sum = this.data.filter(x => [x.dcCd, x.lnTypeCd].join('_') === 'D_ITEM')
@@ -137,6 +143,8 @@ export default {
         const months = Array.from(new Set((this.data || []).filter(x => x.useDt).map(x => this.$moment(x.useDt).format('YYYYMM'))))
         months.forEach(m => this.loadOilPrice(m))
       })
+    } else if (this.slipType === 'E2' || this.slipType === 'E5') {
+      this.$nextTick(() => this.loadBudgetsForData())
     }
   },
   methods: {
@@ -184,13 +192,18 @@ export default {
     // ===== 편집 종료 시 자동검색 (DHTMLX onEditCell stage2 대체) =====
     onCellEditingStopped(params) {
       if (params.node && params.node.rowPinned) return
-      const field = params.colDef.field
+      const f = params.colDef.field
       const row = params.data
-      if (field === 'acctNm') {
-        if (row.acctNm) this.findAccount(row, row.acctNm)
-      } else if (field === 'productNm') {
-        if (row.productNm) this.findProduct(row, row.productNm)
+      if (this.slipType === 'E2' || this.slipType === 'E5') {
+        if (f === 'deptNm') this.cctrValueChangeE2(row, row.deptNm)
+        else if (f === 'acctNm') this.acctValueChangeE2(row, row.acctNm)
+        else if (f === 'acctNmSub') this.subAcctValueChange(row, row.acctNmSub)
+        else if (f === 'detailNm') this.productValueChangeE2(row, row.detailNm)
+        return
       }
+      // def
+      if (f === 'acctNm') { if (row.acctNm) this.findAccount(row, row.acctNm) }
+      else if (f === 'productNm') { if (row.productNm) this.findProduct(row, row.productNm) }
     },
     onCellValueChanged(params) {
       if (params.node && params.node.rowPinned) return
@@ -215,6 +228,13 @@ export default {
         return
       }
 
+      // ── config_E2 / E5 (개인비용외) ──
+      if (this.slipType === 'E2' || this.slipType === 'E5') {
+        if (f === 'useAmt') this.recalcE2Totals()
+        this.refresh()
+        return
+      }
+
       // ── config_def (일반) ──
       if (f === 'debitAmt') {
         row.acctAmt = row.debitAmt = this.$numeral(params.newValue || 0).value()
@@ -225,10 +245,17 @@ export default {
     openSearch(kind, rowIndex) {
       const row = this.data[rowIndex]
       if (!row) return
+      // def
       if (kind === 'cctr') this.openCctr(row)
       else if (kind === 'account') this.openAccount(row)
       else if (kind === 'product') this.openProduct(row)
       else if (kind === 'addon') this.openAddon(row)
+      // E2/E5
+      else if (kind === 'cctrE2') this.openCctrE2(row)
+      else if (kind === 'accountE2') this.openAccountE2(row)
+      else if (kind === 'acctSubE2') this.openAccountSubBtn(row)
+      else if (kind === 'productE2') this.openProductE2(row)
+      else if (kind === 'addonE2') this.openAddonE2(row)
     },
     openCctr(row) {
       this.$modal.open({
@@ -414,6 +441,202 @@ export default {
       this.$parent.value.totAmt = totAmt
       this.$parent.value.supAmt = totAmt - taxAmt
       this.$parent.value.taxAmt = taxAmt
+    },
+    // ===== config_E2 / E5 (개인비용외) =====
+    makeE2Cols() {
+      const that = this
+      const notLocked = (p) => !that.isLocked(p.data) && !(p.node && p.node.rowPinned)
+      const lockStyle = (p) => that.isLocked(p.data) ? { backgroundColor: '#f5f5f5', color: '#999' } : null
+      const cell = (align) => (p) => Object.assign({ textAlign: align || 'left' }, lockStyle(p) || {})
+      return [
+        { headerName: 'No.', valueGetter: p => p.node.rowIndex + 1, width: 45, cellStyle: cell('center') },
+        { headerName: '비용부서코드', field: 'deptCd', hide: true },
+        { headerName: '부서', field: 'deptNm', width: 100, editable: notLocked, cellStyle: cell('left') },
+        { headerName: '', field: 'cctrSrch', width: 30, cellStyle: cell('center'), cellRenderer: 'searchBtn', cellRendererParams: { kind: 'cctrE2' } },
+        { headerName: '계정코드', field: 'acctCd', hide: true },
+        { headerName: '계정명', field: 'acctNm', width: 140, editable: notLocked, cellStyle: cell('left') },
+        { headerName: '', field: 'acctSrch', width: 40, cellStyle: cell('center'), cellRenderer: 'searchBtn', cellRendererParams: { kind: 'accountE2' } },
+        { headerName: '', field: 'dff', width: 40, cellStyle: cell('center'), cellRenderer: 'searchBtn', cellRendererParams: { kind: 'addonE2' } },
+        { headerName: '보조계정코드', field: 'acctCdSub', hide: true },
+        { headerName: '보조계정', field: 'acctNmSub', width: 140, editable: notLocked, cellStyle: cell('left') },
+        { headerName: '', field: 'acctSubSrch', width: 40, cellStyle: cell('center'), cellRenderer: 'searchBtn', cellRendererParams: { kind: 'acctSubE2' } },
+        { headerName: '개발 프로젝트코드', field: 'detailCd', hide: true },
+        { headerName: '개발 프로젝트', field: 'detailNm', width: 90, editable: notLocked, cellStyle: cell('left') },
+        { headerName: '', field: 'prodSrch', width: 30, cellStyle: cell('center'), cellRenderer: 'searchBtn', cellRendererParams: { kind: 'productE2' } },
+        { headerName: '금액', field: 'useAmt', width: 90, editable: notLocked, cellStyle: cell('right'), valueFormatter: that.fmtAmt, valueParser: p => that.$numeral(p.newValue).value() },
+        {
+          headerName: '잔여예산', field: 'rmdAmt', width: 90, cellStyle: cell('right'),
+          valueGetter: p => { const k = that.budgetKey(p.data || {}); const v = that.budget[k]; return v !== undefined ? v : (p.data && p.data.rmdAmt) },
+          valueFormatter: that.fmtAmt
+        },
+        { headerName: '세금코드코드', field: 'taxCd', hide: true },
+        { headerName: '세금코드', field: 'taxNm', width: 80, cellStyle: cell('right') },
+        { headerName: '적요', field: 'lnSgtxt', flex: 1, minWidth: 200, editable: notLocked, cellStyle: cell('left') }
+      ]
+    },
+    // 이름 입력 → 자동검색 (DHTMLX onEnter → *ValueChange 대체). $refs.grid.data[rId] → row 직접
+    cctrValueChangeE2(row, schCode) {
+      const vm = this
+      row.acctCd = ''; row.acctNm = ''; row.acctCdSub = ''; row.acctNmSub = ''
+      for (let i = 1; i <= 15; i++) row['attribute' + i] = ''
+      if (!schCode) { row.deptCd = ''; row.deptNm = ''; this.refresh(); return }
+      this.$http.get('/api/cctr/erp/' + schCode).then(r => {
+        if (r.data.length === 1) {
+          row.deptCd = r.data[0].deptCd; row.deptNm = r.data[0].deptNm
+          if (r.data[0].expenseFlag === 'Y') { row.isExpenseFlag = true } else { row.isExpenseFlag = false; row.detailCd = ''; row.detailNm = '' }
+        } else {
+          vm.$modal.open({
+            component: ErpCctr, parent: vm, props: { searchStr: schCode }, width: 700,
+            events: { close(o) { row.deptCd = o.deptCd; row.deptNm = o.deptNm; vm.refresh() } }
+          })
+        }
+        vm.refresh()
+      })
+    },
+    acctValueChangeE2(row, schCode) {
+      const vm = this
+      row.acctCdSub = ''; row.acctNmSub = ''
+      for (let i = 1; i <= 15; i++) row['attribute' + i] = ''
+      if (!schCode) { row.acctCd = ''; row.acctNm = ''; this.refresh(); return }
+      const deptCd = row.deptCd
+      this.$http.get('/api/account/' + deptCd + '/' + this.slipType + '/' + this.rcpYn + '/' + schCode).then(response => {
+        if (response.data.length === 1) {
+          row.acctCd = response.data[0].acctCd; row.acctNm = response.data[0].acctNm
+          vm.$http.get('/api/account/sub/' + response.data[0].deptCd + '/' + response.data[0].acctCd).then(rs => {
+            const obj = rs.data
+            if (obj.length === 1) { row.acctCdSub = obj[0].subAcctCd; row.acctNmSub = obj[0].subAcctNm; row.reqSubAcct = true }
+            else if (obj.length === 0) { row.acctCdSub = ''; row.acctNmSub = ''; row.reqSubAcct = false }
+            else { row.acctCdSub = ''; row.acctNmSub = ''; vm.openAccountSub(row, response.data[0].acctCd) }
+            vm.loadBudget(row); vm.refresh()
+          })
+        } else {
+          vm.$modal.open({
+            component: Account, parent: vm, props: { deptCd: deptCd, slipTypeCd: vm.slipType, param: schCode }, width: 700,
+            events: {
+              close(o) {
+                row.acctCd = o.acctCd; row.acctNm = o.acctNm
+                vm.$http.get('/api/account/sub/' + deptCd + '/' + o.acctCd).then(r2 => {
+                  if (r2.data.length === 1) { row.acctCdSub = r2.data[0].subAcctCd; row.acctNmSub = r2.data[0].subAcctNm }
+                  else if (r2.data.length > 1) { vm.openAccountSub(row, o.acctCd) }
+                  vm.loadBudget(row); vm.refresh()
+                })
+              }
+            }
+          })
+        }
+        vm.refresh()
+      })
+    },
+    subAcctValueChange(row, schCode) {
+      const vm = this
+      if (!schCode) { row.acctCdSub = ''; row.acctNmSub = ''; this.refresh(); return }
+      if (!row.acctCd) { this.$swal({ type: 'warning', text: '계정을 먼저 선택하기 바랍니다.' }); return }
+      this.$http.get('/api/account/sub/' + row.deptCd + '/' + row.acctCd + '/' + schCode).then(r => {
+        const obj = r.data
+        if (obj.length === 1) { row.acctCdSub = obj[0].subAcctCd; row.acctNmSub = obj[0].subAcctNm }
+        else { vm.openAccountSub(row, row.acctCd) }
+        vm.loadBudget(row); vm.refresh()
+      })
+    },
+    productValueChangeE2(row, schCode) {
+      const vm = this
+      if (!row.isExpenseFlag && row.expenseFlag !== 'Y') { this.$swal({ type: 'warning', text: '연구부서만 등록 가능합니다.' }); return }
+      if (!schCode) { row.detailCd = ''; row.detailNm = ''; this.refresh(); return }
+      this.$http.get('/api/slip/product/' + schCode).then(r => {
+        if (r.data.length === 1) { row.detailCd = r.data[0].detailCd; row.detailNm = r.data[0].detailNm }
+        else {
+          vm.$modal.open({
+            component: Product, parent: vm, props: { slipTypeCd: vm.slipType }, width: 700,
+            events: { close(o) { row.detailCd = o.detailCd; row.detailNm = o.detailNm; vm.refresh() } }
+          })
+        }
+        vm.refresh()
+      })
+    },
+    // E2 검색버튼(다건 직접 팝업)
+    openCctrE2(row) {
+      const vm = this
+      this.$modal.open({
+        component: ErpCctr, parent: this, width: 700,
+        events: {
+          close(o) {
+            row.deptCd = o.deptCd; row.deptNm = o.deptNm
+            row.isExpenseFlag = (o.expenseFlag === 'Y')
+            if (o.expenseFlag !== 'Y') { row.detailCd = ''; row.detailNm = '' }
+            row.acctCd = ''; row.acctNm = ''; row.acctCdSub = ''; row.acctNmSub = ''
+            for (let i = 1; i <= 15; i++) row['attribute' + i] = ''
+            vm.refresh()
+          }
+        }
+      })
+    },
+    openAccountE2(row) {
+      const vm = this
+      this.$modal.open({
+        component: Account, parent: this, props: { deptCd: row.deptCd, slipTypeCd: vm.slipType }, width: 700,
+        events: {
+          close(o) {
+            row.acctCd = o.acctCd; row.acctNm = o.acctNm; row.ctrlYn = o.ctrlYn
+            vm.$http.get('/api/account/sub/' + row.deptCd + '/' + o.acctCd).then(r => {
+              if (r.data.length === 1) { row.acctCdSub = r.data[0].subAcctCd; row.acctNmSub = r.data[0].subAcctNm; row.reqSubAcct = true }
+              else if (r.data.length > 1) { row.reqSubAcct = true; vm.openAccountSub(row, o.acctCd) }
+              else { row.acctCdSub = ''; row.acctNmSub = ''; row.reqSubAcct = false }
+              vm.loadBudget(row); vm.refresh()
+            })
+          }
+        }
+      })
+    },
+    openAccountSubBtn(row) {
+      if (!row.acctCd) { this.$swal({ type: 'warning', text: '계정을 먼저 선택하기 바랍니다.' }); return }
+      this.openAccountSub(row, row.acctCd)
+    },
+    openAccountSub(row, acctCd) {
+      const vm = this
+      this.$modal.open({
+        component: AccountSub, parent: this,
+        props: { deptCd: row.deptCd, slipTypeCd: this.slipType, acctCd: acctCd, searchStr: row.acctNmSub, year: this.$parent.value.postDt }, width: 700,
+        events: { close(o) { row.acctCdSub = o.subAcctCd; row.acctNmSub = o.subAcctNm; vm.loadBudget(row); vm.refresh() } }
+      })
+    },
+    openProductE2(row) {
+      const vm = this
+      if (!row.isExpenseFlag && row.expenseFlag !== 'Y') { this.$swal({ type: 'warning', text: '연구부서만 등록 가능합니다.' }); return }
+      this.$modal.open({
+        component: Product, parent: this, props: { slipTypeCd: vm.slipType }, width: 700,
+        events: { close(o) { row.detailCd = o.detailCd; row.detailNm = o.detailNm; vm.refresh() } }
+      })
+    },
+    openAddonE2(row) {
+      const vm = this
+      this.$modal.open({
+        component: SlipMngItemPop, parent: this, props: { acctCd: row.acctCd, data: row },
+        events: { close(data) { for (let i = 1; i <= 15; i++) { row['attribute' + i] = data['attribute' + i] } vm.refresh() } }
+      })
+    },
+    recalcE2Totals() {
+      const slip = this.$parent.value
+      const topAmt = (slip.slipDetails || []).map(x => this.$numeral(x.useAmt).value()).reduce((a, v) => a + v, 0)
+      slip.totAmt = topAmt
+      if (slip.curCd === 'JPY') slip.totAmtKrw = Math.floor(topAmt * slip.excRt * 0.01)
+      else slip.totAmtKrw = Math.floor(topAmt * slip.excRt)
+    },
+    // 잔여예산 조회 (DHTMLX rmdAmt 셀 컴포넌트 + queryRemainBudget 대체)
+    budgetKey(row) {
+      return [this.$parent.value.postDt, row.deptCd, row.acctCd, row.acctCdSub].join('_')
+    },
+    loadBudget(row) {
+      if (!row || !row.deptCd) return
+      const key = this.budgetKey(row)
+      if (this.budget[key] !== undefined) { row.rmdAmt = this.budget[key]; return }
+      if (this.budgetLock[key]) return
+      this.budgetLock[key] = true
+      this.$http.post('/api/budget/remain', { budYm: this.$parent.value.postDt, budCctrCd: row.deptCd, budAcctCd: row.acctCd, budSubAcctCd: row.acctCdSub })
+        .then(r => { this.$set(this.budget, key, this.$numeral(r.data).value()); row.rmdAmt = this.budget[key]; this.refresh() })
+        .finally(() => { delete this.budgetLock[key] })
+    },
+    loadBudgetsForData() {
+      (this.data || []).forEach(row => this.loadBudget(row))
     },
     // ===== Tab: 편집 가능 셀로만 순환 (PoC 검증 패턴) =====
     nextEditableCell(params) {
