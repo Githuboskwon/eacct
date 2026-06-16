@@ -201,7 +201,6 @@ import mixinSlip from '@/mixin/slip';
 import _ from 'lodash'
 
 import DhxCalendar from '@/components/DhxCalendar.vue'
-import DhxGrid from '@/components/DhxGrid.vue'
 import Emp from '@/components/Emp_Ag.vue'
 import ApprovalModal from '@/components/accrualSlip/Approval/Main.vue';
 import SlipDetailModal from '@/components/SlipDetailModal.vue'
@@ -217,7 +216,7 @@ import SlipBondDetailModal from "@/components/SlipBondDetailModal.vue";
 export default {
     name: 'ApprReqLst',
     mixins: [mixin, mixinSlip],
-    components: {Emp, DhxGrid, DhxCalendar, AgGridVue},
+    components: {Emp, DhxCalendar, AgGridVue},
     data() {
         return {
             columnDefs : [],

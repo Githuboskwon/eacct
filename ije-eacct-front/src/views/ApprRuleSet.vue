@@ -77,7 +77,14 @@
                     </div>
                 </div>
                 <div class="grid-wrap">
-                    <dhx-grid ref="grid" v-model="ruleDetails" :config="config" @constructGridSuccessful="constructGridSuccessful"/>
+                    <ag-grid-vue ref="grid"
+                                 style="width: 100%; height: 570px;"
+                                 class="ag-theme-alpine"
+                                 :columnDefs="columnDefs"
+                                 :rowData="ruleDetails"
+                                 :gridOptions="gridOptions"
+                                 :defaultColDef="defaultColDef"
+                                 @rowDoubleClicked="rowDoubleClick"/>
                 </div>
             </div>
 
@@ -111,55 +118,40 @@
 <script>
     import mixin from '@/mixin';
     import mixinSlip from '@/mixin/slip';
-    import DhxGrid from '@/components/DhxGrid.vue'
-    import DhxCalendar from '@/components/DhxCalendar.vue'
+    import { AgGridVue } from 'ag-grid-vue'
     // import ApprRulePop from '@/components/ApprRulePop.vue'
 
     export default {
         name: 'ApprRuleSet',
         mixins: [mixin, mixinSlip],
-        components: {DhxGrid, DhxCalendar},
+        components: {AgGridVue},
         data() {
             return {
-                config : {
-                    columns: [
-                        {id: 'rn', type: 'cntr', align: 'center', sort: 'na', value: 'No.', width: 35},
-                        {id: 'docTypeNm', type: 'ro', align: 'center', sort: 'na', value: '문서유형', width: 100},
-                        {id: 'dtlTypeNm', type: 'ro', align: 'center', sort: 'na', value: '상세유형', width: 200},
-                        {id: 'useYn', type: 'ro', align: 'center', sort: 'na', value: '사용여부', width: 100},
-                        {id: 'ruleSeq', type: 'ro', align: 'center', sort: 'na', value: '규정순번', width: 100},
-                        {id: 'curNm', type: 'ro', align: 'center', sort: 'na', value: '통화코드', width: 100},
-                        {id: 'maxAmt', type: 'ron', align: 'right', sort: 'na', value: '상한금액', width: 150},
-                        {id: 'apprTypeNm', type: 'ron', align: 'center', sort: 'na', value: '결재유형', width: 120},
-                        {id: 'fixYn', type: 'ro', align: 'center', sort: 'na', value: '고정여부', width: 100},
-                        {id: 'aprverClassNm', type: 'ro', align: 'center', sort: 'na', value: '결재자구분', width: 180},
-                        {id: 'aprverClassVal', type: 'ro', align: 'center', sort: 'na', value: '결재자구분값', width: 200},
-                        {id: 'remark', type: 'ed', align: 'center', sort: 'na', value: '비고', width: 200},
-                        {id: 'docTypeCd', type: 'ro', align: 'center', sort: 'na', value: '문서코드', width: 100},
-                        {id: 'dtlTypeCd', type: 'ro', align: 'center', sort: 'na', value: '상세코드', width: 100},
-                        {id: 'curCd', type: 'ro', align: 'center', sort: 'na', value: '통화Cd', width: 100},
-                        {id: 'apprTypeCd', type: 'ro', align: 'center', sort: 'na', value: '결재코드', width: 100},
-                        {id: 'aprverClassCd', type: 'ro', align: 'center', sort: 'na', value: '결재자구분코드', width: 100},
-                    ],
-                    height: 570,
-                    // enablePaging: true,
-                    pagingSize: 12,
-                    // queryPage: (page) => {
-                    //     page = page || 0
-                    //     return new Promise((resolve, reject) => {
-                    //         let data = {
-                    //             contents: this.ruleDetails,
-                    //             page: page,
-                    //             totalPages: parseInt(this.ruleDetails.length / this.config.pagingSize) + (parseInt(this.ruleDetails.length % this.config.pagingSize) > 0 ? 1 : 0),
-                    //             totalElements: 0
-                    //         }
-                    //         resolve({
-                    //             data: data
-                    //         })
-                    //     })
-                    // },
-                }
-                ,
+                columnDefs: [
+                    {headerName: 'No.', width: 50, cellStyle: {textAlign: 'center'}, valueGetter: params => params.node.rowIndex + 1},
+                    {headerName: '문서유형', field: 'docTypeNm', width: 100, cellStyle: {textAlign: 'center'}},
+                    {headerName: '상세유형', field: 'dtlTypeNm', width: 200, cellStyle: {textAlign: 'center'}},
+                    {headerName: '사용여부', field: 'useYn', width: 100, cellStyle: {textAlign: 'center'}},
+                    {headerName: '규정순번', field: 'ruleSeq', width: 100, cellStyle: {textAlign: 'center'}},
+                    {headerName: '통화코드', field: 'curNm', width: 100, cellStyle: {textAlign: 'center'}},
+                    {
+                        headerName: '상한금액', field: 'maxAmt', width: 150, cellStyle: {textAlign: 'right'},
+                        valueFormatter: params => (params.value === null || params.value === undefined || params.value === '')
+                            ? '' : Number(params.value).toLocaleString(undefined, {maximumFractionDigits: 0})
+                    },
+                    {headerName: '결재유형', field: 'apprTypeNm', width: 120, cellStyle: {textAlign: 'center'}},
+                    {headerName: '고정여부', field: 'fixYn', width: 100, cellStyle: {textAlign: 'center'}},
+                    {headerName: '결재자구분', field: 'aprverClassNm', width: 180, cellStyle: {textAlign: 'center'}},
+                    {headerName: '결재자구분값', field: 'aprverClassVal', width: 200, cellStyle: {textAlign: 'center'}},
+                    {headerName: '비고', field: 'remark', width: 200, editable: true, cellStyle: {textAlign: 'center'}},
+                    {headerName: '문서코드', field: 'docTypeCd', hide: true},
+                    {headerName: '상세코드', field: 'dtlTypeCd', hide: true},
+                    {headerName: '통화Cd', field: 'curCd', hide: true},
+                    {headerName: '결재코드', field: 'apprTypeCd', hide: true},
+                    {headerName: '결재자구분코드', field: 'aprverClassCd', hide: true},
+                ],
+                gridOptions: {},
+                defaultColDef: {resizable: true, sortable: true, filter: true},
                 hiddenDocTypeNm: '',
                 hiddenDocTypeCd: '',
                 hiddenDtlTypeNm: '',
@@ -190,34 +182,26 @@
             };
         },
         methods : {
-            constructGridSuccessful(grid) {
-                // this.config.queryPage(0)
-                grid.setColumnHidden(12,true)
-                grid.setColumnHidden(13,true)
-                grid.setColumnHidden(14,true)
-                grid.setColumnHidden(15,true)
-                grid.setColumnHidden(16,true)
-                grid.setNumberFormat('0,000', 6, '.', ',')
-                grid.attachEvent('onRowDblClicked', (rId) => {
-                    this.hiddenDocTypeNm = grid.cells(rId, 1).getValue();
-                    this.hiddenDocTypeCd = grid.cells(rId, 12).getValue();
-                    this.hiddenDtlTypeNm = grid.cells(rId, 2).getValue();
-                    this.hiddenDtlTypeCd = grid.cells(rId, 13).getValue();
-                    this.hiddenUseYn = grid.cells(rId, 3).getValue();
-                    this.hiddenRuleSeq = grid.cells(rId, 4).getValue();
-                    this.hiddenCurNm = grid.cells(rId, 5).getValue();
-                    this.hiddenCurCd = grid.cells(rId, 14).getValue();
-                    this.hiddenMaxAmt = grid.cells(rId, 6).getValue();
-                    this.hiddenApprTypeNm = grid.cells(rId, 7).getValue();
-                    this.hiddenApprTypeCd = grid.cells(rId, 15).getValue();
-                    this.hiddenFixYn = grid.cells(rId, 8).getValue();
-                    this.hiddenAprverClassNm = grid.cells(rId, 9).getValue();
-                    this.hiddenAprverClassVal = grid.cells(rId, 10).getValue();
-                    this.hiddenAprverClassCd = grid.cells(rId, 16).getValue();
-                    this.hiddenRemark = grid.cells(rId, 11).getValue();
-                    this.hiddenCheck = 'Y';
-                    this.popVendor();
-                });
+            rowDoubleClick(params) {
+                const d = params.data;
+                this.hiddenDocTypeNm = d.docTypeNm;
+                this.hiddenDocTypeCd = d.docTypeCd;
+                this.hiddenDtlTypeNm = d.dtlTypeNm;
+                this.hiddenDtlTypeCd = d.dtlTypeCd;
+                this.hiddenUseYn = d.useYn;
+                this.hiddenRuleSeq = d.ruleSeq;
+                this.hiddenCurNm = d.curNm;
+                this.hiddenCurCd = d.curCd;
+                this.hiddenMaxAmt = d.maxAmt;
+                this.hiddenApprTypeNm = d.apprTypeNm;
+                this.hiddenApprTypeCd = d.apprTypeCd;
+                this.hiddenFixYn = d.fixYn;
+                this.hiddenAprverClassNm = d.aprverClassNm;
+                this.hiddenAprverClassVal = d.aprverClassVal;
+                this.hiddenAprverClassCd = d.aprverClassCd;
+                this.hiddenRemark = d.remark;
+                this.hiddenCheck = 'Y';
+                this.popVendor();
             },
             getCompCdCombo() {
                 this.$http.get(`/api/code/combo`, {params: {groupCd: "COMP_CD"}})
@@ -232,7 +216,7 @@
                     });
             },
             saveExcel() {
-                this.downloadExcel(this.$refs.grid);
+                this.gridOptions.api.exportDataAsExcel({fileName: '전결규정내역'});
             },
             goSearch() {
                 this.$store.commit('loading');
@@ -245,7 +229,6 @@
                     .then(response => {
                         if (response.data) {
                             this.ruleDetails = response.data;
-                            this.config.queryPage(0)
                         }
                     }).finally(() => {
                         this.$store.commit('finish')

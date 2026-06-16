@@ -123,12 +123,7 @@
                 </div>
             </div>
 
-            <b-modal parent:this :active.sync="showEmpModal1" has-modal-card @receive="receiveAdlgEmp">
-                <emp :param="form.adlgNm"></emp>
-            </b-modal>
-            <b-modal parent:this :active.sync="showEmpModal2" has-modal-card @receive="receiveActEmp">
-                <emp :param="form.actNm"></emp>
-            </b-modal>
+            <!-- 사원조회 팝업: ag-grid(Emp_Ag) — popAdlgEmp/popActEmp에서 $modal.open으로 띄움 -->
         </div>
     </layout>
 </template>
@@ -139,7 +134,8 @@
     import mixinSlip from '@/mixin/slip';
 
     import DhxCalendar from '@/components/DhxCalendar.vue'
-    import Emp from '@/components/Emp.vue';
+    // import Emp from '@/components/Emp.vue';
+    import Emp from '@/components/Emp_Ag.vue';
 
     export default {
         name: 'ApprMndPop',
@@ -160,8 +156,6 @@
                     hiddenCheck: '',
                 },
                 returnObject: {},
-                showEmpModal1: false,
-                showEmpModal2: false,
             }
         },
         methods:
@@ -239,20 +233,42 @@
                     this.$parent.close();
                 },
                 popAdlgEmp(clear) {
-                    console.log('직원팝업');
+                    let vm = this;
                     if (clear === true) {
                         this.form.adlgId = '';
                         this.form.adlgNm = '';
                     }
-                    this.showEmpModal1 = true;
+                    this.$modal.open({
+                        component: Emp,
+                        props: {
+                            param: this.form.adlgNm
+                        },
+                        parent: this,
+                        events: {
+                            close(obj) {
+                                vm.receiveAdlgEmp(obj);
+                            }
+                        }
+                    });
                 },
                 popActEmp(clear) {
-                    console.log('직원팝업');
+                    let vm = this;
                     if (clear === true) {
                         this.form.actId = '';
                         this.form.actNm = '';
                     }
-                    this.showEmpModal2 = true;
+                    this.$modal.open({
+                        component: Emp,
+                        props: {
+                            param: this.form.actNm
+                        },
+                        parent: this,
+                        events: {
+                            close(obj) {
+                                vm.receiveActEmp(obj);
+                            }
+                        }
+                    });
                 },
                 initAdlgEmp(force) {
                     if (force === true) this.form.adlgNm = '';

@@ -91,7 +91,6 @@
     import common from '@/mixin/common';
     import _ from 'lodash'
     import DhxCalendar from '@/components/DhxCalendar.vue'
-    import Emp from '@/components/Emp.vue';
 
     import DatepickerCellRenderer from '@/components/agGrid/datepicker-cell-renderer'
     import MaskEditCellRenderer from '@/components/agGrid/maskedit-cell-renderer'    
@@ -117,7 +116,7 @@
     export default {
         name: 'CardUseLst',
         mixins: [mixin, mixinSlip, common],
-        components: {Emp, DhxCalendar},
+        components: {DhxCalendar},
         data() {
             return {
                 title: '환율관리',
@@ -129,7 +128,6 @@
                 useDtlsStatCds: [],
                 crdFgCds: [],
                 data: [],
-                showEmpModal: false,
                 authority: '',
                 form: {
                   fromConvDate: this.$moment().format('YYYY'),

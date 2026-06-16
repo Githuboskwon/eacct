@@ -59,7 +59,6 @@
 import Vue from 'vue'
 import assert from '@/libs/assert'
 import debug from '@/libs/debug'
-import DhxGrid from '@/components/DhxGrid.vue'
 import mixinSlip from '@/mixin/slip';
 
 import common from '@/mixin/common';
@@ -114,9 +113,7 @@ function _resort(array, result) {
 
 export default {
   mixins: [mixinSlip,common],
-  components: {
-    DhxGrid
-  },
+  components: {},
   data() {
     return {
       compCd: undefined,

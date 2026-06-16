@@ -9,7 +9,6 @@
 </template>
 
 <script>
-    import DhxGrid from '@/components/DhxGrid.vue'
     import ApprHeader from '@/components/ApprHeader.vue'
     import ApprLineSet from '@/components/ApprLineSet.vue'
 
@@ -50,7 +49,6 @@
             }
         },
         components: {
-            DhxGrid,
             ApprHeader,
             ApprLineSet,
             SlipBase,

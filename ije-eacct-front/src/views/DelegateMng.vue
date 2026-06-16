@@ -201,7 +201,6 @@ import _ from 'lodash'
 import CheckboxCellRenderer from '@/components/agGrid/checkbox-cell-renderer'
 import DhxCalendar from '@/components/DhxCalendar.vue'
 //팝업
-import Cctr from '@/components/Cctr.vue'
 import Emp from '@/components/Emp_Ag.vue'
 import DelegatePop from '@/components/DelegatePop.vue'
 
@@ -265,7 +264,6 @@ export default {
         modGiveUserId : "",
         modReceiveUserId : "",
       },
-      showCctrModal: false,
       showEmpModal: false,
       showCustomerModal: false,
       result : [],
@@ -562,21 +560,6 @@ export default {
       }
       return true;
     },
-    popCctr(flag) {
-      let vm = this
-      this.$modal.open({
-        component: Cctr,
-        props: {
-          param: this.form.deptNm
-        },
-        parent: this,
-        events: {
-          close(obj) {
-            vm.receiveCctr(obj)
-          }
-        }
-      })
-    },
     popEmp(flag) {
       let vm = this
 
@@ -606,10 +589,6 @@ export default {
         }
       })
     },
-    receiveCctr(obj) {
-      this.form.deptCd = obj.deptCd;
-      this.form.deptNm = obj.deptNm;
-    },
     receiveGiver(obj) {
       this.form.giveUserId = obj.empNo;
       this.form.giveUserNm = obj.empNm;
@@ -617,10 +596,6 @@ export default {
     receiveReceiver(obj) {
       this.form.receiveUserId = obj.empNo;
       this.form.receiveUserNm = obj.empNm;
-    },
-    initCctr(force) {
-      if (force === true) this.form.wrtDeptNm = '';
-      if (this.form.wrtDeptNm === '') this.form.wrtDeptCd = '';
     },
     initGiver(force) {
       if (force === true) this.form.giveUserNm = '';
@@ -664,25 +639,6 @@ export default {
         item.close()
       }
     }
-  },
-
-  popCctr(){
-    const that  = this;
-
-    this.$modal.open({
-      width: 800,
-      component: Cctr,
-      parent: this,
-      props: {
-        param: this.form.cctrNm
-      },
-      events: {
-        close(data) {
-          that.form.cctrCd = data.cctrCd
-          that.form.cctrNm = data.cctrNm
-        },
-      }
-    })
   },
 };
 </script>

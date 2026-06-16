@@ -306,7 +306,6 @@
 </template>
 
 <script>
-import DhxGrid from '@/components/DhxGrid.vue';
 import menual from '@/components/Menual.vue';
 import { AgChartsVue } from 'ag-charts-vue';
 import router from '@/router';
@@ -315,7 +314,6 @@ import router from '@/router';
 export default {
   name: 'MyMain',
   components: {
-    DhxGrid,
     menual,
     'ag-charts-vue': AgChartsVue
   },

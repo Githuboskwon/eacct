@@ -281,14 +281,12 @@
 <script>
 import mixinSlip from '@/mixin/slip';
 import menual from '@/components/Menual.vue';
-import DhxGrid from '@/components/DhxGrid.vue';
 import router from '@/router';
 
 export default {
   name: 'MyMain',
   mixins: [ mixinSlip],
   components: {
-    DhxGrid,
     menual
   },
   data() {

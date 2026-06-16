@@ -164,9 +164,7 @@
     import _ from 'lodash'
 
     import DhxCalendar from '@/components/DhxCalendar.vue'
-    import DhxGrid from '@/components/DhxGrid.vue'
 
-    import Emp from '@/components/Emp.vue';
 
     /*   import SlipDetailModal from '@/components/SlipDetailModal.vue'
        import SlipPayDetailModal from '@/components/SlipPayDetailModal.vue'
@@ -184,7 +182,7 @@
     export default {
         name: 'SlipList',
         mixins: [mixin, mixinSlip],
-        components: {Emp, DhxCalendar, DhxGrid, AgGridVue},
+        components: {DhxCalendar, AgGridVue},
         props: {
           dateSet: {
             type: Object,
@@ -218,7 +216,6 @@
                     searchEmail:'',
                     searchStatus:'00'
                 },
-                showEmpModal: false,
                 setDate: [],
             };
         },
