@@ -44,9 +44,6 @@
 </template>
 
 <script>
-import DhxGrid from '@/components/DhxGrid.vue'
-import GridCheckbox from '@/components/grid/GridCheckbox.vue'
-
 import CheckboxCellRenderer from '@/components/agGrid/ap_checkbox-cell-renderer'
 
 export default {
@@ -60,9 +57,7 @@ export default {
       required: true
     }
   },
-  components: {
-    DhxGrid
-  },
+  components: {},
   name: "ModalSlot",
   data() {
     return {
