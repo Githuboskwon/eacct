@@ -27,7 +27,16 @@
                     <div id="treeBox" style="width:350px;height:330px;float:left; border-top:1px solid #c7c7c7; border-bottom:1px solid #c7c7c7; border-left:1px solid #c7c7c7; border-right:1px solid #c7c7c7;"></div>
 
                     <div class="grid-wrap" style="float:right;width: 60%;">
-                        <dhx-grid ref="gridEmp" v-model="empList" :config="config" @constructGridSuccessful="constructGridSuccessful"/>
+                        <ag-grid-vue ref="gridEmp"
+                                     style="width: 100%; height: 330px;"
+                                     class="ag-theme-alpine"
+                                     rowSelection="single"
+                                     :columnDefs="empColumnDefs"
+                                     :rowData="empList"
+                                     :gridOptions="empGridOptions"
+                                     :defaultColDef="defaultColDef"
+                                     @grid-ready="onEmpReady"
+                                     @rowDoubleClicked="onEmpDblClick"/>
                     </div>
                 </div>
             </div>
@@ -82,7 +91,16 @@
                     </div>
 
                     <div class="grid-wrap">
-                        <dhx-grid ref="gridLine" v-model="form.lineList" :config="configLine" @constructGridSuccessful="constructGridSuccessfulLine"/>
+                        <ag-grid-vue ref="gridLine"
+                                     style="width: 100%; height: 250px;"
+                                     class="ag-theme-alpine"
+                                     rowSelection="single"
+                                     :columnDefs="lineColumnDefs"
+                                     :rowData="form.lineList"
+                                     :gridOptions="lineGridOptions"
+                                     :defaultColDef="defaultColDef"
+                                     @grid-ready="onLineReady"
+                                     @rowDoubleClicked="onLineDblClick"/>
                     </div>
                 </div>
 
@@ -101,7 +119,16 @@
                   </div>
 
                   <div class="grid-wrap">
-                    <dhx-grid ref="gridRef" v-model="form.refList" :config="configRef" @constructGridSuccessful="constructGridSuccessfulRef"/>
+                    <ag-grid-vue ref="gridRef"
+                                 style="width: 100%; height: 319px;"
+                                 class="ag-theme-alpine"
+                                 rowSelection="single"
+                                 :columnDefs="refColumnDefs"
+                                 :rowData="form.refList"
+                                 :gridOptions="refGridOptions"
+                                 :defaultColDef="defaultColDef"
+                                 @grid-ready="onRefReady"
+                                 @rowDoubleClicked="onRefDblClick"/>
                   </div>
                 </div>
             </div>
@@ -114,13 +141,13 @@
     import mixin from '@/mixin';
     import mixinSlip from '@/mixin/slip';
 
-    import DhxGrid from '@/components/DhxGrid.vue'
+    import { AgGridVue } from 'ag-grid-vue'
     import Emp from '@/components/Emp_Ag.vue';
 
     export default {
         name: 'ApprLineSet',
         mixins: [mixin, mixinSlip],
-        components: {Layout, Emp, DhxGrid},
+        components: {Layout, Emp, AgGridVue},
         props: {
           ['lineList']: {
             required:false
@@ -143,43 +170,41 @@
         },
         data() {
             return {
-                config : {
-                    columns: [
-                        {id: 'rn', type: 'cntr', align: 'center', sort: 'na', value: 'No.', width: 35},
-                        {id: 'empNm', type: 'ro', align: 'center', sort: 'na', value: '이름'},
-                        {id: 'jobNm', type: 'ro', align: 'center', sort: 'na', value: '직급'},
-                        {id: 'empNo', type: 'ro', align: 'center', sort: 'na', value: '사번'},
-                        {id: 'deptNm', type: 'ro', align: 'center', sort: 'na', value: '부서명'},
-                        {id: 'jobDutNm', type: 'ro', align: 'center', sort: 'na', value: '직책명'},
-                    ],
-                    height: 330,
-                },
-                configLine : {
-                    columns: [
-                        {id: 'rn', type: 'cntr', align: 'center', sort: 'na', value: '순서.', width: 35},
-                        {id: 'aprverUser', type: 'ro', align: 'center', sort: 'na', value: '이름'},
-                        {id: 'jobNm', type: 'ro', align: 'center', sort: 'na', value: '직급'},
-                        {id: 'deptNm', type: 'ro', align: 'center', sort: 'na', value: '부서'},
-                        {id: 'apprType', type: 'ro', align: 'center', sort: 'na', value: '결재형식'},
-                        {id: 'apprTypeCd', type: 'ro', align: 'center', sort: 'na', value: '결재형식'},
-                        {id: 'aprverId', type: 'ro', align: 'center', sort: 'na', value: '사번'},
-                        {id: 'serveCd', value: '재직여부', hide : true}
-                    ],
-                    height: 250,
-                },
-                configRef : {
-                  columns: [
-                    {id: 'rn', type: 'cntr', align: 'center', sort: 'na', value: '순서.', width: 35},
-                    {id: 'aprverUser', type: 'ro', align: 'center', sort: 'na', value: '이름'},
-                    {id: 'jobNm', type: 'ro', align: 'center', sort: 'na', value: '직급'},
-                    {id: 'deptNm', type: 'ro', align: 'center', sort: 'na', value: '부서'},
-                    {id: 'apprType', type: 'ro', align: 'center', sort: 'na', value: '결재형식'},
-                    {id: 'apprTypeCd', type: 'ro', align: 'center', sort: 'na', value: '결재형식'},
-                    {id: 'aprverId', type: 'ro', align: 'center', sort: 'na', value: '사번'},
-                    {id: 'serveCd', value: '재직여부', hide : true}
-                  ],
-                  height: 319,
-                },
+                empColumnDefs: [
+                    {headerName: 'No.', width: 50, cellStyle: {textAlign: 'center'}, valueGetter: p => p.node.rowIndex + 1},
+                    {headerName: '이름', field: 'empNm', flex: 1, cellStyle: {textAlign: 'center'}},
+                    {headerName: '직급', field: 'jobNm', width: 100, cellStyle: {textAlign: 'center'}},
+                    {headerName: '사번', field: 'empNo', hide: true},
+                    {headerName: '부서명', field: 'deptNm', hide: true},
+                    {headerName: '직책명', field: 'jobDutNm', hide: true},
+                ],
+                lineColumnDefs: [
+                    {headerName: '순서', width: 55, cellStyle: {textAlign: 'center'}, valueGetter: p => p.node.rowIndex + 1},
+                    {headerName: '이름', field: 'aprverUser', flex: 1, cellStyle: {textAlign: 'center'}},
+                    {headerName: '직급', field: 'jobNm', width: 80, cellStyle: {textAlign: 'center'}},
+                    {headerName: '부서', field: 'deptNm', flex: 1, cellStyle: {textAlign: 'center'}},
+                    {headerName: '결재형식', field: 'apprType', width: 90, cellStyle: {textAlign: 'center'}},
+                    {headerName: '결재형식Cd', field: 'apprTypeCd', hide: true},
+                    {headerName: '사번', field: 'aprverId', hide: true},
+                    {headerName: '재직여부', field: 'serveCd', hide: true},
+                ],
+                refColumnDefs: [
+                    {headerName: '순서', width: 55, cellStyle: {textAlign: 'center'}, valueGetter: p => p.node.rowIndex + 1},
+                    {headerName: '이름', field: 'aprverUser', flex: 1, cellStyle: {textAlign: 'center'}},
+                    {headerName: '직급', field: 'jobNm', width: 80, cellStyle: {textAlign: 'center'}},
+                    {headerName: '부서', field: 'deptNm', flex: 1, cellStyle: {textAlign: 'center'}},
+                    {headerName: '결재형식', field: 'apprType', width: 90, cellStyle: {textAlign: 'center'}},
+                    {headerName: '결재형식Cd', field: 'apprTypeCd', hide: true},
+                    {headerName: '사번', field: 'aprverId', hide: true},
+                    {headerName: '재직여부', field: 'serveCd', hide: true},
+                ],
+                empGridOptions: {},
+                lineGridOptions: {},
+                refGridOptions: {},
+                defaultColDef: {resizable: true, sortable: false, filter: false},
+                empApi: null,
+                lineApi: null,
+                refApi: null,
                 title: '결재선 지정',
                 form: {
                     lineList: [],
@@ -199,84 +224,52 @@
         },
         methods:
             {
-                constructGridSuccessful(grid) {
+                onEmpReady(params) {
+                    this.empApi = params.api;
+                },
+                onLineReady(params) {
+                    this.lineApi = params.api;
+                },
+                onRefReady(params) {
+                    this.refApi = params.api;
+                },
+                onEmpDblClick(params) {
+                    const d = params.data;
                     let apprTypeNm;
-                    let outYn = ''
-                    grid.setColumnHidden(3,true)
-                    grid.setColumnHidden(4,true)
-                    grid.setColumnHidden(5,true)
-                    grid.attachEvent('onRowDblClicked', (rId) => {
-                        outYn = 'N'
-                        if(this.apprTypeCd==='20') apprTypeNm = '결재'
-                        else if(this.apprTypeCd==='30') apprTypeNm = '합의'
+                    if (this.apprTypeCd === '20') apprTypeNm = '결재';
+                    else if (this.apprTypeCd === '30') apprTypeNm = '합의';
 
-                        if(!this.checkDup(grid.cells(rId,3).getValue())) return
+                    if (!this.checkDup(d.empNo)) return;
 
-                        if(this.changeLineFlag){
-                            //결재
-                            this.form.lineList.push(
-                                {
-                                  aprverUser : grid.cells(rId,1).getValue(),
-                                  jobNm : grid.cells(rId,2).getValue(),
-                                  aprverId : grid.cells(rId,3).getValue(),
-                                  deptNm : grid.cells(rId,4).getValue(),
-                                  apprTypeCd : this.apprTypeCd,
-                                  apprType : apprTypeNm,
-                                  serveCd : '10'
-                                }
-                            );
-                        }else{
-                            //참조
-                            this.form.refList.push(
-                                {
-                                  aprverUser : grid.cells(rId,1).getValue(),
-                                  jobNm : grid.cells(rId,2).getValue(),
-                                  aprverId : grid.cells(rId,3).getValue(),
-                                  deptNm : grid.cells(rId,4).getValue(),
-                                  apprTypeCd : this.apprTypeCd,
-                                  apprType : '참조',
-                                  serveCd : '10'
-                                }
-                            );
-                        }
-
-                    });
+                    const item = {
+                        aprverUser: d.empNm,
+                        jobNm: d.jobNm,
+                        aprverId: d.empNo,
+                        deptNm: d.deptNm,
+                        apprTypeCd: this.apprTypeCd,
+                        apprType: this.changeLineFlag ? apprTypeNm : '참조',
+                        serveCd: '10'
+                    };
+                    if (this.changeLineFlag) this.form.lineList.push(item);
+                    else this.form.refList.push(item);
                 },
-                constructGridSuccessfulLine(grid) {
-                    grid.setColumnHidden(5,true)
-                    grid.setColumnHidden(6,true)
-
-                    grid.attachEvent('onRowDblClicked', (rId) => {
-                        let index= rId-1
-                        let row = this.form.lineList[index]
-
-                        if (row.apprTypeCd === '10') {
-                            this.$swal({
-                                type: 'warning',
-                                text: '선택하신 행은 삭제할 수 없습니다.'
-                            })
-                        } else {
-                            this.form.lineList.splice(index, 1)
-                        }
-                    });
+                onLineDblClick(params) {
+                    const index = params.node.rowIndex;
+                    const row = this.form.lineList[index];
+                    if (row && row.apprTypeCd === '10') {
+                        this.$swal({type: 'warning', text: '선택하신 행은 삭제할 수 없습니다.'});
+                    } else {
+                        this.form.lineList.splice(index, 1);
+                    }
                 },
-                constructGridSuccessfulRef(grid) {
-                    grid.setColumnHidden(5,true)
-                    grid.setColumnHidden(6,true)
-
-                    grid.attachEvent('onRowDblClicked', (rId) => {
-                        let index= rId-1
-                        let row = this.form.lineList[index]
-
-                        if (row.apprTypeCd === '10') {
-                            this.$swal({
-                                type: 'warning',
-                                text: '선택하신 행은 삭제할 수 없습니다.'
-                            })
-                        } else {
-                           this.form.refList.splice(index, 1)
-                        }
-                    });
+                onRefDblClick(params) {
+                    const index = params.node.rowIndex;
+                    const row = this.form.refList[index];
+                    if (row && row.apprTypeCd === '10') {
+                        this.$swal({type: 'warning', text: '선택하신 행은 삭제할 수 없습니다.'});
+                    } else {
+                        this.form.refList.splice(index, 1);
+                    }
                 },
                 getGroupData(){
                   this.$http
@@ -297,10 +290,10 @@
                 },
                 addEmp() {
                     try {
-                        if (this.$refs.gridEmp.instance.getSelectedRowId() == null)
+                        const nodes = this.empApi ? this.empApi.getSelectedNodes() : []
+                        if (!nodes.length)
                             throw '선택된 행이 없습니다.'
-                        let index = this.$refs.gridEmp.instance.getSelectedRowId() - 1
-                        let row = this.empList[index]
+                        let row = nodes[0].data
 
                         let apprTypeNm;
 
@@ -309,33 +302,17 @@
 
                         if(!this.checkDup(row.empNo)) return
 
-                        if(this.changeLineFlag){
-                          //결재
-                          this.form.lineList.push(
-                            {
-                              aprverUser : row.empNm,
-                              jobNm : row.jobNm,
-                              aprverId : row.empNo,
-                              deptNm : row.deptNm,
-                              apprTypeCd : this.apprTypeCd,
-                              apprType : apprTypeNm,
-                              serveCd : '10'
-                            }
-                          );
-                        }else{
-                          //참조
-                          this.form.refList.push(
-                            {
-                              aprverUser : row.empNm,
-                              jobNm : row.jobNm,
-                              aprverId : row.empNo,
-                              deptNm : row.deptNm,
-                              apprTypeCd : this.apprTypeCd,
-                              apprType : '참조',
-                              serveCd : '10'
-                            }
-                          );
+                        const item = {
+                            aprverUser : row.empNm,
+                            jobNm : row.jobNm,
+                            aprverId : row.empNo,
+                            deptNm : row.deptNm,
+                            apprTypeCd : this.apprTypeCd,
+                            apprType : this.changeLineFlag ? apprTypeNm : '참조',
+                            serveCd : '10'
                         }
+                        if(this.changeLineFlag) this.form.lineList.push(item)
+                        else this.form.refList.push(item)
 
                     } catch (e) {
                         this.$swal({
@@ -348,9 +325,10 @@
                     try {
                         if(this.changeLineFlag){
                           //결재
-                          if (this.$refs.gridLine.instance.getSelectedRowId() == null)
+                          const nodes = this.lineApi ? this.lineApi.getSelectedNodes() : []
+                          if (!nodes.length)
                             throw '선택된 행이 없습니다.'
-                          let index = this.$refs.gridLine.instance.getSelectedRowId() - 1
+                          let index = nodes[0].rowIndex
                           let row = this.form.lineList[index]
 
                           if (row.apprTypeCd === '10') {
@@ -363,10 +341,10 @@
                           }
                         }else{
                           //참조
-                          if (this.$refs.gridRef.instance.getSelectedRowId() == null)
+                          const nodes = this.refApi ? this.refApi.getSelectedNodes() : []
+                          if (!nodes.length)
                             throw '선택된 행이 없습니다.'
-                          let index = this.$refs.gridRef.instance.getSelectedRowId() - 1
-                          let row = this.form.refList[index]
+                          let index = nodes[0].rowIndex
 
                           this.form.refList.splice(index, 1)
                         }
@@ -379,179 +357,42 @@
                     }
                 },
                 moveDown() {
-                    _process.apply(this, [0])
-
-                    function _process(retry) {
-                        retry = retry || 0
-
-                        try {
-                            let grid = null
-                            if(this.changeLineFlag){
-                                //결재
-                                grid = this.$refs.gridLine.instance
-                            }else{
-                                //참조
-                                grid = this.$refs.gridRef.instance
-                            }
-
-                            let rId = grid.getSelectedRowId()
-                            if (rId === null) {
-                                // 선택된 행이 없음
-                                this.$swal({
-                                    type: 'warning',
-                                    text: '선택된 행이 없습니다.'
-                                })
-                            } else {
-                                let rowIndex = grid.getRowIndex(rId)
-                                /*if (rowIndex === 0) {
-                                    this.$swal({
-                                        type: 'warning',
-                                        text: '선택된 행은 이동 불가능합니다.'
-                                    })
-                                    return
-                                }*/
-
-                                let alterIndex = null
-
-                                if(this.changeLineFlag){
-                                    //결재
-                                    alterIndex = rowIndex + 1 >= this.form.lineList.length ? this.form.lineList.length - 1 : rowIndex + 1
-                                    let data = this.form.lineList[rowIndex]
-
-                                    this.form.lineList.splice(rowIndex, 1)
-                                    this.form.lineList.splice(alterIndex, 0, data)
-                                }else{
-                                    //참조
-                                    alterIndex = rowIndex + 1 >= this.form.refList.length ? this.form.refList.length - 1 : rowIndex + 1
-                                    let data = this.form.refList[rowIndex]
-
-                                    this.form.refList.splice(rowIndex, 1)
-                                    this.form.refList.splice(alterIndex, 0, data)
-                                }
-
-
-                                setTimeout(() => {
-                                    let alterId = grid.getRowId(alterIndex)
-                                    grid.selectRowById(alterId)
-                                }, 100)
-                            }
-                        } catch (e) {
-                            if (retry < 3) {
-                                _process.apply(this, [retry + 1])
-                            }
-                        }
+                    const api = this.changeLineFlag ? this.lineApi : this.refApi
+                    const list = this.changeLineFlag ? this.form.lineList : this.form.refList
+                    const nodes = api ? api.getSelectedNodes() : []
+                    if (!nodes.length) {
+                        this.$swal({type: 'warning', text: '선택된 행이 없습니다.'})
+                        return
                     }
-                    // try {
-                    //     if (this.$refs.gridLine.instance.getSelectedRowId() == null)
-                    //         throw '선택된 행이 없습니다.'
-                    //     let index = this.$refs.gridLine.instance.getSelectedRowId() - 1
-                    //     let row = this.form.lineList[index]
-                    //
-                    //     let newPos = index + 1;
-                    //     if (index === 0)
-                    //         throw '선택하신 행은 이동 불가능합니다.'
-                    //
-                    //     const newContents = JSON.parse(JSON.stringify(this.form.lineList));
-                    //     if (newPos >= this.form.lineList.length) newPos = this.form.lineList.length;
-                    //
-                    //     newContents.splice(index, 1);
-                    //     newContents.splice(newPos, 0, row);
-                    //     this.form.lineList = newContents;
-                    //
-                    //     this.$refs.gridLine.instance.selectRow(newPos)
-                    // }
-                    // catch (e) {
-                    //     this.$swal({
-                    //         type: 'warning',
-                    //         text: e
-                    //     })
-                    // }
+                    const rowIndex = nodes[0].rowIndex
+                    const alterIndex = rowIndex + 1 >= list.length ? list.length - 1 : rowIndex + 1
+                    const data = list[rowIndex]
+                    list.splice(rowIndex, 1)
+                    list.splice(alterIndex, 0, data)
+
+                    this.$nextTick(() => {
+                        const node = api.getDisplayedRowAtIndex(alterIndex)
+                        if (node) node.setSelected(true)
+                    })
                 },
                 moveUp() {
-                    _process.apply(this, [0])
-
-                    function _process(retry) {
-                        retry = retry || 0
-
-                        try {
-                            let grid = null
-                            if(this.changeLineFlag){
-                                //결재
-                                grid = this.$refs.gridLine.instance
-                            }else{
-                                //참조
-                                grid = this.$refs.gridRef.instance
-                            }
-
-                            let rId = grid.getSelectedRowId()
-                            if (rId === null) {
-                                // 선택된 행이 없음
-                                this.$swal({
-                                    type: 'warning',
-                                    text: '선택된 행이 없습니다.'
-                                })
-                            } else {
-                                let rowIndex = grid.getRowIndex(rId)
-                                let alterIndex = rowIndex - 1 < 0 ? 0 : rowIndex - 1
-
-                                /*if (alterIndex === 0) {
-                                    this.$swal({
-                                        type: 'error',
-                                        text: '첫번째 행으로 이동 불가능합니다.'
-                                    })
-                                    return
-                                }*/
-
-                                if(this.changeLineFlag){
-                                    //결재
-                                    let data = this.form.lineList[rowIndex]
-                                    this.form.lineList.splice(rowIndex, 1)
-                                    this.form.lineList.splice(alterIndex, 0, data)
-                                }else{
-                                    //참조
-                                    let data = this.form.refList[rowIndex]
-                                    this.form.refList.splice(rowIndex, 1)
-                                    this.form.refList.splice(alterIndex, 0, data)
-                                }
-
-                                setTimeout(() => {
-                                    let alterId = grid.getRowId(alterIndex)
-                                    grid.selectRowById(alterId)
-                                }, 100)
-                            }
-                        } catch (e) {
-                            if (retry < 3) {
-                                _process.apply(this, [retry + 1])
-                            }
-                        }
+                    const api = this.changeLineFlag ? this.lineApi : this.refApi
+                    const list = this.changeLineFlag ? this.form.lineList : this.form.refList
+                    const nodes = api ? api.getSelectedNodes() : []
+                    if (!nodes.length) {
+                        this.$swal({type: 'warning', text: '선택된 행이 없습니다.'})
+                        return
                     }
-                    // try {
-                    //     if (this.$refs.gridLine.instance.getSelectedRowId() == null)
-                    //         throw '선택된 행이 없습니다.'
-                    //     let index = this.$refs.gridLine.instance.getSelectedRowId() - 1
-                    //     let row = this.form.lineList[index]
-                    //
-                    //     let newPos = index - 1;
-                    //     if (index === 0)
-                    //         throw '선택하신 행은 이동 불가능합니다.'
-                    //     if (newPos === 0)
-                    //         throw '첫번쨰 행으로 이동 불가능합니다.'
-                    //
-                    //     const newContents = JSON.parse(JSON.stringify(this.form.lineList));
-                    //     if (newPos >= this.form.lineList.length) newPos = this.form.lineList.length;
-                    //
-                    //     newContents.splice(index, 1);
-                    //     newContents.splice(newPos, 0, row);
-                    //     this.form.lineList = newContents;
-                    //
-                    //     this.$refs.gridLine.instance.selectRow(newPos)
-                    // }
-                    // catch (e) {
-                    //     this.$swal({
-                    //         type: 'warning',
-                    //         text: e
-                    //     })
-                    // }
+                    const rowIndex = nodes[0].rowIndex
+                    const alterIndex = rowIndex - 1 < 0 ? 0 : rowIndex - 1
+                    const data = list[rowIndex]
+                    list.splice(rowIndex, 1)
+                    list.splice(alterIndex, 0, data)
+
+                    this.$nextTick(() => {
+                        const node = api.getDisplayedRowAtIndex(alterIndex)
+                        if (node) node.setSelected(true)
+                    })
                 },
                 selectChange(){
                   this.form.lineList.splice(0, this.form.lineList.length)
@@ -767,6 +608,7 @@
                             }
 
                             this.items = arr
+                            // eslint-disable-next-line
                             const tree = new dhtmlXTreeView({
                                 parent: "treeBox",
                                 items: this.items,

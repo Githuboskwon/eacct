@@ -19,7 +19,16 @@
 
       <div class="table-area">
         <div class="table-b">
-          <dhx-grid ref="grid" v-model="data" :config="config" @constructGridSuccessful="constructGridSuccessful" />
+          <ag-grid-vue ref="grid"
+                       style="width: 100%; height: 450px;"
+                       class="ag-theme-alpine"
+                       :columnDefs="columnDefs"
+                       :rowData="data"
+                       :gridOptions="gridOptions"
+                       :defaultColDef="defaultColDef"
+                       :frameworkComponents="frameworkComponents"
+                       @grid-ready="onGridReady"
+                       @cell-value-changed="onCellValueChanged" />
         </div>
       </div>
     </div>
@@ -28,8 +37,9 @@
 </template>
 
 <script>
-import DhxGrid from '@/components/DhxGrid.vue'
-import GridCheckbox from '@/components/grid/GridCheckbox.vue'
+import { AgGridVue } from 'ag-grid-vue'
+import CheckboxCellRenderer from '@/components/agGrid/checkbox-cell-renderer'
+
 export default {
   props: {
     'roleCd': {
@@ -42,95 +52,66 @@ export default {
     }
   },
   components: {
-    DhxGrid
+    AgGridVue
   },
   data() {
     return {
       data: [],
-      config: {
-        columns: [{
-          value: 'No.',
-          type: 'cntr',
-          width: 50
-        }, {
-          id: 'roleCk',
-          value: '권한',
-          width: 40,
-          type: 'ch'
-        }, {
-          id: 'menuNm',
-          value: '메뉴',
-          align: 'left',
-          width: 150,
-          component: {
-            template: `
-              <div :style="style">
-                <i :class="{ 'far fa-folder-open': hasChildren, 'far fa-file': !hasChildren }"></i>
-                {{ title() }}
-              </div>
-            `,
-            computed: {
-              hasChildren() {
-                return Array.isArray(this.value.children) && this.value.children.length > 0
-              },
-              style() {
-                return {
-                  'margin-left': this.value.menuLv * 15 + 'px'
-                }
-              }
-            },
-            methods: {
-              title() {
-                return this.value[this.field]
-              }
-            }
+      columnDefs: [
+        {headerName: 'No.', width: 60, cellStyle: {textAlign: 'center'}, valueGetter: params => params.node.rowIndex + 1},
+        {
+          headerName: '권한', field: 'roleCk', width: 70, cellStyle: {textAlign: 'center'},
+          cellRenderer: 'checkboxRenderer',
+          cellRendererParams: {trueValue: true, falseValue: false}
+        },
+        {
+          headerName: '메뉴', field: 'menuNm', width: 260, cellStyle: {textAlign: 'left'},
+          cellRenderer: (params) => {
+            const d = params.data || {};
+            const hasChildren = Array.isArray(d.children) && d.children.length > 0;
+            const ml = (d.menuLv || 0) * 15;
+            const icon = hasChildren ? 'far fa-folder-open' : 'far fa-file';
+            const text = params.value == null ? '' : params.value;
+            return `<div style="margin-left:${ml}px"><i class="${icon}"></i> ${text}</div>`;
           }
-        }, {
-          id: 'menuDc',
-          value: '메뉴설명',
-          align: 'left',
-          width: 200
-        }],
-        events: {
-          onCheck(rId, cInd, state) {
-            const row = this.value[this.instance.getRowIndex(rId)]
-            const column = this.options.columns[cInd]
-
-            if (column.id === 'roleCk') {
-              row[column.id] = state
-              _setChildren.apply(this, [row.children, state])
-              _setParents.apply(this, [row, state])
-
-              function _setChildren(array, state) {
-                if (Array.isArray(array) && array.length > 0) {
-                  for (var i = 0, node = array[i], size = array.length; i < size; node = array[++i]) {
-                    node.roleCk = state
-                    _setChildren.apply(this, [node.children, state])
-                  }
-                }
-              }
-
-              function _setParents(row, state) {
-                if (!state) {
-                  return
-                } else {
-                  let array = this.value.filter(x => x.menuNo === row.upperMenuNo)
-                  if (Array.isArray(array) && array.length > 0) {
-                    for (var i = 0, node = array[i], size = array.length; i < size; node = array[++i]) {
-                      node.roleCk = state
-                      _setParents.apply(this, [node, state])
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+        },
+        {headerName: '메뉴설명', field: 'menuDc', width: 260, cellStyle: {textAlign: 'left'}},
+      ],
+      gridOptions: {},
+      defaultColDef: {resizable: true, sortable: false, filter: false},
+      frameworkComponents: {checkboxRenderer: CheckboxCellRenderer},
+      gridApi: null,
     }
   },
   methods: {
-    constructGridSuccessful(grid) {},
+    onGridReady() {
+      this.gridApi = this.gridOptions.api;
+    },
+    // 체크박스 변경 시 상/하위 메뉴 권한 동기화 (DHTMLX onCheck 대체)
+    onCellValueChanged(params) {
+      if (params.colDef.field !== 'roleCk') return;
+      const state = params.value;
+      const row = params.data;
+      this.setChildren(row.children, state);
+      this.setParents(row, state);
+      if (this.gridApi) this.gridApi.refreshCells({force: true});
+    },
+    setChildren(array, state) {
+      if (Array.isArray(array) && array.length > 0) {
+        array.forEach(node => {
+          node.roleCk = state;
+          this.setChildren(node.children, state);
+        });
+      }
+    },
+    setParents(row, state) {
+      if (!state) return;
+      const array = this.data.filter(x => x.menuNo === row.upperMenuNo);
+      array.forEach(node => {
+        node.roleCk = state;
+        this.setParents(node, state);
+      });
+    },
     query() {
       this.$store.commit('loading')
       this.$http.get('/api/auth/menu', {
