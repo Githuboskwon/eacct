@@ -27,7 +27,14 @@
     </div>
     <div class="table-b">
       <div class="table-header">
-        <dhx-grid ref="grid" v-model="slipDetails" class="slip-grid" :config="config" @constructGridSuccessful="constructGridSuccessful" />
+        <ag-grid-vue ref="grid" class="slip-grid ag-theme-alpine" style="width:100%; height:300px;"
+                     rowSelection="single"
+                     :columnDefs="columnDefs"
+                     :rowData="slipDetails"
+                     :gridOptions="gridOptions"
+                     :defaultColDef="defaultColDef"
+                     :frameworkComponents="frameworkComponents"
+                     @grid-ready="onGridReady" />
       </div>
     </div>
   </div>
@@ -35,13 +42,31 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import _ from 'lodash'
 
 import Layout from '@/components/ModalSlot.vue'
-import DhxGrid from '@/components/DhxGrid.vue'
+import { AgGridVue } from 'ag-grid-vue'
 import Vendor from '@/components/Vendor_Ag.vue'
 import Emp from '@/components/Emp_Ag.vue'
 import assert from '@/libs/assert'
+
+// 문서보기 링크 셀 렌더러 — DHTMLX component: 대체
+const JiniLinkRenderer = Vue.extend({
+  template: `<span style="color:#0065b3;cursor:pointer;" @click="goLink"><i class="far fa-file-alt"></i></span>`,
+  methods: {
+    goLink() {
+      const v = this.params.data
+      if (!v) return
+      if (v.jiniUrl !== undefined) {
+        window.open(v.jiniUrl, '_blank')
+      } else if (v.jiniId) {
+        const mainUrl = 'https://jini.iljin.co.kr/ekp/service/openapi/IF_CUS_EAP_002_goView?APP_ID='
+        window.open(mainUrl + String(v.jiniId).split('_')[1], '_blank')
+      }
+    }
+  }
+})
 
 //['docMngNo', 'value', 'readonly']
 export default {
@@ -59,68 +84,29 @@ export default {
   mixins: [],
   components: {
     Layout,
-    DhxGrid
+    AgGridVue
   },
   data() {
     return {
       title: '그룹웨어 일괄적용',
       slipDetails: [],
-      config:{
-        columns: [
-          {
-          id: 'itemSeq',
-          align: 'center',
-          value: 'No.',
-          type: 'cntr',
-          width: 10
-        }, {
-          id: 'jiniNm',
-          align: 'center',
-          value: '문서명',
-          type: 'ed',
-          width: 50
-        }, {
-          id: 'jiniId',
-          align: 'center',
-          value: '문서번호',
-          type: 'ed',
-          width: 60
-        }, {
-          id: 'jiniUrl',
-          align: 'center',
-          value: '문서보기',
-          width: 30,
-          component: {
-            props: ['index', 'value', 'field'],
-            template: `<span style="color: #0065b3;" @click="goLink()"> <i class="far fa-file-alt"></i></span>`,
-            methods: {
-              goLink(){
-                if(this.value.jiniUrl !== undefined) window.open(this.value.jiniUrl, "_blank");
-                else{
-                  let mainUrl = "https://jini.iljin.co.kr/ekp/service/openapi/IF_CUS_EAP_002_goView?APP_ID=";
-                  let jiniId = this.value.jiniId.split('_')[1];
-                  let jiniUrl = mainUrl + jiniId;
-                  window.open(jiniUrl, "_blank");
-                }
-              }
-            }
-          }
-        }],
-        events: {
-          onEditCell(stage, rId, cInd) {
-            if (cInd === 3) {
-              if(!this.data[rId - 1].new){
-                return false
-              }
-            }
-            return true
-          }
-        },
-      },
+      gridApi: null,
+      gridOptions: {},
+      defaultColDef: { resizable: true, sortable: false, filter: false },
+      frameworkComponents: { jiniLink: JiniLinkRenderer },
+      columnDefs: [
+        { headerName: 'No.', width: 50, cellStyle: { textAlign: 'center' }, valueGetter: p => p.node.rowIndex + 1 },
+        { headerName: '문서명', field: 'jiniNm', flex: 1, minWidth: 200, editable: true, cellStyle: { textAlign: 'left' } },
+        { headerName: '문서번호', field: 'jiniId', flex: 1, minWidth: 200, editable: true, cellStyle: { textAlign: 'left' } },
+        { headerName: '문서보기', field: 'jiniUrl', width: 80, cellStyle: { textAlign: 'center' }, cellRenderer: 'jiniLink' }
+      ],
       chkYn : false
     }
   },
   methods: {
+    onGridReady(params) {
+      this.gridApi = params.api
+    },
     addJiniRow(){
       this.slipDetails.push({
         jiniId:'',
@@ -129,14 +115,12 @@ export default {
       })
     },
     removeRow() {
-      let index = this.$refs.grid.instance.getSelectedRowId() - 1
-      this.slipDetails.splice(index,1)
+      const nodes = this.gridApi ? this.gridApi.getSelectedNodes() : []
+      if (!nodes.length) { this.$swal({ type: 'warning', text: '선택된 행이 없습니다.' }); return }
+      this.slipDetails.splice(nodes[0].rowIndex, 1)
     },
     closeModal() {
       this.$emit('close')
-    },
-    constructGridSuccessful(grid) {
-      grid.attachHeader([],[])
     },
     goSubmit() {
       let jiniList = this.slipDetails;
