@@ -292,6 +292,56 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 > ⚠️ 런타임 확인 필요: `ApprRuleSet`/`ApprMndSet`(조회·더블클릭·엑셀), `ApprLineSet`(`/apprLineMng`: 부서트리→임직원목록→추가/삭제/순서이동/적용).
 > 커밋: `refactor(front): DHTMLX → ag-grid ...`(B그룹) + `refactor(front): 죽은 AuthMngUser/AuthMngMenu 삭제 + AuthMngMenu2 정리`.
 
+### 8.8 편집형 전표 `GridED` ag-grid PoC 결과 (2026-06-16)
+
+> **목적:** 운영 `GridED.vue`(약 3,658줄, 슬립유형별 config 4종 `def/E2/E6/E1`)를 통째로 건드리지 않고, **4대 난관의 실현성·공수만 실측.**
+> **산출물:** 독립 실증 컴포넌트 `src/components/poc/GridEDPoc.vue` (라우트 `/gridEdPoc`, 운영 영향 0). 슬립 기본유형(config_def) 핵심 패턴을 ag-grid로 재현.
+
+**4대 난관 실현성 — 전부 ✅ 검증됨:**
+
+| 난관 | DHTMLX(현행) | ag-grid 대응 | 결과 |
+|------|--------------|--------------|------|
+| ① 셀 내부 Vue 컴포넌트 | `config.columns[].component:{template,methods}` (검색버튼·GridSelect·예산표시) | `cellRenderer`(frameworkComponent) / `cellEditor`. 검색버튼은 `Vue.extend` 렌더러에서 `$modal.open(...)` 호출 → `params.node.setDataValue`로 주입 | ✅ (프로젝트 기존 `agGrid/*-cell-renderer.js`가 동일 패턴 사용 — 이미 검증된 방식) |
+| ② 셀/행 잠금 | `grid.lockRow()` + `setColumnClassName('bg-lightpink')` (afterRefreshData에서 대변/세액 행 잠금) | `colDef.editable=(params)=>!isLocked(row)` + `cellStyle=(params)=>음영` | ✅ |
+| ③ 키보드 Tab 네비 | DHTMLX 편집셀 Tab 이동 | `gridOptions.tabToNextCell`로 **편집 가능 셀만** 점프 구현 | ✅ |
+| ④ 인라인 편집 + 포맷 + 연동계산 | `type:ed/edn`, `onEditCell`/`onCellChanged`의 합계·검색 로직 | `editable` + `valueParser`/`valueFormatter`(천단위) + `@cell-value-changed`(차/대변 합계 자동) + `agSelectCellEditor`(셀렉트) | ✅ |
+
+> **참고:** GridED의 슬립 그리드는 **페이징을 쓰지 않음**(`height` 고정, `enablePaging` 없음) → §8.4의 "가상 페이징" 난관은 GridED에는 **해당 없음**.
+
+**결론 — 기술적 전환 가능(난관 모두 해소). 단, 공수는 "패턴"이 아니라 "분량"에서 발생:**
+- 4대 난관은 PoC로 해소됐고, 검색 컴포넌트(`Cctr_Ag`/`Account_Ag`/`Product_Ag`)·셀 렌더러(`agGrid/*`)도 이미 존재.
+- 실제 공수 = **config 4종(def/E2/E6/E1) × 각 15~20컬럼 + 슬립유형별 `onEditCell`/`onCellChanged`/`afterRefreshData` 비즈니스 로직 포팅**. 화면 의존성(예산조회·계정애드온·유가계산·세액계산 등)이 많아 **화면 단위 신중 전환 + 회귀 테스트** 필요.
+- 추정: `GridED`(+`GridRO`) 본전환 **2~3주 + 슬립유형별 E2E 1~2주** (기존 §8.4 추정 유지).
+
+**권장 전환 순서(전표 영역):** 가장 단순한 config부터 — 읽기전용 `GridRO` → `config_def`/`config_E6` → `config_E2`(보조계정·예산연동) → `config_E1`(법인카드, 2그리드). 각 단계 후 해당 슬립유형 E2E.
+
+### 8.9 `GridRO`(읽기전용 전표 조회) ag-grid 전환 (2026-06-16) — 첫 A그룹 실전
+
+- `components/slip/GridRO.vue`를 `<dhx-grid>` → `<ag-grid-vue>`로 전환(읽기전용 6 config: def/E5/E6/E2/E1/E1_2).
+- **합계 푸터**(`attachHeader #stat_total`) → ag-grid `pinnedBottomRowData`(def/E5: 차·대변 합, E6: 사용금액 합).
+- **셀 내부 컴포넌트** → frameworkComponent + `gridOptions.context`:
+  - 카드정보 버튼(`crdInfoBtn`) → `openCrdInfo()`로 `CardInfoDetailPop` 오픈
+  - 스캔증빙(`scanCtCell`) → 파일수 조회 + `openEvidence()`로 증빙 팝업 `window.open`(IE 분기/상태별 readonly 로직 부모 메서드로 이관)
+  - 유종/유가·날짜·금액 → `valueGetter`/`valueFormatter`(천단위·소수점·YYYY-MM-DD)
+  - 숨김컬럼 `setColumnHidden` → `hide:true`, `attribute10`(증빙유형) 매핑은 `mapAttribute10()`로 이관
+- vatYn(GridSelect)은 원본에서 `hide:true`였으므로 컬럼 생략.
+- 검증: ESLint 통과. ⚠️ **머지 전 슬립유형별(E1/E2/E5/E6/일반) 런타임 검증 필수**(합계 푸터·카드정보·스캔증빙 팝업·금액/날짜 포맷). 별도 브랜치 `poc/grided-aggrid`.
+
+### 8.10 `GridED`(편집형 전표) 본전환 착수 — 증분 1 (2026-06-16)
+
+> `GridED.vue`(3,658줄, config 5종 def/E2/E6/E1/E1_2)는 자동검색·보조계정 캐스케이드·예산잔액·유가·세액 계산·합계 푸터(DHTMLX 헤더 훅)·`$refs.grid.instance`/`$refs.grid.data` 전반 의존 + mixin(`add_row`)으로 GridRO보다 훨씬 깊게 결합. **단일 세션 일괄 변환은 핵심 전표작성 화면에 치명적 — 증분 + 슬립유형별 런타임 검증 필수.**
+
+- **신규 `components/slip/GridED_Ag.vue` 생성**(`Account.vue`↔`Account_Ag.vue` 관례). 운영 `GridED.vue`는 미변경, `slip-basic.js` 미연결 → **운영 무영향**.
+- **증분 1 = `config_def`(일반전표/기타) 완성:**
+  - columnDefs(부서/계정/제품 검색버튼 cellRenderer + 계정명/제품/차변금액/적요 인라인 편집)
+  - 자동검색(`@cell-editing-stopped` → `findAccount`/`findProduct`, 단건 자동·다건 팝업), `@cell-value-changed`로 차변=acctAmt 동기
+  - 셀 잠금(C_ITEM/D_TAX → `editable(fn)`+`cellStyle`), 합계 푸터(`pinnedBottomRowData` 차/대변), 행추가·삭제(mixin `add_row`/splice), 초기화(`reset_rows`), 엑셀(`exportDataAsExcel`), Tab 순환(PoC 패턴)
+- **증분 2 = `config_E6`(출장/교통비) 완성:** 교통비유형/유종 **select 셀(코드→명, `select-cell-renderer` 재사용)**, 사용일자/출발·도착지/출장목적 편집, 유류대(tpsTypeCd='10') 시 **거리·유가표로 사용금액 자동계산**(`computeOil`, 월별 `/api/oilPrice/list` 캐시), 편집 잠금규칙(유류대=거리편집/그외=금액편집), 사용일자 변경 시 지급예정일·대변행 동기(`syncUseDt`), 금액 변경 시 공급가/세액 재계산(`recalcE6Totals`), 합계 푸터(사용금액 합).
+- **증분 3 = `config_E2`/`E5`(개인비용외) 완성:** 부서/계정/보조계정/개발프로젝트 검색버튼 + 자동검색, **계정 선택 시 보조계정 자동조회 캐스케이드**(1건 자동·다건 팝업 `openAccountSub`), **잔여예산 표시**(`/api/budget/remain` 캐시 `loadBudget`, `budgetKey`로 valueGetter), 관리항목(attribute1~15) 팝업, 부서변경 시 계정/보조계정/항목 초기화, 금액 변경 시 총액/원화금액 재계산(`recalcE2Totals`, JPY 보정). 합계 푸터 없음(원본과 동일).
+- **증분 4 = `config_E1`+`config_E1_2`(법인카드, 2그리드) 완성:** 메인(법인카드지급)+현금지급 2개 ag-grid, 세금코드/교통비유형/유종 **select**, 부서/항목(계정)/제품 검색버튼(ErpCctr/ErpAccount/Product), **카드정보 팝업**(`CardInfoDetailPop`)·**스캔증빙 팝업**(`EvidAtchPop` + 파일수 조회), 유류대 자동계산(`computeOilE1`, eaSlipDt 월 유가), 금액/거리 변경 시 총액 재계산(`recalcE1Totals`=메인+현금 합), **법인카드내역 불러오기**(`SlipCrdLstModal` → `add_row` 일괄), 현금지급 행추가/삭제(`add_row_sub`/splice). 합계 푸터 없음.
+- **✅ 전 슬립유형(def/E6/E2/E5/E1) 증분 완료.** 남은 단계 = **`SlipBase.vue`의 `GridED` → `GridED_Ag` 교체(또는 `slip-basic.js` gridType 스위치)** 후 **슬립유형별 런타임 검증**(작성/조회·검색·금액계산·증빙·카드내역·저장).
+- 검증: ESLint 통과. ⚠️ 슬립 컨텍스트(value.slipDetails) 필요해 단독 라우트 검증 불가 → **`slip-basic.js` 연결 후 슬립유형별 런타임 검증**(증분 완료 시점).
+
 ---
 
 ## 9. 다음 액션
@@ -300,8 +350,9 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 3. [x] **(완료 2026-06-16)** 죽은 구버전 `AuthMngUser.vue`/`AuthMngMenu.vue` 삭제 + 활성본 `AuthMngMenu2.vue` 죽은 import 정리 (권한관리 활성본은 기전환됨) (§8.7)
 4. [x] **(완료 2026-06-16)** 런타임 확인 — `/apprRuleSet`·`/apprMndSet`·`/apprLineMng` 정상 동작 확인 (※ `ApprMndPop` 사원검색 팝업은 `/apprMndSet` 신규/수정 흐름에서 추가 확인 권장)
 5. [x] **(완료 2026-06-16)** 저위험 정리 — 죽은 `DhxGrid` import 27개 파일 일괄 제거 + 죽은 파일 `PopupGrid.vue` 삭제 (그리드 동작 변화 없음, DhxGrid no-undef/구문오류 0)
-6. [ ] **(선결)** §8.5 — 편집형 전표 `GridED` 1화면 ag-grid PoC로 4대 난관(셀잠금/키보드/페이징/인라인 컴포넌트) 실현성·공수 실측
-7. [ ] 검색 `_new` 변형(활성 DHTMLX 그리드) 전환 — A그룹과 함께 (Account_new/Cctr_new/Emp_new/IO_new/Vendor_new) + 직접호출(`Account/Cctr/Emp/Vendor/Product/Expend/ErpAccountPop`)
+6. [x] **(완료 2026-06-16)** 편집형 전표 `GridED` ag-grid PoC — 4대 난관 전부 검증(독립 컴포넌트 `poc/GridEDPoc.vue`, `/gridEdPoc`). 기술적 전환 가능 확인, 공수는 config 4종 분량에서 발생 (§8.8)
+7. [~] **(진행 2026-06-16)** A그룹 진행 — `GridRO` 전환 완료(§8.9) / `GridED` 본전환 진행: `GridED_Ag.vue` **증분1~4(def/E6/E2/E5/E1) 전부 완성**(§8.10). 다음: `SlipBase.vue`에서 `GridED`→`GridED_Ag` 교체 + 슬립유형별 런타임 검증 → `SlipGr`/`SlipCrdLstModal`/`BdgReq` 등
+8. [ ] 검색 `_new` 변형(활성 DHTMLX 그리드) 전환 — A그룹과 함께 (Account_new/Cctr_new/Emp_new/IO_new/Vendor_new) + 직접호출(`Account/Cctr/Emp/Vendor/Product/Expend/ErpAccountPop`)
 8. [ ] 0단계 잔여: 미사용 의존성 9종 제거 + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
 9. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정
 10. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
