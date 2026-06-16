@@ -260,7 +260,7 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 | `views/EbillSlipRcvLst.vue` | 죽은 `import Emp` | ✅ 제거 |
 | `views/GridComponent.vue`(데모 라우트) | 죽은 `import Emp` | ✅ 제거 |
 | `views/DelegateMng.vue` | 죽은 `import Cctr` + 죽은 `popCctr`(2개)·`receiveCctr`·`initCctr`·`showCctrModal` (실사용 검색은 이미 `Emp_Ag`) | ✅ 제거 |
-| `components/PopupGrid.vue` | `<account>`/`<cctr>`(DHTMLX) 사용하나 **어디서도 import 안 되는 완전 죽은 파일** | ⏸ 보류 — import 정리가 아닌 **파일 삭제 후보**(별도 판단) |
+| `components/PopupGrid.vue` | `<account>`/`<cctr>`(DHTMLX) 사용하나 **어디서도 import 안 되는 완전 죽은 파일** | ✅ **삭제 완료**(2026-06-16) |
 | `slip/GridED.vue`, `slip/GridRO.vue`, `SlipCrdLstModal.vue` | **활성 DHTMLX 검색(`Emp/Account/Cctr/Product/ErpAccount(Pop)`)** | ⏭ **3차(편집형 전표)** 작업 시 그리드와 함께 전환 |
 
 > 검증: 변경 5개 파일 **ESLint 통과(에러 0)**. ⚠️ 런타임 클릭 테스트(`ApprMndPop` 위임자/수임자 검색→선택)는 dev 기동 후 별도 확인 필요.
@@ -299,9 +299,10 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 2. [x] **(완료 2026-06-16)** B그룹 활성 3개 전환 — `ApprRuleSet`/`ApprMndSet`/`ApprLineSet` (§8.7)
 3. [x] **(완료 2026-06-16)** 죽은 구버전 `AuthMngUser.vue`/`AuthMngMenu.vue` 삭제 + 활성본 `AuthMngMenu2.vue` 죽은 import 정리 (권한관리 활성본은 기전환됨) (§8.7)
 4. [x] **(완료 2026-06-16)** 런타임 확인 — `/apprRuleSet`·`/apprMndSet`·`/apprLineMng` 정상 동작 확인 (※ `ApprMndPop` 사원검색 팝업은 `/apprMndSet` 신규/수정 흐름에서 추가 확인 권장)
-5. [ ] **(선결)** §8.5 — 편집형 전표 `GridED` 1화면 ag-grid PoC로 4대 난관(셀잠금/키보드/페이징/인라인 컴포넌트) 실현성·공수 실측
-6. [ ] `PopupGrid.vue`(완전 죽은 파일) 삭제 여부 판단 + DHTMLX `_new` 변형 잔존 정리
-7. [ ] 0단계: 미사용 의존성 9종 제거 + **C그룹 16개 파일의 dead `DhxGrid` import 제거** + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
-6. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정
-7. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
+5. [x] **(완료 2026-06-16)** 저위험 정리 — 죽은 `DhxGrid` import 27개 파일 일괄 제거 + 죽은 파일 `PopupGrid.vue` 삭제 (그리드 동작 변화 없음, DhxGrid no-undef/구문오류 0)
+6. [ ] **(선결)** §8.5 — 편집형 전표 `GridED` 1화면 ag-grid PoC로 4대 난관(셀잠금/키보드/페이징/인라인 컴포넌트) 실현성·공수 실측
+7. [ ] 검색 `_new` 변형(활성 DHTMLX 그리드) 전환 — A그룹과 함께 (Account_new/Cctr_new/Emp_new/IO_new/Vendor_new) + 직접호출(`Account/Cctr/Emp/Vendor/Product/Expend/ErpAccountPop`)
+8. [ ] 0단계 잔여: 미사용 의존성 9종 제거 + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
+9. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정
+10. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
 8. [ ] `$bus` 대체 방식(mitt vs Pinia) 결정
