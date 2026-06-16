@@ -173,7 +173,15 @@
                 </div>
 
                 <div class="grid-wrap">
-                    <dhx-grid ref="grid" v-model="mndList" :config="config" @constructGridSuccessful="constructGridSuccessful"/>
+                    <ag-grid-vue ref="grid"
+                                 style="width: 100%; height: 550px;"
+                                 class="ag-theme-alpine"
+                                 :columnDefs="columnDefs"
+                                 :rowData="mndList"
+                                 :gridOptions="gridOptions"
+                                 :defaultColDef="defaultColDef"
+                                 @grid-ready="onGridReady"
+                                 @rowDoubleClicked="rowDoubleClick"/>
                 </div>
             </div>
 
@@ -210,7 +218,7 @@
     import _ from 'lodash'
 
     import DhxCalendar from '@/components/DhxCalendar.vue'
-    import DhxGrid from '@/components/DhxGrid.vue'
+    import { AgGridVue } from 'ag-grid-vue'
     // import Emp from '@/components/Emp.vue';
     import Emp from '@/components/Emp_Ag.vue';
     // import ApprMndPop from '@/components/ApprMndPop.vue';
@@ -218,53 +226,12 @@
     export default {
         name: 'ApprMndSet',
         mixins: [mixin, mixinSlip],
-        components: {Emp, DhxGrid, DhxCalendar},
+        components: {Emp, AgGridVue, DhxCalendar},
         data() {
             return {
-                config : {
-                    columns: [
-                        {id: 'rn', type: 'cntr', align: 'center', sort: 'na', value: 'No.', width: 35},
-                        {id: 'adlgNm', type: 'ro', align: 'center', sort: 'na', value: '위임자', width: 300},
-                        {id: 'actNm', type: 'ro', align: 'center', sort: 'na', value: '수임자', width: 300},
-                        {id: 'adlgStrDt', type: 'ro', align: 'center', sort: 'na', value: '위임시작일', width: 200},
-                        {id: 'adlgEndDt', type: 'ro', align: 'center', sort: 'na', value: '위임종료일', width: 200},
-                        {id: 'adlgExeDtm', type: 'ro', align: 'center', sort: 'na', value: '위임실행일시', width: 120, hide:true},
-                        {id: 'adlgRvcDtm', type: 'ro', align: 'center', sort: 'na', value: '위임해제일시', width: 120, hide:true},
-                        {id: 'adlgStatNm', type: 'ro', align: 'center', sort: 'na', value: '위임상태', width: 200},
-                        {id: 'adlgId', type: 'ro', align: 'center', sort: 'na', value: '위임자Id', width: 100},
-                        {id: 'actId', type: 'ro', align: 'center', sort: 'na', value: '수임자Id', width: 100},
-                        {id: 'adlgSeq', type: 'ro', align: 'center', sort: 'na', value: 'Seq', width: 100},
-                        {id: 'adlgStatCd', type: 'ro', align: 'center', sort: 'na', value: '위임상태Cd', width: 100},
-                    ],
-                    height: 550,
-                    // enablePaging: true,
-                    pagingSize: 12,
-                    // queryPage: (page) => {
-                    //     page = page || 0
-                    //     return new Promise((resolve, reject) => {
-                    //         let data = {
-                    //             contents: this.mndList,
-                    //             page: page,
-                    //             totalPages: parseInt(this.mndList.length / this.config.pagingSize) + (parseInt(this.mndList.length % this.config.pagingSize) > 0 ? 1 : 0),
-                    //             totalElements: 0
-                    //         }
-                    //         resolve({
-                    //             data: data
-                    //         })
-                    //     })
-                    // },
-                    afterRefreshData(grid, data) {
-                        this.$nextTick(() => {
-                            _.forEach(data, (item, index) => {
-                                let rId = index + 1
-                                if (grid.cells(rId, 3).getValue()) grid.cells(rId, 3).setValue(this.$moment(grid.cells(rId, 3).getValue()).format('YYYY-MM-DD'));
-                                if (grid.cells(rId, 4).getValue()) grid.cells(rId, 4).setValue(this.$moment(grid.cells(rId, 4).getValue()).format('YYYY-MM-DD'));
-                                if (grid.cells(rId, 5).getValue()) grid.cells(rId, 5).setValue(this.$moment(grid.cells(rId, 5).getValue()).format('YYYY-MM-DD'));
-                                if (grid.cells(rId, 6).getValue()) grid.cells(rId, 6).setValue(this.$moment(grid.cells(rId, 6).getValue()).format('YYYY-MM-DD'));
-                            })
-                        })
-                    }
-                },
+                columnDefs: [],
+                gridOptions: {},
+                defaultColDef: {resizable: true, sortable: true, filter: true},
                 title: '결재위임',
                 docTypes: [],
                 docStatuses: [],
@@ -298,29 +265,43 @@
             };
         },
         methods: {
-            constructGridSuccessful(grid) {
-                // this.config.queryPage(0)
-                grid.setColumnHidden(8,true)
-                grid.setColumnHidden(9,true)
-                grid.setColumnHidden(10,true)
-                grid.setColumnHidden(11,true)
+            onGridReady() {
+                this.makeColDef();
+            },
+            makeColDef() {
+                const that = this;
+                const dateFmt = (params) => params.value ? that.$moment(params.value).format('YYYY-MM-DD') : '';
+                this.columnDefs = [
+                    {headerName: 'No.', width: 50, cellStyle: {textAlign: 'center'}, valueGetter: params => params.node.rowIndex + 1},
+                    {headerName: '위임자', field: 'adlgNm', width: 300, cellStyle: {textAlign: 'center'}},
+                    {headerName: '수임자', field: 'actNm', width: 300, cellStyle: {textAlign: 'center'}},
+                    {headerName: '위임시작일', field: 'adlgStrDt', width: 200, cellStyle: {textAlign: 'center'}, valueFormatter: dateFmt},
+                    {headerName: '위임종료일', field: 'adlgEndDt', width: 200, cellStyle: {textAlign: 'center'}, valueFormatter: dateFmt},
+                    {headerName: '위임실행일시', field: 'adlgExeDtm', hide: true},
+                    {headerName: '위임해제일시', field: 'adlgRvcDtm', hide: true},
+                    {headerName: '위임상태', field: 'adlgStatNm', width: 200, cellStyle: {textAlign: 'center'}},
+                    {headerName: '위임자Id', field: 'adlgId', hide: true},
+                    {headerName: '수임자Id', field: 'actId', hide: true},
+                    {headerName: 'Seq', field: 'adlgSeq', hide: true},
+                    {headerName: '위임상태Cd', field: 'adlgStatCd', hide: true},
+                ];
+            },
+            rowDoubleClick(params) {
+                const d = params.data;
+                this.hiddenAdlgId = d.adlgId;
+                this.hiddenAdlgNm = d.adlgNm;
+                this.hiddenActId = d.actId;
+                this.hiddenActNm = d.actNm;
+                this.hiddenAdlgSeq = d.adlgSeq;
+                this.hiddenDtmFr = d.adlgStrDt ? this.$moment(d.adlgStrDt).format('YYYY-MM-DD') : d.adlgStrDt;
+                this.hiddenDtmTo = d.adlgEndDt ? this.$moment(d.adlgEndDt).format('YYYY-MM-DD') : d.adlgEndDt;
+                this.hiddenCheck = 'Y';
 
-                grid.attachEvent('onRowDblClicked', (rId) => {
-                    this.hiddenAdlgId = grid.cells(rId, 8).getValue();
-                    this.hiddenAdlgNm = grid.cells(rId, 1).getValue();
-                    this.hiddenActId = grid.cells(rId, 9).getValue();
-                    this.hiddenActNm = grid.cells(rId, 2).getValue();
-                    this.hiddenAdlgSeq = grid.cells(rId, 10).getValue();
-                    this.hiddenDtmFr = grid.cells(rId, 3).getValue();
-                    this.hiddenDtmTo = grid.cells(rId, 4).getValue();
-                    this.hiddenCheck = 'Y';
-
-                    if(grid.cells(rId, 11).getValue() !== '10'){
-                        this.$swal({type: 'warning', text: '위임이 해제된 건입니다.'});
-                        return false;
-                    }
-                    this.popVendor();
-                });
+                if (d.adlgStatCd !== '10') {
+                    this.$swal({type: 'warning', text: '위임이 해제된 건입니다.'});
+                    return false;
+                }
+                this.popVendor();
             },
             getCompCdCombo() {
                 this.$http.get(`/api/code/combo`, {params: {groupCd: "COMP_CD"}})
@@ -335,7 +316,7 @@
                     });
             },
             saveExcel() {
-                this.downloadExcel(this.$refs.grid);
+                this.gridOptions.api.exportDataAsExcel({fileName: '결재위임내역'});
             },
           compareDate(value){
             if(!value){

@@ -19,7 +19,14 @@
 
       <div class="table-area">
         <div class="table-b">
-          <dhx-grid ref="grid" v-model="data" :config="config" @constructGridSuccessful="constructGridSuccessful" />
+          <ag-grid-vue ref="grid"
+                       style="width: 100%; height: 400px;"
+                       class="ag-theme-alpine"
+                       :columnDefs="columnDefs"
+                       :rowData="data"
+                       :gridOptions="gridOptions"
+                       :defaultColDef="defaultColDef"
+                       :frameworkComponents="frameworkComponents" />
         </div>
       </div>
     </div>
@@ -28,8 +35,9 @@
 </template>
 
 <script>
-import DhxGrid from '@/components/DhxGrid.vue'
-import GridCheckbox from '@/components/grid/GridCheckbox.vue'
+import { AgGridVue } from 'ag-grid-vue'
+import CheckboxCellRenderer from '@/components/agGrid/checkbox-cell-renderer'
+
 export default {
   props: {
     'roleCd': {
@@ -42,53 +50,30 @@ export default {
     }
   },
   components: {
-    DhxGrid
+    AgGridVue
   },
   data() {
     return {
       data: [],
-      config: {
-        columns: [{
-          value: 'No.',
-          type: 'cntr',
-          width: 50
-        }, {
-          id: 'roleChk',
-          value: '권한부여',
-          width: 80,
-          type: 'ch'
-          // component: GridCheckbox,
-          // mixin: {
-          //   data() {
-          //     return {
-          //       trueValue: '1',
-          //       falseValue: '0'
-          //     }
-          //   }
-          // }
-        }, {
-          id: 'crtRole',
-          value: '현재권한'
-        }, {
-          id: 'empNo',
-          value: '사번',
-        }, {
-          id: 'empNm',
-          value: '성명',
-        }, {
-          id: 'jobGradeNm',
-          value: '직급',
-        }, {
-          id: 'deptNm',
-          value: '부서',
-          align: 'left',
-          width: 150
-        }]
-      }
+      columnDefs: [
+        {headerName: 'No.', width: 60, cellStyle: {textAlign: 'center'}, valueGetter: params => params.node.rowIndex + 1},
+        {
+          headerName: '권한부여', field: 'roleChk', width: 90, cellStyle: {textAlign: 'center'},
+          cellRenderer: 'checkboxRenderer',
+          cellRendererParams: {trueValue: true, falseValue: false}
+        },
+        {headerName: '현재권한', field: 'crtRole', width: 110, cellStyle: {textAlign: 'center'}},
+        {headerName: '사번', field: 'empNo', width: 120, cellStyle: {textAlign: 'center'}},
+        {headerName: '성명', field: 'empNm', width: 120, cellStyle: {textAlign: 'center'}},
+        {headerName: '직급', field: 'jobGradeNm', width: 110, cellStyle: {textAlign: 'center'}},
+        {headerName: '부서', field: 'deptNm', width: 180, cellStyle: {textAlign: 'left'}},
+      ],
+      gridOptions: {},
+      defaultColDef: {resizable: true, sortable: true, filter: true},
+      frameworkComponents: {checkboxRenderer: CheckboxCellRenderer},
     }
   },
   methods: {
-    constructGridSuccessful(grid) {},
     query() {
       this.$store.commit('loading')
       this.$http.get('/api/auth/user', {
