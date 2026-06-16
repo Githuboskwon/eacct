@@ -298,7 +298,7 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 1. [x] **(완료 2026-06-16)** 1차 PoC — `ApprMndPop.vue` DHTMLX 사원조회 → `Emp_Ag` 전환 + 검색팝업 죽은 import 정리(4파일) (§8.6)
 2. [x] **(완료 2026-06-16)** B그룹 활성 3개 전환 — `ApprRuleSet`/`ApprMndSet`/`ApprLineSet` (§8.7)
 3. [x] **(완료 2026-06-16)** 죽은 구버전 `AuthMngUser.vue`/`AuthMngMenu.vue` 삭제 + 활성본 `AuthMngMenu2.vue` 죽은 import 정리 (권한관리 활성본은 기전환됨) (§8.7)
-4. [ ] 런타임 확인(dev 기동) — `ApprMndPop` 사원검색 / `ApprRuleSet`·`ApprMndSet` 조회·더블클릭·엑셀 / `ApprLineSet`(`/apprLineMng`) 임직원검색·추가·삭제·순서이동·적용
+4. [x] **(완료 2026-06-16)** 런타임 확인 — `/apprRuleSet`·`/apprMndSet`·`/apprLineMng` 정상 동작 확인 (※ `ApprMndPop` 사원검색 팝업은 `/apprMndSet` 신규/수정 흐름에서 추가 확인 권장)
 5. [ ] **(선결)** §8.5 — 편집형 전표 `GridED` 1화면 ag-grid PoC로 4대 난관(셀잠금/키보드/페이징/인라인 컴포넌트) 실현성·공수 실측
 6. [ ] `PopupGrid.vue`(완전 죽은 파일) 삭제 여부 판단 + DHTMLX `_new` 변형 잔존 정리
 7. [ ] 0단계: 미사용 의존성 9종 제거 + **C그룹 16개 파일의 dead `DhxGrid` import 제거** + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
