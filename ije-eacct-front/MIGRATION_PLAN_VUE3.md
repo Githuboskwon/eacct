@@ -266,15 +266,19 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 > 검증: 변경 5개 파일 **ESLint 통과(에러 0)**. ⚠️ 런타임 클릭 테스트(`ApprMndPop` 위임자/수임자 검색→선택)는 dev 기동 후 별도 확인 필요.
 > 시사점: **1차(검색 팝업)는 잔여 정리 수준**이며, 실질 공수는 예상대로 **3차 편집형 전표**에 집중됨. `PopupGrid` 등 죽은 파일/잔존 DHTMLX `_new` 변형은 별도 정리.
 
-### 8.7 B그룹(결재/권한 설정) 전환 현황 (2026-06-16) — **5개 전부 완료** ✅
+### 8.7 B그룹(결재/권한 설정) 전환 현황 (2026-06-16)
+
+**실제 활성 화면 3개 전환 완료. 권한관리 2개는 죽은 구버전을 잘못 건드린 것으로 판명 → 삭제하고 활성본(이미 ag-grid) 확인·정리.**
 
 | # | 화면 | 유형 | 상태 |
 |---|------|------|------|
-| 1 | `views/ApprRuleSet.vue` (전결 규정) | 읽기전용 + 더블클릭 팝업 + 금액 포맷 | ✅ 완료 |
-| 2 | `views/ApprMndSet.vue` (결재 위임현황) | 읽기전용 + 날짜 포맷 + 더블클릭 | ✅ 완료 |
-| 3 | `components/AuthMngUser.vue` (권한별 사용자) | 체크박스 + 저장 | ✅ 완료 (`checkbox-cell-renderer` 재사용, query/save 로직 유지) |
-| 4 | `components/AuthMngMenu.vue` (권한별 메뉴) | 트리(들여쓰기) + 체크박스 + 부모-자식 동기화 | ✅ 완료 — **실제 Tree Data 아님**(플랫 배열 + `menuLv` 들여쓰기). 메뉴컬럼 커스텀 `cellRenderer`(폴더/파일 아이콘+들여쓰기), 체크 전파는 `@cell-value-changed` + `setChildren`/`setParents` + `refreshCells`로 재현 |
-| 5 | `components/ApprLineSet.vue` (결재선 지정) | 그리드 3개 + 행 추가/삭제/순서이동 | ✅ 완료 — `gridEmp`/`gridLine`/`gridRef` 전환, DHTMLX 인스턴스 API(`getSelectedRowId`/`getRowIndex`/`selectRowById`) → ag-grid `getSelectedNodes()`/`getDisplayedRowAtIndex().setSelected()`. **좌측 부서 트리(`dhtmlXTreeView`)는 그리드가 아니므로 유지**(별도 위젯) |
+| 1 | `views/ApprRuleSet.vue` (전결 규정, `/apprRuleSet`) | 읽기전용 + 더블클릭 팝업 + 금액 포맷 | ✅ 완료 (활성) |
+| 2 | `views/ApprMndSet.vue` (결재 위임현황, `/apprMndSet`) | 읽기전용 + 날짜 포맷 + 더블클릭 | ✅ 완료 (활성) |
+| 3 | `components/ApprLineSet.vue` (결재선 지정, `/apprLineMng` 및 전표 상신 플로우 다수) | 그리드 3개 + 행 추가/삭제/순서이동 | ✅ 완료 (활성) — `gridEmp`/`gridLine`/`gridRef` 전환, DHTMLX 인스턴스 API(`getSelectedRowId`/`getRowIndex`/`selectRowById`) → ag-grid `getSelectedNodes()`/`getDisplayedRowAtIndex().setSelected()`. **좌측 부서 트리(`dhtmlXTreeView`)는 그리드가 아니므로 유지** |
+| — | ~~`components/AuthMngUser.vue` (권한별 사용자)~~ | — | ⚠️ **죽은 구버전 파일(importer 0건)** → **삭제.** 권한관리(`/authMng`)가 실제 쓰는 것은 `AuthMngUser2.vue`이며 **이미 ag-grid**(DHTMLX 잔재 없음) |
+| — | ~~`components/AuthMngMenu.vue` (권한별 메뉴)~~ | — | ⚠️ **죽은 구버전 파일(importer 0건)** → **삭제.** 실제 사용본 `AuthMngMenu2.vue`는 **이미 ag-grid**(체크박스 `ap_checkbox-cell-renderer`). 활성본의 죽은 `DhxGrid`/`GridCheckbox` import만 정리 |
+
+> **교훈:** `Account.vue` ↔ `Account_Ag.vue`처럼 "구버전(죽음)/신버전(활성)"이 공존하는 파일은, 전환 전 **import(사용처) 존재 여부를 먼저 확인**할 것. AuthMngUser/AuthMngMenu는 `<dhx-grid>` 태그가 살아있어 활성처럼 보였으나 어디서도 import되지 않는 죽은 파일이었음.
 
 **확립된 변환 패턴 (B그룹 공통):**
 - `<dhx-grid ref v-model="data" :config="config" @constructGridSuccessful>` → `<ag-grid-vue :columnDefs :rowData="data" :gridOptions :defaultColDef [:frameworkComponents] @grid-ready @rowDoubleClicked>`
@@ -284,19 +288,20 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 - 엑셀: `downloadExcel(this.$refs.grid)` → `this.gridOptions.api.exportDataAsExcel({fileName})`
 - DHTMLX 페이징 잔재(`config.queryPage`) 제거
 
-> 검증: 3개 모두 **ESLint 통과(에러 0)**. ⚠️ 런타임 확인 필요(조회/더블클릭 팝업/체크박스 저장/엑셀).
-> 커밋: `refactor(front): DHTMLX → ag-grid 전환 ...` (검색팝업 PoC + 죽은 import + B그룹 3개).
+> 검증: 변경 파일 **ESLint 통과**(단, `AuthMngMenu2.vue`의 `no-inner-declarations` 2건은 기존 트리생성 코드의 사전 존재 경고로 본 작업과 무관).
+> ⚠️ 런타임 확인 필요: `ApprRuleSet`/`ApprMndSet`(조회·더블클릭·엑셀), `ApprLineSet`(`/apprLineMng`: 부서트리→임직원목록→추가/삭제/순서이동/적용).
+> 커밋: `refactor(front): DHTMLX → ag-grid ...`(B그룹) + `refactor(front): 죽은 AuthMngUser/AuthMngMenu 삭제 + AuthMngMenu2 정리`.
 
 ---
 
 ## 9. 다음 액션
 1. [x] **(완료 2026-06-16)** 1차 PoC — `ApprMndPop.vue` DHTMLX 사원조회 → `Emp_Ag` 전환 + 검색팝업 죽은 import 정리(4파일) (§8.6)
-2. [x] **(완료 2026-06-16)** B그룹 3개 전환 — `ApprRuleSet`/`ApprMndSet`/`AuthMngUser` (§8.7)
-3. [x] **(완료 2026-06-16)** B그룹 **전부 완료** — `AuthMngMenu`(트리/체크전파), `ApprLineSet`(3그리드/행추가삭제/순서이동) (§8.7)
-4. [ ] 런타임 확인(dev 기동) — `ApprMndPop` 사원검색 / `ApprRuleSet`·`ApprMndSet` 조회·더블클릭 / `AuthMngUser` 체크박스 저장 / `AuthMngMenu` 메뉴 트리 체크 상하위 동기화·저장 / `ApprLineSet` 임직원검색·추가·삭제·순서이동·적용
+2. [x] **(완료 2026-06-16)** B그룹 활성 3개 전환 — `ApprRuleSet`/`ApprMndSet`/`ApprLineSet` (§8.7)
+3. [x] **(완료 2026-06-16)** 죽은 구버전 `AuthMngUser.vue`/`AuthMngMenu.vue` 삭제 + 활성본 `AuthMngMenu2.vue` 죽은 import 정리 (권한관리 활성본은 기전환됨) (§8.7)
+4. [ ] 런타임 확인(dev 기동) — `ApprMndPop` 사원검색 / `ApprRuleSet`·`ApprMndSet` 조회·더블클릭·엑셀 / `ApprLineSet`(`/apprLineMng`) 임직원검색·추가·삭제·순서이동·적용
 5. [ ] **(선결)** §8.5 — 편집형 전표 `GridED` 1화면 ag-grid PoC로 4대 난관(셀잠금/키보드/페이징/인라인 컴포넌트) 실현성·공수 실측
-4. [ ] `PopupGrid.vue`(완전 죽은 파일) 삭제 여부 판단 + DHTMLX `_new` 변형 잔존 정리
-5. [ ] 0단계: 미사용 의존성 9종 제거 + **C그룹 16개 파일의 dead `DhxGrid` import 제거** + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
+6. [ ] `PopupGrid.vue`(완전 죽은 파일) 삭제 여부 판단 + DHTMLX `_new` 변형 잔존 정리
+7. [ ] 0단계: 미사용 의존성 9종 제거 + **C그룹 16개 파일의 dead `DhxGrid` import 제거** + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
 6. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정
 7. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
 8. [ ] `$bus` 대체 방식(mitt vs Pinia) 결정
