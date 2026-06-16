@@ -352,7 +352,11 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 5. [x] **(완료 2026-06-16)** 저위험 정리 — 죽은 `DhxGrid` import 27개 파일 일괄 제거 + 죽은 파일 `PopupGrid.vue` 삭제 (그리드 동작 변화 없음, DhxGrid no-undef/구문오류 0)
 6. [x] **(완료 2026-06-16)** 편집형 전표 `GridED` ag-grid PoC — 4대 난관 전부 검증(독립 컴포넌트 `poc/GridEDPoc.vue`, `/gridEdPoc`). 기술적 전환 가능 확인, 공수는 config 4종 분량에서 발생 (§8.8)
 7. [~] **(진행 2026-06-16)** A그룹 진행 — `GridRO` 전환 완료(§8.9) / `GridED` 본전환 진행: `GridED_Ag.vue` **증분1~4(def/E6/E2/E5/E1) 전부 완성**(§8.10). 다음: `SlipBase.vue`에서 `GridED`→`GridED_Ag` 교체 + 슬립유형별 런타임 검증 → `SlipGr`/`SlipCrdLstModal`/`BdgReq` 등
-8. [ ] 검색 `_new` 변형(활성 DHTMLX 그리드) 전환 — A그룹과 함께 (Account_new/Cctr_new/Emp_new/IO_new/Vendor_new) + 직접호출(`Account/Cctr/Emp/Vendor/Product/Expend/ErpAccountPop`)
+8. [~] **(진행 2026-06-16)** 잔여 그리드 정리/전환 (브랜치 `refactor/dhtmlx-remaining-grids`):
+   - 죽은 파일 삭제: `Account.vue`/`Account_new.vue`/`Expend.vue`(import 0 확정)
+   - `SlipGr.vue`(전표 그룹, 읽기전용) ag-grid 전환 완료
+   - ⚠️ 감사 주의: import가 `'`/`"` + `.vue` 유무로 혼재 → 양쪽 매칭으로 재확인 필요(예: `JiniAtchBatchPop`·`Cctr`는 쌍따옴표 import라 live)
+   - 잔여(live, 전환 필요): `SlipCrdLstModal`/`BdgReq`/`Prepay`/`JiniAtchPop`/`JiniAtchBatchPop`/`Cctr_new`/`Emp_new`/`IO_new`/`Vendor_new`/`ErpAccountPop`. `_Ag` 존재분(`Cctr`/`ErpAccount`/`Emp`/`Vendor`/`Product`)은 호출처를 `_Ag`로 교체 검토
 8. [ ] 0단계 잔여: 미사용 의존성 9종 제거 + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
 9. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정
 10. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측

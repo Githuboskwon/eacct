@@ -29,14 +29,18 @@
           <h3 class="ico_table_name">전표내역</h3>
         </div>
       </div>
-      <dhx-grid ref="grid" v-model="data.slipGroupDetails" :config="config" @constructGridSuccessful="constructGridSuccessful" />
+      <ag-grid-vue ref="grid" class="ag-theme-alpine" style="width: 100%; height: 200px;"
+                   :columnDefs="columnDefs"
+                   :rowData="data.slipGroupDetails"
+                   :gridOptions="gridOptions"
+                   :defaultColDef="defaultColDef"/>
     </div>
   </div>
 </div>
 </template>
 
 <script>
-import DhxGrid from '@/components/DhxGrid.vue'
+import { AgGridVue } from 'ag-grid-vue'
 
 export default {
   props: {
@@ -46,94 +50,35 @@ export default {
     }
   },
   components: {
-    DhxGrid
+    AgGridVue
   },
   data() {
     return {
       data: {
         slipGroupDetails: []
       },
-      // DhxGrid config
-      config: {
-        columns: [{
-          value: 'No.',
-          type: 'cntr',
-          width: 50
-        }, {
-          id: 'totAmt',
-          value: '전표금액',
-          type: 'ron',
-          align: 'right',
-          width: 150
-        }, {
-          id: 'stnAcctNm',
-          value: '계정명',
-          align: 'left',
-          width: 180
-        }, {
-          id: 'wrtDeptNm',
-          value: '부서',
-          align: 'left',
-          width: 180
-        }, {
-          id: 'payCustNm',
-          value: '지급처',
-          width: 180
-        }, {
-          id: 'hdSgtxt',
-          value: '전표내용',
-          align: 'left',
-          width: 250
-        }, {
-          id: 'merchNm',
-          value: '가맹점명',
-          align: 'left',
-          width: 180
-        }, {
-          id: 'mccName',
-          value: '업종명',
-          align: 'left'
-        }, {
-          id: 'apprDate',
-          value: '승인일자',
-          component: {
-            props: ['index', 'value', 'field'],
-            template: `<span>{{ format(value[field]) }}</span>`,
-            methods: {
-              format(value) {
-                if (value !== undefined && value.match(/^\d{8}/g)) {
-                  return value.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')
-                } else {
-                  return ''
-                }
-              }
-            }
-          }
-        }, {
-          id: 'apprTime',
-          value: '승인시각',
-          component: {
-            props: ['index', 'value', 'field'],
-            template: `<span>{{ format(value[field]) }}</span>`,
-            methods: {
-              format(value) {
-                if (value !== undefined && value.match(/^\d{6}/g)) {
-                  return value.replace(/(\d{2})(\d{2})(\d{2})/g, '$1:$2:$3')
-                } else {
-                  return ''
-                }
-              }
-            }
-          }
-        }],
-        height: 200,
-        autoWidth: false
-      }
+      gridOptions: {},
+      defaultColDef: { resizable: true, sortable: false, filter: false },
+      columnDefs: [
+        { headerName: 'No.', width: 50, cellStyle: { textAlign: 'center' }, valueGetter: p => p.node.rowIndex + 1 },
+        { headerName: '전표금액', field: 'totAmt', width: 150, cellStyle: { textAlign: 'right' }, valueFormatter: p => (p.value == null || p.value === '') ? '' : this.$numeral(p.value).format('0,0') },
+        { headerName: '계정명', field: 'stnAcctNm', width: 180, cellStyle: { textAlign: 'left' } },
+        { headerName: '부서', field: 'wrtDeptNm', width: 180, cellStyle: { textAlign: 'left' } },
+        { headerName: '지급처', field: 'payCustNm', width: 180, cellStyle: { textAlign: 'center' } },
+        { headerName: '전표내용', field: 'hdSgtxt', width: 250, cellStyle: { textAlign: 'left' } },
+        { headerName: '가맹점명', field: 'merchNm', width: 180, cellStyle: { textAlign: 'left' } },
+        { headerName: '업종명', field: 'mccName', width: 150, cellStyle: { textAlign: 'left' } },
+        { headerName: '승인일자', field: 'apprDate', width: 110, cellStyle: { textAlign: 'center' }, valueFormatter: p => this.fmtDate8(p.value) },
+        { headerName: '승인시각', field: 'apprTime', width: 110, cellStyle: { textAlign: 'center' }, valueFormatter: p => this.fmtTime6(p.value) }
+      ]
     }
   },
   methods: {
-    constructGridSuccessful(grid) {
-      grid.setNumberFormat('0,000', 1, '.', ',')
+    fmtDate8(v) {
+      return (v !== undefined && v !== null && String(v).match(/^\d{8}/)) ? String(v).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3') : ''
+    },
+    fmtTime6(v) {
+      return (v !== undefined && v !== null && String(v).match(/^\d{6}/)) ? String(v).replace(/(\d{2})(\d{2})(\d{2})/, '$1:$2:$3') : ''
     }
   },
   watch: {
