@@ -55,6 +55,7 @@ export default {
   data() {
     return {
       gridApi: null,
+      columnApi: null,
       columnDefs: [],
       gridOptions: {
         // ③ Tab: 편집 가능한 다음 셀로만 이동(비편집/잠금 셀 건너뜀)
@@ -83,6 +84,7 @@ export default {
     },
     onGridReady(params) {
       this.gridApi = params.api;
+      this.columnApi = params.columnApi;
       this.makeColDef();
     },
     makeColDef() {
@@ -145,23 +147,38 @@ export default {
       const n = Number(String(v).replace(/,/g, ''));
       return isNaN(n) ? 0 : n;
     },
-    // ③ Tab 이동: 다음 편집 가능 셀로 점프(비편집/잠금 컬럼 skip)
+    // ③ Tab 이동: 다음 편집 가능 셀로 점프(비편집/잠금 셀 skip)
+    // 주의: getAllDisplayedColumns()는 columnApi 의 메서드 (gridApi 아님)
     nextEditableCell(params) {
-      const allCols = this.gridApi ? this.gridApi.getColumnDefs() : [];
-      // ag-grid 기본 다음 위치
-      let next = params.nextCellPosition;
-      if (!next) return params.previousCellPosition;
-      // 편집 가능 컬럼만 필터
-      const editableFields = allCols
-        .filter(c => typeof c.editable === 'function' || c.editable === true)
-        .map(c => c.field);
-      // 현재 행에서 다음 편집가능 컬럼 탐색
-      const displayedCols = this.gridApi.getAllDisplayedColumns();
-      const startIdx = displayedCols.findIndex(c => c.getColId() === next.column.getColId());
-      for (let i = startIdx; i < displayedCols.length; i++) {
-        const colId = displayedCols[i].getColId();
-        if (editableFields.indexOf(colId) >= 0) {
-          return { rowIndex: next.rowIndex, column: displayedCols[i], rowPinned: next.rowPinned };
+      const next = params.nextCellPosition;
+      if (!next || !this.columnApi) return next;
+
+      const cols = this.columnApi.getAllDisplayedColumns();
+      const isEditable = (col, rowIndex) => {
+        const colDef = col.getColDef();
+        const ed = colDef.editable;
+        if (ed === true) return true;
+        if (typeof ed === 'function') {
+          const node = this.gridApi.getDisplayedRowAtIndex(rowIndex);
+          return !!ed({ data: node && node.data, node, colDef, column: col, api: this.gridApi });
+        }
+        return false;
+      };
+
+      const startIdx = cols.findIndex(c => c.getColId() === next.column.getColId());
+      // 다음 위치(포함)부터 앞으로 탐색하여 편집 가능한 첫 셀로 이동
+      for (let i = startIdx; i < cols.length; i++) {
+        if (isEditable(cols[i], next.rowIndex)) {
+          return { rowIndex: next.rowIndex, column: cols[i], rowPinned: next.rowPinned };
+        }
+      }
+      // 현재 행에 더 없으면 다음 행의 첫 편집 가능 셀로
+      const lastRow = this.gridApi.getDisplayedRowCount() - 1;
+      if (next.rowIndex < lastRow) {
+        for (let i = 0; i < cols.length; i++) {
+          if (isEditable(cols[i], next.rowIndex + 1)) {
+            return { rowIndex: next.rowIndex + 1, column: cols[i], rowPinned: next.rowPinned };
+          }
         }
       }
       return next;
