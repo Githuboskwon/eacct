@@ -103,15 +103,16 @@
 Big-bang은 위험하므로 **빌드 안정화 → 코어 → UI 라이브러리 → 패턴 정리** 순으로 분산.
 
 ```
-[선결]  그리드 2종 PoC (DHTMLX 재작성 / ag-grid-vue3)  ← 실현성·공수 먼저 검증 (§7)
-[0단계] 미사용 의존성 제거 + SSO 잔존 정리          (노이즈 제거, 저위험)
+[선행]  DHTMLX → ag-grid 통합 (現 Vue 2 위에서)      ← Vue 3 최대 블로커 사전 제거 (§8)
+[0단계] 미사용 의존성 제거 + dead import + SSO 잔존 정리  (노이즈 제거, 저위험)
 [1단계] 빌드 툴체인 교체 (vue-cli 5 or Vite)        (Vue 3 컴파일 환경 확보)
 [2단계] Vue 3 + 코어 플러그인 (router4/vuex4/i18n9) (부트스트랩·라우터·스토어)
 [3단계] UI 라이브러리 교체 (element-plus/ag-grid-vue3/buefy 흡수) ← 최대 작업
-       + DHTMLX 그리드 셀 렌더링 재작성(또는 타 그리드 이관)  ← 최대 난관 (§7)
 [4단계] API 패턴 정리 (filter/$bus/.native/v-model/lifecycle)
-[5단계] jQuery 제거 + 회귀 테스트                   (DhxGrid/NumberInput 리팩토링)
+[5단계] jQuery 제거 + 회귀 테스트
 ```
+> **[선행] 단계가 핵심 차별점:** DHTMLX를 Vue 2 상태에서 ag-grid로 먼저 통합하면(§8),
+> Vue 3 비호환 그리드 블로커가 사라져 3단계는 `ag-grid-vue → ag-grid-vue3` 단순 업그레이드로 축소된다.
 
 ---
 
@@ -203,9 +204,99 @@ Big-bang은 위험하므로 **빌드 안정화 → 코어 → UI 라이브러리
 
 ---
 
-## 8. 다음 액션
-1. [ ] **(선결)** 그리드 2종 PoC — DHTMLX 셀 렌더링 Vue 3 재작성 가능성 + ag-grid-vue3 샘플 화면 전환으로 공수·실현성 검증 → **불가/과다 시 그리드 통합 이관 여부 의사결정**
-2. [ ] 0단계: 미사용 의존성 9종 제거 + **C그룹 16개 파일의 dead `DhxGrid` import 제거** + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
-3. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정
-4. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
-5. [ ] `$bus` 대체 방식(mitt vs Pinia) 결정
+## 8. ✅ 선행 전략: DHTMLX → ag-grid 통합 (Vue 3 전환 前)
+
+> **권장:** Vue 3 전환에 착수하기 **전에**, 현재 Vue 2 스택 위에서 잔존 DHTMLX를 ag-grid로 먼저 통합한다.
+> ag-grid v25는 **이미 Vue 2에서 정상 동작**하므로 지금 바로 진행 가능하며, Vue 3 최대 블로커
+> (DhxGrid의 `Vue.extend/$mount` 셀 렌더링)를 사전에 제거해 이후 전환 리스크를 크게 낮춘다.
+
+### 8.1 왜 먼저 하는가
+- ag-grid v25가 현 Vue 2에서 동작 → **Vue 3 없이 지금 착수 가능**
+- DHTMLX 셀 렌더링(Vue 3 비호환)을 미리 제거 → **이후 Vue 3 전환 단순화**
+- 그리드를 **ag-grid 한 종으로 일원화** → 이후 ag-grid-vue3 업그레이드만 관리
+- 화면 단위 **점진적 전환** 가능(한 번에 안 바꿔도 됨)
+
+### 8.2 이미 갖춰진 기반 (전환이 쉬운 이유)
+- **검색/선택 팝업은 ag-grid 대체본(`_Ag.vue`) 10종이 이미 존재·운영 사용 중**
+  (`Emp_Ag` 37파일, `Cctr_Ag` 21파일, `Vendor_Ag` 12파일, `Account_Ag`/`Product_Ag`/`Expend_Ag`/`ErpAccount_Ag`,
+   ag 전용 `ErpCctr_Ag`/`ErpAccountSub_Ag`/`ExpPrice_Ag`)
+- **편집형 셀 에디터/렌더러가 `src/components/agGrid/`에 이미 구비**
+  (`select`/`checkbox`/`numberinput`/`input`/`maskedit`/`el-datepicker`/`button` cell-renderer, `AgGridCheckbox/ScanAttach/SearchBtn`)
+- `GridED.vue`는 이미 한 화면에서 ag-grid(`Account_Ag`/`Cctr_Ag`/`Product_Ag`)와 DHTMLX **혼용 검증됨**
+- `EstimateReg.vue` 등 **ag-grid 편집형 그리드 구현 사례** 존재
+
+### 8.3 화면별 난이도 / 전환 순서
+
+| 단계 | 대상 | 난이도 | 작업 성격 |
+|------|------|--------|-----------|
+| **1차 (마무리성)** | 검색/선택 팝업의 DHTMLX 잔존 경로를 기존 `_Ag` 대체본으로 통일 — `GridRO`의 `Account`/`Cctr`/`Product`, `DelegateMng`의 `Cctr`, B그룹 직접호출 7종(`Cctr/Account/Emp/ErpAccountPop/Expend/Product/Vendor`) | **하** | 신규개발 아님, **대체본 연결·경로 정리** |
+| **1.5차 (정리)** | C그룹 16파일 dead `DhxGrid` import 제거 (§7.1 C) | 하 | 코드 청소 |
+| **2차 (목록형)** | 결재/권한 설정 — `ApprLineSet`(그리드3), `ApprRuleSet`, `ApprMndSet`, `AuthMngUser`, `AuthMngMenu` | 중 | 대부분 목록형, ag-grid 표준 패턴 |
+| **3차 (편집형·핵심)** | 전표 편집 그리드 — `slip/GridED`(입력), `slip/GridRO`(조회), `SlipGr`, `BdgReq`, `SlipCrdLstModal`, `Prepay`, `JiniAtchPop`/`JiniAtchBatchPop`, `ErpAccount` | **상** | 인라인 편집/셀잠금/페이징/키보드 재구현 |
+
+### 8.4 3차(편집형 전표)의 핵심 난관 — 사전 설계 필요
+1. **셀 동적 잠금**: DhxGrid `lockCell()`/`isCellLocked()` → ag-grid `colDef.editable` 함수 + `cellStyle`로 재구현
+2. **키보드 네비게이션**: Tab이 "다음 **편집가능** 셀만" 이동하도록 ag-grid `tabToNextCell` 커스터마이징, Enter/Esc/Ctrl+C 동작 매핑
+3. **가상 페이징**: DHTMLX virtual paging → ag-grid 페이징 API(`paginationPageSize` 등) 또는 클라이언트 모델로 재작성
+4. **셀 내부 Vue 컴포넌트**: DhxGrid `component:` 옵션 → ag-grid `cellRenderer`/`cellEditor`(기존 `agGrid/` 렌더러 재사용)
+
+> **공수 추정:** 1차·1.5차·2차는 비교적 짧게(경로 정리 위주), **3차 편집형 전표가 본 작업** — 핵심 구현 2~3주 + 테스트 1~2주.
+
+### 8.5 권장 진행
+1. **3차 대상 1화면 PoC**(예: `GridED` 단일 전표) — 셀잠금/키보드/페이징/인라인 컴포넌트 4대 난관 실현성·공수 실측
+2. PoC 통과 시 1차 → 2차 → 3차 순으로 화면 단위 점진 전환 + 화면별 회귀 테스트
+3. 전환 완료 후 `DhxGrid.vue`·전역 `/js/dhtmlx.js`·관련 SCSS 제거 → **DHTMLX Suite 의존 종료**(차트 `dhtmlXChart`는 별도, §7.1)
+
+### 8.6 진행 현황 (2026-06-16, 1차 착수)
+
+**검색 팝업 전환 실측 결과 — 1차는 사실상 거의 완료 상태였음:**
+DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 전수 조사한 결과,
+대부분 화면은 이미 `_Ag` 버전으로 전환됐고 잔존분은 **(a) 죽은 import** 또는 **(b) 전표 그리드 내부 활성 사용**뿐이었다.
+
+| 파일 | 상태 | 조치 |
+|------|------|------|
+| `components/ApprMndPop.vue` | 비-전표 화면 중 **유일한 활성 DHTMLX 사원조회** | ✅ **전환 완료** — `Emp.vue`→`Emp_Ag.vue`, 구형 `<b-modal @receive>`+`<emp>` → 표준 `$modal.open({component, events:{close}})` |
+| `components/ExchangeRateMng.vue` | 죽은 `import Emp` | ✅ 제거(import·components 등록·`showEmpModal`) |
+| `views/EbillSlipRcvLst.vue` | 죽은 `import Emp` | ✅ 제거 |
+| `views/GridComponent.vue`(데모 라우트) | 죽은 `import Emp` | ✅ 제거 |
+| `views/DelegateMng.vue` | 죽은 `import Cctr` + 죽은 `popCctr`(2개)·`receiveCctr`·`initCctr`·`showCctrModal` (실사용 검색은 이미 `Emp_Ag`) | ✅ 제거 |
+| `components/PopupGrid.vue` | `<account>`/`<cctr>`(DHTMLX) 사용하나 **어디서도 import 안 되는 완전 죽은 파일** | ⏸ 보류 — import 정리가 아닌 **파일 삭제 후보**(별도 판단) |
+| `slip/GridED.vue`, `slip/GridRO.vue`, `SlipCrdLstModal.vue` | **활성 DHTMLX 검색(`Emp/Account/Cctr/Product/ErpAccount(Pop)`)** | ⏭ **3차(편집형 전표)** 작업 시 그리드와 함께 전환 |
+
+> 검증: 변경 5개 파일 **ESLint 통과(에러 0)**. ⚠️ 런타임 클릭 테스트(`ApprMndPop` 위임자/수임자 검색→선택)는 dev 기동 후 별도 확인 필요.
+> 시사점: **1차(검색 팝업)는 잔여 정리 수준**이며, 실질 공수는 예상대로 **3차 편집형 전표**에 집중됨. `PopupGrid` 등 죽은 파일/잔존 DHTMLX `_new` 변형은 별도 정리.
+
+### 8.7 B그룹(결재/권한 설정) 전환 현황 (2026-06-16) — 5개 중 3개 완료
+
+| # | 화면 | 유형 | 상태 |
+|---|------|------|------|
+| 1 | `views/ApprRuleSet.vue` (전결 규정) | 읽기전용 + 더블클릭 팝업 + 금액 포맷 | ✅ 완료 |
+| 2 | `views/ApprMndSet.vue` (결재 위임현황) | 읽기전용 + 날짜 포맷 + 더블클릭 | ✅ 완료 |
+| 3 | `components/AuthMngUser.vue` (권한별 사용자) | 체크박스 + 저장 | ✅ 완료 (`checkbox-cell-renderer` 재사용, query/save 로직 유지) |
+| 4 | `components/AuthMngMenu.vue` (권한별 메뉴) | **트리 구조 + 체크박스 + 부모-자식 동기화**(`_setChildren`/`_setParents`) | ⏭ 미착수 (복잡 — ag-grid Tree Data 또는 평탄화 재설계 필요) |
+| 5 | `components/ApprLineSet.vue` (결재선 지정) | **그리드 3개 + 행 추가/삭제/순서이동**(`moveUp`/`moveDown`)·중복검증·개인결재선 연동 | ⏭ 미착수 (복잡) |
+
+**확립된 변환 패턴 (B그룹 공통):**
+- `<dhx-grid ref v-model="data" :config="config" @constructGridSuccessful>` → `<ag-grid-vue :columnDefs :rowData="data" :gridOptions :defaultColDef [:frameworkComponents] @grid-ready @rowDoubleClicked>`
+- `config.columns`(`type: ro/ron/ed/ch/cntr`) → `columnDefs`(`hide:true` / `editable:true` / `cellRenderer:'checkboxRenderer'` / `valueGetter`(No.) / `valueFormatter`(날짜·금액))
+- `constructGridSuccessful`의 `setColumnHidden`·`setNumberFormat`·`attachEvent('onRowDblClicked')` → `hide:true`·`valueFormatter`·`@rowDoubleClicked="rowDoubleClick(params)"`(셀 인덱스 `grid.cells(rId,n)` → `params.data.field`)
+- 체크박스: `type:'ch'` → `checkbox-cell-renderer` + `cellRendererParams:{trueValue,falseValue}` (boolean 유지 시 `trueValue:true`)
+- 엑셀: `downloadExcel(this.$refs.grid)` → `this.gridOptions.api.exportDataAsExcel({fileName})`
+- DHTMLX 페이징 잔재(`config.queryPage`) 제거
+
+> 검증: 3개 모두 **ESLint 통과(에러 0)**. ⚠️ 런타임 확인 필요(조회/더블클릭 팝업/체크박스 저장/엑셀).
+> 커밋: `refactor(front): DHTMLX → ag-grid 전환 ...` (검색팝업 PoC + 죽은 import + B그룹 3개).
+
+---
+
+## 9. 다음 액션
+1. [x] **(완료 2026-06-16)** 1차 PoC — `ApprMndPop.vue` DHTMLX 사원조회 → `Emp_Ag` 전환 + 검색팝업 죽은 import 정리(4파일) (§8.6)
+2. [x] **(완료 2026-06-16)** B그룹 3개 전환 — `ApprRuleSet`/`ApprMndSet`/`AuthMngUser` (§8.7)
+3. [ ] 런타임 확인(dev 기동) — `ApprMndPop` 사원검색, `ApprRuleSet`/`ApprMndSet` 조회·더블클릭, `AuthMngUser` 체크박스 저장·엑셀
+4. [ ] B그룹 잔여 2개 전환 — `AuthMngMenu`(트리), `ApprLineSet`(3그리드/행추가삭제) (§8.7)
+5. [ ] **(선결)** §8.5 — 편집형 전표 `GridED` 1화면 ag-grid PoC로 4대 난관(셀잠금/키보드/페이징/인라인 컴포넌트) 실현성·공수 실측
+4. [ ] `PopupGrid.vue`(완전 죽은 파일) 삭제 여부 판단 + DHTMLX `_new` 변형 잔존 정리
+5. [ ] 0단계: 미사용 의존성 9종 제거 + **C그룹 16개 파일의 dead `DhxGrid` import 제거** + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
+6. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정
+7. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
+8. [ ] `$bus` 대체 방식(mitt vs Pinia) 결정
