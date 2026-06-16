@@ -111,7 +111,7 @@
  */
 import Layout from '@/components/ModalSlot.vue';
 import CheckboxCellRenderer from "@/components/agGrid/checkbox-cell-renderer";
-import Cctr from "@/components/Cctr";
+import Cctr from "@/components/Cctr_Ag.vue";
 import Emp from "@/components/Emp_Ag";
 
 /**
