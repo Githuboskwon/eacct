@@ -198,7 +198,13 @@
         </div>
           <div class="table-b">
               <div class="grid-wrap">
-                  <dhx-grid ref="grid" v-model="useDetails" :config="config" @constructGridSuccessful="constructGridSuccessful"/>
+                  <ag-grid-vue ref="grid" class="ag-theme-alpine" style="width:100%; height:390px;"
+                               :columnDefs="columnDefs"
+                               :rowData="useDetails"
+                               :gridOptions="gridOptions"
+                               :defaultColDef="defaultColDef"
+                               :frameworkComponents="frameworkComponents"
+                               @grid-ready="onGridReady"/>
               </div>
           </div>
       </div>
@@ -228,7 +234,8 @@ import _ from 'lodash'
 import assert from '@/libs/assert'
 import Layout from '@/components/ModalSlot.vue'
 import DhxCalendar from '@/components/DhxCalendar.vue'
-import DhxGrid from '@/components/DhxGrid.vue'
+import { AgGridVue } from 'ag-grid-vue'
+import CheckboxCellRenderer from '@/components/agGrid/checkbox-cell-renderer'
 import Emp from '@/components/Emp.vue'
 import ErpAccountPop from '@/components/ErpAccountPop.vue'
 import Product from '@/components/Product.vue'
@@ -261,112 +268,47 @@ export default {
       required: false
     }
   },
-  components: {Emp, ErpAccountPop, Product, DhxGrid, DhxCalendar, Layout},
+  components: {Emp, ErpAccountPop, Product, AgGridVue, DhxCalendar, Layout},
   mixins: [ mixin, mixinSlip ],
   data() {
+    const fmtAmt = (p) => (p.value == null || p.value === '') ? '' : this.$numeral(p.value).format('0,0')
+    const fmtDate = (p) => (p.value !== undefined && p.value !== null && String(p.value).match(/^\d{8}/)) ? String(p.value).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3') : (p.value || '')
+    const fmtTime = (p) => (p.value !== undefined && p.value !== null && String(p.value).match(/^\d{6}/)) ? String(p.value).replace(/(\d{2})(\d{2})(\d{2})/, '$1:$2:$3') : (p.value || '')
+    const fmtDtm = (p) => p.value ? this.$moment(p.value).format('YYYY-MM-DD HH:mm:ss') : ''
     return {
-      config : {
-          columns: [
-            {id: 'useYn', type: 'ch', value: '선택', width: 40},
-            // {id: 'rn', type: 'cntr', align: 'center', sort: 'na', value: 'No.', width: 35},
-            {id: 'cardNo', type: 'ro', align: 'center', sort: 'na', value: '카드번호', width: 150},
-            {id: 'merchNm', type: 'ro', align: 'center', sort: 'na', value: '가맹점명', width: 150},
-            {id: 'crdFgNm', type: 'ro', align: 'center', sort: 'na', value: '카드구분', width: 80},
-            {id: 'apprDate', type: 'ro', align: 'center', sort: 'na', value: '승인일자', width: 120},
-            {id: 'apprTime', type: 'ro', align: 'center', sort: 'na', value: '승인시각', width: 120},
-            {id: 'useDtlsStatNm', type: 'ro', align: 'center', sort: 'na', value: '처리상태', width: 110},
-            {id: 'purchTot', type: 'ron', align: 'right', sort: 'na', value: '매입금액', width: 80},
-            {id: 'apprAmt', type: 'ron', align: 'right', sort: 'na', value: '공급가액', width: 80},
-            {id: 'vat', type: 'ron', align: 'right', sort: 'na', value: '부가세', width: 80},
-            {id: 'tips', type: 'ron', align: 'right', sort: 'na', value: '봉사료', width: 80},
-            // {id: 'crdCompNm', type: 'ro', align: 'center', sort: 'na', value: '카드사', width: 50},
-            // {id: 'apprDate', type: 'ro', align: 'center', sort: 'na', value: '승인일자', width: 120},
-            // {id: 'apprTime', type: 'ro', align: 'center', sort: 'na', value: '승인시각', width: 120},
-            // {id: 'purchTot', type: 'ron', align: 'right', sort: 'na', value: '사용금액', width: 150},
-            // {id: 'apprAmt', type: 'ron', align: 'right', sort: 'na', value: '공급가액', width: 150},
-            // {id: 'vat', type: 'ron', align: 'right', sort: 'na', value: '부가세', width: 150},
-            // {id: 'tips', type: 'ron', align: 'right', sort: 'na', value: '봉사료', width: 150},
-            // {id: 'merchNm', type: 'ro', align: 'center', sort: 'na', value: '가맹점명', width: 200},
-            {id: 'apprNo', type: 'ro', align: 'center', sort: 'na', value: '승인번호', width: 120},
-            {id: 'acqClassNm', type: 'ro', align: 'center', sort: 'na', value: '매입구분', width: 100},
-            {id: 'useDtlsCancel', align: 'center', value: '처리취소', width: 60},
-            {id: 'merchAddr', type: 'ro', align: 'center', sort: 'na', value: '가맹점주소', width: 300},
-            {id: 'mccName', type: 'ro', align: 'center', sort: 'na', value: '업종명', width: 120},
-            {id: 'etc3', type: 'ro', align: 'center', sort: 'na', value: '과세구분', width: 100},
-            {id: 'eaSlipNo', type: 'ro', align: 'center', sort: 'na', value: '전표번호', width: 150},
-            {id: 'slipStatNm', type: 'ro', align: 'center', sort: 'na', value: '전표상태', width: 100},
-            {id: 'crdPssrNm', type: 'ro', align: 'center', sort: 'na', value: '카드사용자', width: 100},
-            {id: 'crdUseDutNm', type: 'ro', align: 'center', sort: 'na', value: '직급', width: 100},
-            {id: 'crdUseDeptNm', type: 'ro', align: 'center', sort: 'na', value: '부서명', width: 150},
-            {id: 'procPeriod', type: 'ro', align: 'center', sort: 'na', value: '경비처리기한', width: 120},
-            {id: 'slipProcNm', type: 'ro', align: 'center', sort: 'na', value: '경비처리자', width: 100},
-            {id: 'erpSlipDtm', type: 'ro', align: 'center', sort: 'na', value: '전송일시', width: 150},
-            // {id: 'compNm', type: 'ro', align: 'center', sort: 'na', value: '회사', width: 150},
-          ],
-          events: {
-            // onRowDblClicked(rid) {
-            //     try{
-            //         var index = rid - 1
-            //         let datas = this.data.filter(x => x.useYn === 'Y')
-
-            //         assert.apply(this, [datas.length > 0, '전표를 선택해주세요.'])
-            //         var self = this.$parent.$parent
-            //         self.$emit('close', datas)
-            //     }catch(e){
-            //         this.$swal({
-            //             type: 'error',
-            //             text: e
-            //         })
-            //     }
-                
-            // }
-          },
-          height: 390,
-          enablePaging: false,
-        //   pagingSize: 8,
-        //   queryPage: (page) => {
-        //       page = page || 0
-        //       return new Promise((resolve, reject) => {
-        //           let data = {
-        //               contents: this.useDetails,
-        //               page: page,
-        //               totalPages: parseInt(this.useDetails.length / this.config.pagingSize) + (parseInt(this.useDetails.length % this.config.pagingSize) > 0 ? 1 : 0),
-        //               totalElements: 0
-        //           }
-        //           resolve({
-        //               data: data
-        //           })
-        //       })
-        //   },
-        // beforeRefreshData(grid, data) {
-        //     _.forEach(data, (item, index) => {
-        //         var rId = index + 1
-        //         grid.cells(rId, 1).setValue(this.$parent.$parent.getFormattedCardNumber(grid.cells(rId, 1).getValue()));
-        //         grid.cells(rId, 4).setValue(this.$moment(grid.cells(rId, 4).getValue()).format('YYYY-MM-DD'));
-        //         if (grid.cells(rId, 5).getValue()) grid.cells(rId, 5).setValue(this.$moment(grid.cells(rId, 5).getValue(), 'HHmmss').format('HH:mm:ss'));
-        //         if (grid.cells(rId, 24).getValue()) grid.cells(rId, 24).setValue(this.$moment(grid.cells(rId, 24).getValue()).format('YYYY-MM-DD HH:mm:ss'));
-        //     })
-        // },
-        afterRefreshData(grid, data) {
-
-            this.$nextTick(() => {
-                _.forEach(data, (item, index) => {
-                    var rId = index + 1
-                    
-                    if(data[index].cStateYn !== undefined) {
-                        // console.log(data[index].cStateYn)
-                        if(data[index].cStateYn === true) {
-                            grid.setRowColor(rId, "orange")
-                        }
-                    }
-                    // grid.cells(rId, 1).setValue(this.$parent.$parent.getFormattedCardNumber(grid.cells(rId, 1).getValue()));
-                    // grid.cells(rId, 4).setValue(this.$moment(grid.cells(rId, 4).getValue()).format('YYYY-MM-DD'));
-                    // if (grid.cells(rId, 5).getValue()) grid.cells(rId, 5).setValue(this.$moment(grid.cells(rId, 5).getValue(), 'HHmmss').format('HH:mm:ss'));
-                    // if (grid.cells(rId, 24).getValue()) grid.cells(rId, 24).setValue(this.$moment(grid.cells(rId, 24).getValue()).format('YYYY-MM-DD HH:mm:ss'));
-                })
-            })
-        }
+      gridApi: null,
+      gridOptions: {
+        getRowStyle: (params) => (params.data && params.data.cStateYn === true) ? { backgroundColor: 'orange' } : null
       },
+      defaultColDef: { resizable: true, sortable: false, filter: false },
+      frameworkComponents: { checkboxRenderer: CheckboxCellRenderer },
+      columnDefs: [
+        { headerName: '선택', field: 'useYn', width: 60, cellStyle: { textAlign: 'center' }, cellRenderer: 'checkboxRenderer', cellRendererParams: { trueValue: true, falseValue: false } },
+        { headerName: '카드번호', field: 'cardNo', width: 150, cellStyle: { textAlign: 'center' } },
+        { headerName: '가맹점명', field: 'merchNm', width: 150, cellStyle: { textAlign: 'center' } },
+        { headerName: '카드구분', field: 'crdFgNm', width: 80, cellStyle: { textAlign: 'center' } },
+        { headerName: '승인일자', field: 'apprDate', width: 120, cellStyle: { textAlign: 'center' }, valueFormatter: fmtDate },
+        { headerName: '승인시각', field: 'apprTime', width: 120, cellStyle: { textAlign: 'center' }, valueFormatter: fmtTime },
+        { headerName: '처리상태', field: 'useDtlsStatNm', width: 110, cellStyle: { textAlign: 'center' } },
+        { headerName: '매입금액', field: 'purchTot', width: 90, cellStyle: { textAlign: 'right' }, valueFormatter: fmtAmt },
+        { headerName: '공급가액', field: 'apprAmt', width: 90, cellStyle: { textAlign: 'right' }, valueFormatter: fmtAmt },
+        { headerName: '부가세', field: 'vat', width: 80, cellStyle: { textAlign: 'right' }, valueFormatter: fmtAmt },
+        { headerName: '봉사료', field: 'tips', width: 80, cellStyle: { textAlign: 'right' }, valueFormatter: fmtAmt },
+        { headerName: '승인번호', field: 'apprNo', width: 120, cellStyle: { textAlign: 'center' } },
+        { headerName: '매입구분', field: 'acqClassNm', width: 100, cellStyle: { textAlign: 'center' } },
+        { headerName: '처리취소', field: 'useDtlsCancel', width: 80, cellStyle: { textAlign: 'center' } },
+        { headerName: '가맹점주소', field: 'merchAddr', width: 300, cellStyle: { textAlign: 'left' } },
+        { headerName: '업종명', field: 'mccName', width: 120, cellStyle: { textAlign: 'center' } },
+        { headerName: '과세구분', field: 'etc3', width: 100, cellStyle: { textAlign: 'center' } },
+        { headerName: '전표번호', field: 'eaSlipNo', width: 150, cellStyle: { textAlign: 'center' } },
+        { headerName: '전표상태', field: 'slipStatNm', width: 100, cellStyle: { textAlign: 'center' } },
+        { headerName: '카드사용자', field: 'crdPssrNm', width: 100, cellStyle: { textAlign: 'center' } },
+        { headerName: '직급', field: 'crdUseDutNm', width: 100, cellStyle: { textAlign: 'center' } },
+        { headerName: '부서명', field: 'crdUseDeptNm', width: 150, cellStyle: { textAlign: 'center' } },
+        { headerName: '경비처리기한', field: 'procPeriod', width: 120, cellStyle: { textAlign: 'center' } },
+        { headerName: '경비처리자', field: 'slipProcNm', width: 100, cellStyle: { textAlign: 'center' } },
+        { headerName: '전송일시', field: 'erpSlipDtm', width: 160, cellStyle: { textAlign: 'center' }, valueFormatter: fmtDtm }
+      ],
       title: '법인카드전체내역',
       compCds: [],
       crdCompCds: [],
@@ -408,14 +350,11 @@ export default {
     }
   },
   methods: {
-    constructGridSuccessful(grid) {
-        grid.attachHeader(
-            []
-        )
-        grid.setNumberFormat('0,000', 7, '.', ',')
-        grid.setNumberFormat('0,000', 8, '.', ',')
-        grid.setNumberFormat('0,000', 9, '.', ',')
-        grid.setNumberFormat('0,000', 10, '.', ',')
+    onGridReady(params) {
+        this.gridApi = params.api
+    },
+    gridRefresh() {
+        if (this.gridApi) this.gridApi.refreshCells({ force: true })
     },
     getCompCdCombo() {
         this.$http.get(`/api/code/combo`, {params: {groupCd: "COMP_CD"}})
@@ -560,6 +499,7 @@ export default {
         for(let i=0; i < data.length; i++){
             this.useDetails[i].useYn = true
         }
+        this.gridRefresh()
         this.$store.commit('finish')
     },
     allUnChk(){
@@ -587,6 +527,7 @@ export default {
         for(let i=0; i < data.length; i++){
             this.useDetails[i].useYn = false
         }
+        this.gridRefresh()
         this.$store.commit('finish')
     },
     // getCardListCombo(cdlgId){
