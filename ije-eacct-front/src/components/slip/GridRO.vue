@@ -7,986 +7,361 @@
     </div>
   </div>
 
-  <!-- DhxGrid component -->
-  <dhx-grid ref="grid" class="slip-grid" v-model="data" :config="config" @constructGridSuccessful="constructGridSuccessful" />
+  <!-- ag-grid (read-only) -->
+  <ag-grid-vue ref="grid" class="slip-grid ag-theme-alpine" style="width: 100%;" :style="{ height: gridHeight + 'px' }"
+               :columnDefs="columnDefs"
+               :rowData="data"
+               :gridOptions="gridOptions"
+               :defaultColDef="defaultColDef"
+               :frameworkComponents="frameworkComponents"
+               :pinnedBottomRowData="pinnedBottomRowData"
+               @grid-ready="onGridReady"/>
+
   <div class="table-header" v-if="value.slipTypeCd === 'E1'">
     <div class="table-name">
       <h3 class="ico_table_name">현금지급</h3>
     </div>
-    <dhx-grid ref="grid2" class="slip-grid"  v-model="datad" :config="config_E1_2" @constructGridSuccessful="constructGridSuccessful2" />
+    <ag-grid-vue ref="grid2" class="slip-grid ag-theme-alpine" style="width: 100%; height: 260px;"
+                 :columnDefs="columnDefs2"
+                 :rowData="datad"
+                 :gridOptions="gridOptions2"
+                 :defaultColDef="defaultColDef"
+                 :frameworkComponents="frameworkComponents"
+                 @grid-ready="onGridReady2"/>
   </div>
-  <!-- //DhxGrid component -->
 </div>
 </template>
 
 <script>
 import Vue from 'vue'
 
-// Import DhxGrid
-import DhxGrid from '@/components/DhxGrid.vue'
-import Cctr from '@/components/Cctr.vue'
-import Account from '@/components/Account.vue'
-import ErpAccount from '@/components/ErpAccount.vue'
-import Product from '@/components/Product.vue'
-import SlipMngItemPop from '@/components/SlipMngItemPop.vue'
-import GridSelect from '@/components/grid/GridSelect.vue'
-import EvidAtchPop from '@/components/EvidAtchPop.vue'
+import { AgGridVue } from 'ag-grid-vue'
 import CardInfoDetailPop from '@/components/CardInfoDetailPop.vue'
 
-const eventBus = new Vue()
-
-/**
- * 계정 관련 추가 정보
- */
-const account = {}
-const account_lock = {}
-
-const options = {
-  'USE_SELECT_CD': [{"detailCd": "Y", "detailNm": "선택함"}, {"detailCd": "N", "detailNm": "선택안함"}]
-}
-
-function queryAccountAddon(acctCd) {
-  return new Promise((resolve, reject) => {
-    if (!acctCd || account[acctCd] !== undefined || account_lock[acctCd]) {
-      resolve(0)
-    } else {
-      account_lock[acctCd] = true
-      this.$http.post('/api/slip/managementItem', {
-        acctCd: acctCd,
-        useYn: 'Y'
-      }).then(response => {
-        let filter = response.data.filter(x => x.acctCd === acctCd)
-        account[acctCd] = filter.length
-        eventBus.$emit(['account', acctCd].join('_'), filter.length)
-      }).finally(() => {
-        delete account_lock[acctCd]
-      })
+// 카드정보 버튼 셀 렌더러 (DHTMLX component:{template:'<button @click=crdInfoPop>'} 대체)
+const CrdInfoRenderer = Vue.extend({
+  template: `<button type="button" class="icon far fa-file" @click="open"></button>`,
+  methods: {
+    open() {
+      const v = this.params.data
+      if (v && v.apprNo) this.params.context.parent.openCrdInfo(v.crdNo, v.apprNo)
     }
-  })
-}
+  }
+})
+
+// 스캔증빙 셀 렌더러 (count 표시 + 클릭 시 증빙첨부 팝업)
+const ScanCtRenderer = Vue.extend({
+  template: `<span style="color:#0065b3;cursor:pointer;" @click="open">{{ display }} <i class="far fa-file-alt"></i></span>`,
+  data() {
+    return { display: '0' }
+  },
+  created() {
+    this.refresh()
+  },
+  watch: {
+    'params': { deep: true, handler() { this.refresh() } }
+  },
+  methods: {
+    refresh() {
+      const v = this.params.data
+      if (!v || !v.eaSlipNo) { this.display = this.$numeral(v && v.scanCt).format('0'); return }
+      this.params.context.parent.fetchScanCt(v).then(cnt => {
+        if (cnt !== undefined) { v.scanCt = cnt }
+        this.display = this.$numeral(v.scanCt).format('0')
+      })
+    },
+    open() {
+      this.params.context.parent.openEvidence(this.params.node.rowIndex, this.params.data, this.params.colDef.__sub === true)
+    }
+  }
+})
 
 export default {
   props: ['value', 'status'],
   components: {
-    DhxGrid,
-    Cctr,
-    Account,
-    ErpAccount,
-    Product
+    AgGridVue
   },
   data() {
     return {
       id: 'RO',
       data: [],
       datad: [],
+      gridApi: null,
+      gridApi2: null,
       options: {
         'OIL_KIND_CD': [],
         'TPS_TYPE_CD': []
       },
-      objectPopup:[],
-      objectPopupSub:[],
-      attachRoles:[],
-      config_def: {
-        columns: [{
-          id: 'itemSeq',
-          align: 'center',
-          value: 'No.',
-          width: 35
-        }, {
-          id: 'dcNm',
-          align: 'center',
-          value: '유형',
-          width: 40
-        }, {
-          id: 'taxCd',
-          align: 'center',
-          value: '세금코드',
-          width: 60
-        }, {
-          id: 'cctrCd',
-          align: 'center',
-          value: '비용부서',
-          width: 100
-        }, {
-          id: 'cctrNm',
-          align: 'left',
-          value: '비용부서명',
-          width: 120
-        }, {
-          id: 'acctCd',
-          align: 'center',
-          value: '계정코드',
-          width: 80
-        }, {
-          id: 'acctNm',
-          align: 'left',
-          value: '계정명',
-          width: 140
-        }
-        , {
-          id: 'subAcctCd',
-          align: 'center',
-          value: '보조계정코드',
-          width: 80
-        }, {
-          id: 'subAcctNm',
-          align: 'left',
-          value: '보조계정명',
-          width: 140
-        }, {
-          id: 'productNm',
-          align: '',
-          value: '개발 프로젝트',
-          width: 140
-        }, {
-          id: 'debitAmt',
-          align: 'right',
-          value: '차변금액',
-          width: 90,
-          type: 'ron'
-        }, {
-          id: 'creditAmt',
-          align: 'right',
-          value: '대변금액',
-          width: 90,
-          type: 'ron'
-        }, {
-          id: 'lnSgtxt',
-          align: 'left',
-          value: '적요',
-          width: 150
-        }, {
-          id: 'attribute10',
-          align: 'center',
-          value: '선납부가세<br>증빙유형',
-          width: 50
-        }],
-        height: 300
-      },
-      config_E6: {
-        columns: [{
-          id: 'itemSeq',
-          value: 'No.',
-          width: 35
-        }, {
-          id: 'useDt',
-          value: '사용일자',
-          width: 40,
-          component: {
-            props: ['index', 'value', 'field'],
-            template: `
-              <span>{{ $moment(value.useDt).format('YYYY-MM-DD') }}</span>
-            `
-          }
-        }, {
-          id: 'stptPlc',
-          width: 60,
-          value: '출발지',
-          align: 'left'
-        }, {
-          id: 'dstnPlc',
-          width: 60,
-          value: '도착지',
-          align: 'left'
-        }, {
-          id: 'biztrpObj',
-          width: 100,
-          value: '출장목적',
-          align: 'left'
-        }, {
-          id: 'tpsTypeNm',
-          width: 100,
-          value: '교통비유형'
-        }, {
-          id: 'tpsDst',
-          value: '거리',
-          width: 80,
-          align: 'right',
-          type: 'ron'
-        }, {
-          id: 'oilKindCd',
-          value: '유종',
-          width: 100,
-          component: {
-            template: `<span>{{ text }}</span>`,
-            props: ['index', 'value', 'field'],
-            data() {
-              return {
-                text: undefined
-              }
-            },
-            methods: {
-              setText() {
-                let vm = this.$parent.$parent
-                if (vm.options['OIL_KIND_CD'].length > 0) {
-                  let result = vm.options['OIL_KIND_CD'].filter(x => x.detailCd === this.value[this.field])[0]
-                  if (result !== undefined) {
-                    this.text = result.detailNm
-                  }
-                }
-              }
-            },
-            created() {
-              this.setText()
-              this.$parent.$parent.$on('options.OIL_KIND_CD.updated', () => {
-                this.setText()
-              })
-            }
-          }
-        }, {
-          id: 'oilUpc',
-          value: '유류단가/연비',
-          width: 80,
-          component: {
-            props: ['index', 'value', 'field'],
-            template: `<span v-if="value.oilUpc && value.oilEff">{{ this.$numeral(value.oilUpc).format('0,0') }} / {{ this.$numeral(value.oilEff).format('0,0') }}</span>`
-          }
-        }, {
-          id: 'acctAmt',
-          value: '사용금액',
-          width: 90,
-          align: 'right',
-          type: 'ron'
-        }, {
-          id: 'acctCd',
-          align: 'center',
-          value: '계정코드',
-          width: 50
-        }, {
-          id: 'acctNm',
-          align: 'left',
-          value: '계정명',
-          width: 80
-        }],
-        height: 220
-      },
-      // config_E7: {
-      config_E1: {
-        columns: [
-            { id: 'itemSeq', value: 'No.', width: 35}
-          , { id: 'postDt', value: '회계일자', width: 100, align: 'left', type: 'ro'}
-          , { id: 'deptCd', align: 'center', value: '부서', hidden: true}
-          , { id: 'deptNm', align: 'left', value: '부서', width: 120, type: 'ron'}
-          , { id: 'expenseAcctCode', value: '', type: 'ron', hidden: true}
-          , { id: 'expenseAcctName', align: 'left', value: '계정명', width: 120, type: 'ron'}
-          , { id: 'expenseAcctNameSub', align: 'left', value: '보조계정명', width: 180, type: 'ron'}
-          , { id: 'supAmt', value: '공급가액', width: 100, align: 'right', type: 'ron'}
-          , { id: 'vatAmt', value: '세액', width: 100, align: 'right', type: 'ron'}
-          , { id: 'useAmt', value: '금액', width: 100, align: 'right', type: 'ron'}
-          , { id: 'crdMerchNm', value: '가맹점명', width: 150, align: 'left', type: 'ron'}
-          , { id: 'lnSgtxt', value: '적요', width: 150, align: 'left', type: 'ron'}
-          , { id: 'detailNm', align: 'left', value: '개발 프로젝트', width: 120, type: 'ron'}
-          , { id: 'vatYn', width: 90, value: '부가세포함', type: 'ron', component: GridSelect, hide: true,
-            mixin: {
-              data() {
-                return {
-                  options: [{
-                    detailCd: 'N',
-                    detailNm: '선택안함'
-                  }, {
-                    detailCd: 'Y',
-                    detailNm: '선택'
-                  }]
-                }
-              },
-              created() {
-                this.disable = true
-                this.update()
-                eventBus.$on('OPTIONS.USE_SELECT_CD', () => {
-                  this.update()
-                })
-              },
-              methods: {
-                update() {
-                  this.options = options['USE_SELECT_CD']
-
-                  if (Array.isArray(this.options) && this.options.length > 0) {
-                    let found = this.options.filter(x => x[this.detailCd] === this.data)[0]
-                    if (found === undefined) {
-                      this.data = this.options[0][this.detailCd]
-                      this.value[this.field] = this.data
-                      this.$emit('input', this.value)
-                    }
-                  }
-
-                  return function() {}
-                }
-              },
-              watch: {
-                value: {
-                  immediate: true,
-                  deep: true,
-                  handler() {
-
-                  }
-                }
-              }
-
-            }
-          }
-          , { id: 'vatNm', width: 120, value: '세금코드'}
-          , { id: 'crdPssrNm', width: 120, value: '카드소유주'}
-          , { id: 'crdInfo', value: '카드정보', width: 100,
-            component: {
-              props: ['index', 'value', 'field'],
-              template: `<button type="button" class="icon far fa-file" @click="crdInfoPop"></button>`,
-              methods: {
-                crdInfoPop(r) {
-                  if (this.value.apprNo) {
-                    this.open(this.value.crdNo, this.value.apprNo)
-                  }
-                },
-                open(crdNo, apprNo) {
-                  this.$modal.open({
-                    component: CardInfoDetailPop,
-                    parent: this,
-                    props: {
-                      apprNo: apprNo,
-                      crdNo: crdNo
-                    },
-                    width: 700
-                  })
-                }
-              }
-            }
-          }
-          , { id: 'scanCt', value: '스캔증빙', width: 100,
-            component: {
-              props: ['index', 'value', 'field'],
-              template: `<span style="color: #0065b3;" @click="openUploadEvidencePopup()">{{ this.$numeral(value.scanCt).format('0') }} <i class="far fa-file-alt"></i></span>`,
-              created() {
-                this.scanFileCount();
-              },
-              watch: {
-                value: {
-                  immediate: true,
-                  deep: true,
-                  handler() {
-                    this.scanFileCount();
-                  }
-                }
-              },
-              methods: {
-                scanFileCount() {
-                  const val = this.$parent.value[this.index]
-                  this.$http.get(`/api/evid/fileList/${this.value.eaSlipNo}`)
-                      .then(response => {
-                        val.scanCt = ((response.data || {}).aFiles || []).length
-                      })
-                },
-                openUploadEvidencePopup() {
-                  let vm = this
-                  let rdoCtrl = vm.$parent.$parent.status.readonly
-                  /*
-                    - 작성자 후첨 -
-                    결재요청, 결재진행, 결재완료 전표 중 작성자와 접속자가 동일한 경우, 후첨 가능하도록 변경
-                    단, 기 첨부된 증빙은 삭제할 수 없음
-                  */
-                  if(vm.$parent.$parent.status.memento[0].slipStatCd === '20'
-                      || vm.$parent.$parent.status.memento[0].slipStatCd === '30'
-                      || vm.$parent.$parent.status.memento[0].slipStatCd === '50') {
-                    if(vm.$parent.$parent.status.memento[0].wrtId === vm.$parent.$parent.$store.state.loginInfo.loginId) {
-                      rdoCtrl = false
-                    }
-                  }
-
-                  /*
-                    - 재경팀 후첨 -
-                    재경확정 전표는 재경팀에서 후첨 가능하도록 변경
-                    단, 기 첨부된 증빙은 삭제할 수 없음
-                  */
-                  if(vm.$parent.$parent.status.memento[0].slipStatCd === '20'
-                      || vm.$parent.$parent.status.memento[0].slipStatCd === '30'
-                      || vm.$parent.$parent.status.memento[0].slipStatCd === '50') {
-                    let authorityRoleChecked = vm.$parent.$parent.attachRoles
-                        .filter(x=>x.detailCd === vm.$parent.$parent.$store.state.loginInfo.authorities[0].roleCd);
-                    if(authorityRoleChecked.length > 0){
-                      rdoCtrl = false
-                    }
-                    // if(vm.$parent.$parent.$store.state.loginInfo.authorities[0].roleCd === 'ADMIN' ||
-                    //     vm.$parent.$parent.$store.state.loginInfo.authorities[0].roleCd === 'P_USER'||
-                    //     vm.$parent.$parent.$store.state.loginInfo.authorities[0].roleCd === 'F_USER') {
-                    //   rdoCtrl = false
-                    // }
-                  }
-
-                  const val = this.$parent.value[this.index]
-
-                  let url = '/evidAtchPopModeless?docMngNo=' + vm.value.eaSlipNo + '&readonly='+ vm.$parent.$parent.status.readonly + '&readonlyCtrl='+ rdoCtrl;
-
-                  if(!(!vm.$parent.$parent.objectPopup[this.index] || vm.$parent.$parent.objectPopup[this.index].closed)){
-                    vm.$parent.$parent.objectPopup[this.index].focus();
-                  }else{
-                    vm.$parent.$parent.objectPopup[this.index] = window.open(url, '_blank', 'toolbar=0,location=0,menubar=0,resizable=yes');
-                  }
-                  //팝업 Close Callback
-                  //브라우저 체크(IE 체크)
-                  var agent = navigator.userAgent.toLowerCase();
-
-                  if ((navigator.appName == 'Netscape' && navigator.userAgent.search('Trident') != -1) || (agent.indexOf("msie") != -1)){
-                    vm.$parent.$parent.objectPopup[this.index].attachEvent("onunload",function(){
-                      val.scanCt = localStorage.getItem("popFileCnt")
-                      vm.$forceUpdate();
-                    });
-                  }else{
-                    vm.$parent.$parent.objectPopup[this.index].onbeforeunload = function(){
-                      val.scanCt = localStorage.getItem("popFileCnt")
-                      vm.$forceUpdate();
-                    };
-                  }
-
-                  // this.$modal.open({
-                  //     component: EvidAtchPop,
-                  //     props: {
-                  //         docMngNo: vm.value.eaSlipNo,
-                  //         readonly: vm.$parent.$parent.status.readonly,
-                  //         readonlyCtrl: rdoCtrl
-                  //     },
-                  //     parent: this,
-                  //     width: 1200,
-                  //     events: {
-                  //         close(value) {
-                  //           val.scanCt = value.length
-                  //           //스캔증빙 카운팅 벨류 강제 업데이트
-                  //           vm.$forceUpdate();
-                  //         }
-                  //     }
-                  // })
-                }
-              },
-            }
-          },
-        ],
-        height: 260,
-        afterRefreshData(grid, data) {
-          this.$nextTick(() => {
-            _.forEach(data, (item, index) => {
-              let rId = index + 1
-              if (grid.cells(rId, 1).getValue()) grid.cells(rId, 1).setValue(this.$moment(grid.cells(rId, 1).getValue()).format('YYYY-MM-DD'));
-            })
-          })
-          grid.setDateFormat('%Y-%m-%d', '%Y%m%d')
-          grid.setColumnHidden(2,true)
-          grid.setColumnHidden(4,true)
-          grid.setColumnHidden(25,true)
-          grid.setNumberFormat('0,000', 7, '.', ',')
-          grid.setNumberFormat('0,000', 8, '.', ',')
-          grid.setNumberFormat('0,000', 9, '.', ',')
-          grid.setNumberFormat('0,000', 21, '.', ',')
-          grid.setNumberFormat('0,000', 24, '.', ',')
-        }
-      },
-      config_E1_2: {
-
-        columns: [
-            { id: 'itemSeq', align: 'center', value: 'No.', type: 'cntr', width: 35}
-          , { id: 'eaSlipDt', value: '회계일자', width: 100, align: 'left', type: 'ro'}
-          , { id: 'deptCd', align: 'center', type: 'ron', value: '부서', hidden: true}
-          , { id: 'deptNm', align: 'left', value: '부서', type: 'ron', width: 100,}
-          , { id: 'expenseAcctName2', align: 'left', value: '계정명', width: 120, type: 'ron'}
-          , { id: 'expenseAcctNameSub2', align: 'left', value: '보조계정명', width: 180, type: 'ron'}
-          , { id: 'useAmt2', value: '금액', width: 120, align: 'right', type: 'ron'}
-          , { id: 'curCd', value: '통화', width: 100, align: 'center', type: 'ron'}
-          , { id: 'excRt', value: '환율', width: 100, align: 'right', type: 'ron'}
-          , { id: 'krwTotAmt', value: '원화금액', width: 130, align: 'right', type: 'ron'}
-          , { id: 'evdCustNm', align: 'left', value: '가맹점', type: 'ron', width: 200}
-          , { id: 'payCustNm', align: 'left', value: '지급처', type: 'ron', width: 200}
-          , { id: 'lnSgtxt', align: 'left', value: '적요', type: 'ron', width: 200}
-          , { id: 'detailNm2', align: 'left', value: '개발 프로젝트', width: 120, type: 'ron'}
-          , {
-            id: 'scanCt',
-            value: '스캔증빙',
-            width: 100,
-            component: {
-              props: ['index', 'value', 'field'],
-              template: `<span style="color: #0065b3;" @click="openUploadEvidencePopup()">{{ this.$numeral(value.scanCt).format('0') }} <i class="far fa-file-alt"></i></span>`,
-              created() {
-                this.scanFileCount();
-              },
-              watch: {
-                value: {
-                  immediate: true,
-                  deep: true,
-                  handler() {
-                    this.scanFileCount();
-                  }
-                }
-              },
-              methods: {
-                scanFileCount() {
-                  const val = this.$parent.value[this.index]
-                  this.$http.get(`/api/evid/fileList/${this.value.eaSlipNo}`)
-                      .then(response => {
-                        val.scanCt = ((response.data || {}).aFiles || []).length
-                      })
-                },
-                openUploadEvidencePopup() {
-                  let vm = this
-                  let rdoCtrl = vm.$parent.$parent.status.readonly
-
-                  /*
-                    - 작성자 후첨 -
-                    결재요청, 결재진행, 결재완료 전표 중 작성자와 접속자가 동일한 경우, 후첨 가능하도록 변경
-                    단, 기 첨부된 증빙은 삭제할 수 없음
-                  */
-                  if(vm.$parent.$parent.status.memento[0].slipStatCd === '20'
-                      || vm.$parent.$parent.status.memento[0].slipStatCd === '30'
-                      || vm.$parent.$parent.status.memento[0].slipStatCd === '50') {
-                    if(vm.$parent.$parent.status.memento[0].wrtId === vm.$parent.$parent.$store.state.loginInfo.loginId) {
-                      rdoCtrl = false
-                    }
-                  }
-                  /*
-                    - 재경팀 후첨 -
-                    재경확정 전표는 재경팀에서 후첨 가능하도록 변경
-                    단, 기 첨부된 증빙은 삭제할 수 없음
-                  */
-                  if(vm.$parent.$parent.status.memento[0].slipStatCd === '20'
-                      || vm.$parent.$parent.status.memento[0].slipStatCd === '30'
-                      || vm.$parent.$parent.status.memento[0].slipStatCd === '50') {
-                    let authorityRoleChecked = vm.$parent.$parent.attachRoles
-                        .filter(x=>x.detailCd === vm.$parent.$parent.$store.state.loginInfo.authorities[0].roleCd);
-                    if(authorityRoleChecked.length > 0) {
-                      rdoCtrl = false
-                    }
-                    // if(vm.$parent.$parent.$store.state.loginInfo.authorities[0].roleCd === 'ADMIN' ||
-                    //     vm.$parent.$parent.$store.state.loginInfo.authorities[0].roleCd === 'P_USER'||
-                    //     vm.$parent.$parent.$store.state.loginInfo.authorities[0].roleCd === 'F_USER') {
-                    //   rdoCtrl = false
-                    // }
-                  }
-
-                  const val = this.$parent.value[this.index]
-                  let url = '/evidAtchPopModeless?docMngNo=' + vm.value.eaSlipNo + '&readonly='+ vm.$parent.$parent.status.readonly + '&readonlyCtrl='+ rdoCtrl;
-
-                  if(!(!vm.$parent.$parent.objectPopupSub[this.index] || vm.$parent.$parent.objectPopupSub[this.index].closed)){
-                    vm.$parent.$parent.objectPopupSub[this.index].focus();
-                  }else{
-                    vm.$parent.$parent.objectPopupSub[this.index] = window.open(url, '_blank', 'toolbar=0,location=0,menubar=0,resizable=yes');
-                  }
-                  //팝업 Close Callback
-                  //브라우저 체크(IE 체크)
-                  var agent = navigator.userAgent.toLowerCase();
-
-                  if ((navigator.appName == 'Netscape' && navigator.userAgent.search('Trident') != -1) || (agent.indexOf("msie") != -1)){
-                    vm.$parent.$parent.objectPopupSub[this.index].attachEvent("onunload",function(){
-                      val.scanCt = localStorage.getItem("popFileCnt")
-                      vm.$forceUpdate();
-                    });
-                  }else{
-                    vm.$parent.$parent.objectPopupSub[this.index].onbeforeunload = function(){
-                      val.scanCt = localStorage.getItem("popFileCnt")
-                      vm.$forceUpdate();
-                    };
-                  }
-                }
-              },
-            }
-          }
-          //, { id: 'address', align: 'left', value: '주소', type: 'ron', width: 200 }
-        ],
-        //////////////////////////////////
-        height: 260,
-        afterRefreshData(grid, data) {
-          this.$nextTick(() => {
-            _.forEach(data, (item, index) => {
-              let rId = index + 1
-              if (grid.cells(rId, 1).getValue()) grid.cells(rId, 1).setValue(this.$moment(grid.cells(rId, 1).getValue()).format('YYYY-MM-DD'));
-            })
-          })
-        }
-        
-      },
-      config_E2: {
-          columns: [{
-            id: 'itemSeq',
-            value: 'No.',
-            width: 35
-          },
-          {
-            id: 'deptCd',
-            align: 'center',
-            value: '비용부서코드',
-            width: 80,
-            hide: true
-          }, {
-            id: 'deptNm',
-            align: 'left',
-            value: '부서',
-            width: 80,
-            type: 'ron'
-          }, 
-          {
-            id: 'acctCd',
-            align: 'center',
-            value: '계정코드',
-            width: 80,
-            hide: true
-          }, {
-            id: 'acctNm',
-            align: 'left',
-            value: '계정명',
-            width: 140,
-            type: 'ron'
-          },  
-          {
-            id: 'acctCdSub',
-            align: 'center',
-            value: '보조계정코드',
-            width: 80,
-            hide: true
-          }, {
-            id: 'acctNmSub',
-            align: 'left',
-            value: '보조계정명',
-            width: 140,
-            type: 'ron'
-          },
-          {
-            id: 'detailCd',
-            align: 'left',
-            value: '',
-            type: 'ron',
-            hide: true
-          },{
-            id: 'detailNm',
-            align: 'center',
-            value: '개발 프로젝트',
-            width: 140,
-            type: 'ro'
-          }, 
-          {
-            id: 'vatYn',
-            width: 65,
-            value: '부가세포함',
-            type: 'ron',
-            component: GridSelect,
-            hide: true,
-            mixin: {
-              data() {
-                return {
-                  options: [{
-                    detailCd: 'N',
-                    detailNm: '선택안함'
-                  }, {
-                    detailCd: 'Y',
-                    detailNm: '선택'
-                  }]
-                }
-              },
-              created() {
-                this.disable = true
-                this.update()
-                eventBus.$on('OPTIONS.USE_SELECT_CD', () => {
-                  this.update()
-                })
-              },
-              methods: {
-                update() {
-                  this.options = options['USE_SELECT_CD']
-                  
-                  if (Array.isArray(this.options) && this.options.length > 0) {
-                    let found = this.options.filter(x => x[this.detailCd] === this.data)[0]
-                    if (found === undefined) {
-                      this.data = this.options[0][this.detailCd]
-                      this.value[this.field] = this.data
-                      this.$emit('input', this.value)
-                    }
-                  }
-
-                  return function() {}
-                }
-              },
-              watch: {
-                value: {
-                  immediate: true,
-                  deep: true,
-                  handler() {
-
-                  }
-                }
-              }
-              
-            }
-          }, {
-            id: 'useAmt',
-            value: '금액',
-            width: 80,
-            type: 'ron',
-            align: 'right',
-          }, {
-            id: 'taxCd',
-            width: 80,
-            type: 'ro',
-            hide: true
-          }, {
-            id: 'taxNm',
-            value: '세금코드',
-            width: 80,
-            type: 'ro',
-            align: 'right',
-            hide: true
-          }, {
-            id: 'lnSgtxt',
-            value: '적요',
-            width: 400,
-            align: 'left',
-            type: 'ron'
-          }, 
-        ],
-      },
-      config_E5: {
-        columns: [{
-          id: 'itemSeq',
-          align: 'center',
-          value: 'No.',
-          width: 35
-        }, {
-          id: 'dcNm',
-          align: 'center',
-          value: '유형',
-          width: 40
-        }, {
-          id: 'taxCd',
-          align: 'center',
-          value: '세금코드',
-          width: 60
-        }, {
-          id: 'cctrCd',
-          align: 'center',
-          value: '비용부서',
-          width: 100
-        }, {
-          id: 'cctrNm',
-          align: 'left',
-          value: '비용부서명',
-          width: 120
-        }, {
-          id: 'acctCd',
-          align: 'center',
-          value: '계정코드',
-          width: 80
-        }, {
-          id: 'acctNm',
-          align: 'left',
-          value: '계정명',
-          width: 140
-        }
-        , {
-          id: 'subAcctCd',
-          align: 'center',
-          value: '보조계정코드',
-          width: 80
-        }, {
-          id: 'subAcctNm',
-          align: 'left',
-          value: '보조계정명',
-          width: 140
-        }, {
-          id: 'productNm',
-          align: 'left',
-          value: '개발 프로젝트',
-          width: 140
-        }, {
-          id: 'debitAmt',
-          align: 'right',
-          value: '차변금액',
-          width: 90,
-          type: 'ron'
-        }, {
-          id: 'creditAmt',
-          align: 'right',
-          value: '대변금액',
-          width: 90,
-          type: 'ron'
-        }, {
-          id: 'lnSgtxt',
-          align: 'left',
-          value: '적요',
-          width: 150
-        }],
-        height: 300
-      },      
-    
+      objectPopup: [],
+      objectPopupSub: [],
+      attachRoles: [],
+      gridOptions: { context: { parent: this } },
+      gridOptions2: { context: { parent: this } },
+      defaultColDef: { resizable: true, sortable: false, filter: false },
+      frameworkComponents: { crdInfoBtn: CrdInfoRenderer, scanCtCell: ScanCtRenderer }
     }
   },
   computed: {
-    config() {
+    gridHeight() {
       switch (this.value.slipTypeCd) {
-        case 'E6':
-          return this.config_E6
+        case 'E6': return 220
         case 'E1':
-          return this.config_E1
-        case 'E2':
-          return this.config_E2
-        case 'E5':
-          return this.config_E5
-        default:
-          return this.config_def
+        case 'E2': return 260
+        default: return 300
       }
+    },
+    columnDefs() {
+      switch (this.value.slipTypeCd) {
+        case 'E6': return this.makeE6Cols()
+        case 'E1': return this.makeE1Cols()
+        case 'E2': return this.makeE2Cols()
+        case 'E5': return this.makeDefCols()
+        default: return this.makeDefCols()
+      }
+    },
+    columnDefs2() {
+      return this.makeE1_2Cols()
+    },
+    // 합계 푸터 (DHTMLX attachHeader #stat_total 대체) — def/E5/E6 만
+    pinnedBottomRowData() {
+      const st = this.value.slipTypeCd
+      if (st === 'E6') {
+        return [{ itemSeq: '합계', acctAmt: this.sum('acctAmt') }]
+      } else if (st === undefined || st === '' || st === 'E5' || ['E3', 'E4', 'E7'].indexOf(st) >= 0) {
+        return [{ dcNm: '합계', debitAmt: this.sum('debitAmt'), creditAmt: this.sum('creditAmt') }]
+      }
+      return null
     }
   },
   created() {
-    this.$watch(() => this.value.slipDetails, (nValue, oValue) => {
-      if (nValue === undefined) {
-        this.data = []
-      } else if (nValue !== undefined && Array.isArray(nValue)) {
-        this.data = this.value.slipDetails
-      }
-    }, {
-      immediate: true,
-      deep: true
-    })
+    this.$watch(() => this.value.slipDetails, (nValue) => {
+      this.data = (nValue !== undefined && Array.isArray(nValue)) ? this.value.slipDetails : []
+      this.mapAttribute10()
+    }, { immediate: true, deep: true })
 
-    this.$watch(() => this.value.slipDetails2, (nValue, oValue) => {
-      if (nValue === undefined) {
-        this.datad = []
-      } else if (nValue !== undefined && Array.isArray(nValue)) {
-        this.datad = this.value.slipDetails2
-      }
-    }, {
-      immediate: true,
-      deep: true
-    })
+    this.$watch(() => this.value.slipDetails2, (nValue) => {
+      this.datad = (nValue !== undefined && Array.isArray(nValue)) ? this.value.slipDetails2 : []
+    }, { immediate: true, deep: true })
 
     this.setAttachRoles()
 
-    this.$http.get('/api/code/detail', {
-      params: {
-        groupCd: 'TPS_TYPE_CD'
-      }
-    }).then(response => {
-      this.options['TPS_TYPE_CD'] = response.data
-      this.$emit('options.TPS_TYPE_CD.updated', response.data)
-    })
+    this.$http.get('/api/code/detail', { params: { groupCd: 'TPS_TYPE_CD' } })
+      .then(response => { this.options['TPS_TYPE_CD'] = response.data })
 
-    this.$http.get('/api/code/detail', {
-      params: {
-        groupCd: 'OIL_KIND_CD'
-      }
-    }).then(response => {
-      this.options['OIL_KIND_CD'] = response.data
-      this.$emit('options.OIL_KIND_CD.updated', response.data)
-    })
+    this.$http.get('/api/code/detail', { params: { groupCd: 'OIL_KIND_CD' } })
+      .then(response => { this.options['OIL_KIND_CD'] = response.data })
   },
   methods: {
-    constructGridSuccessful(grid) {
-      var header_style = 'color:#222;text-align:center;'
-      var stat_total_text = 'color:red;text-align:right;padding-right:10px !important;'
-      if (this.value.slipTypeCd === 'E6') {
-        grid.attachHeader(
-          ['합계', '#cspan', '#cspan', '#cspan', '#cspan', '#cspan', '#cspan', '#cspan', '#cspan', '#stat_total', '', ''],
-          [header_style, '', '', '', '', '', '', '', '', stat_total_text, '', '']
-        )
-        grid.setNumberFormat('0,000', 6, '.', ',')
-        grid.setNumberFormat('0,000', 9, '.', ',')
-      
-      } else if(this.value.slipTypeCd === 'E1') {
-        
-        grid.attachHeader([],[])
-
-        grid.setDateFormat('%Y-%m-%d', '%Y%m%d')
-        grid.setColumnHidden(2,true)
-        grid.setColumnHidden(4,true)
-        grid.setColumnHidden(25,true)
-        grid.setNumberFormat('0,000', 7, '.', ',')
-        grid.setNumberFormat('0,000', 8, '.', ',')
-        grid.setNumberFormat('0,000', 9, '.', ',')
-        grid.setNumberFormat('0,000', 21, '.', ',')
-        grid.setNumberFormat('0,000', 24, '.', ',')
-      } else if(this.value.slipTypeCd === 'E2') {
-        grid.attachHeader([],[])
-        grid.setDateFormat('%Y-%m-%d', '%Y%m%d')
-        
-		    //2020.07.16 E2(read) 통화에 따른 소수점 표시
-        if(this.value.slipTypeCd === 'E2') {
-          // grid.setColumnHidden(10,true)
-          if(this.$parent.value.curCd === 'KRW'){
-            grid.setNumberFormat('0,000', 10, '.', ',')
-          }else{
-            grid.setNumberFormat('0,000.000', 10, '.', ',')
-          }
-        }else{
-          grid.setNumberFormat('0,000.000', 10, '.', ',')
-        }
-      } else if(this.value.slipTypeCd === 'E5') {
-        
-        grid.attachHeader(
-          ['합계', '#cspan', '#cspan', '#cspan',  '#cspan', '#cspan', '#cspan', '#cspan', '#cspan', '#cspan', '#stat_total', '#stat_total', ''],
-          [header_style, '', '', '', '', '', '', '', '', '',  stat_total_text, stat_total_text, '']
-        )
-        grid.setNumberFormat('0,000', 10, '.', ',')
-        grid.setNumberFormat('0,000', 11, '.', ',')        
-      
-      }else {
-        grid.attachHeader(
-          ['합계', '#cspan', '#cspan', '#cspan',  '#cspan', '#cspan', '#cspan', '#cspan', '#cspan', '#cspan', '#stat_total', '#stat_total', '',''],
-          [header_style, '', '', '', '', '', '', '', '', '',  stat_total_text, stat_total_text, '']
-        )
-        grid.setNumberFormat('0,000', 10, '.', ',')
-        grid.setNumberFormat('0,000', 11, '.', ',')
-
-        this.data.forEach(x => {
-          if(x.dcCd === 'D' && x.lnTypeCd === 'TAX') {
-            if(x.attribute10 === '0') {
-              x.attribute10 = '기타'
-            } else if(x.attribute10 === '1') {
-              x.attribute10 = '종이'
-            } else if(x.attribute10 === '2') {
-              x.attribute10 = '전자'
-            } else {
-              if(this.value.slipTypeCd === 'E4') {
-                x.attribute10 = '종이'
-              }else {
-                x.attribute10 = '전자'
-              }
-            }
-          }
-        })
-        
-      }
-      grid.callEvent('ongridreconstructed', [])
+    onGridReady(params) { this.gridApi = params.api },
+    onGridReady2(params) { this.gridApi2 = params.api },
+    sum(field) {
+      return this.data.reduce((a, r) => a + this.$numeral(r && r[field]).value(), 0)
     },
-    constructGridSuccessful2(grid) {
-      grid.attachHeader([])
-      grid.setDateFormat('%Y-%m-%d', '%Y%m%d')
-      grid.setNumberFormat('0,000', 6, '.', ',')
-      grid.setNumberFormat('0,000.00', 8, '.', ',')
-      grid.setNumberFormat('0,000', 9, '.', ',')
-      grid.setColumnHidden(2, true)
+    // ===== 공통 포맷터 =====
+    fmtAmt(p) {
+      if (p.value == null || p.value === '') return ''
+      return this.$numeral(p.value).format('0,0')
     },
-    setAttachRoles(){
-      this.$store.commit('loading')
-
-      this.$http.get('/api/code/detail', {params: {groupCd: "ATTACH_ROLE"}})
-          .then(response => {
-            this.attachRoles = response.data;
-
-          }).catch(response => {
-        console.error("getAttchRole Error " + response.message);
-
-      }).finally(() => {
-        this.$store.commit('finish')
+    fmtAmt3(p) {
+      if (p.value == null || p.value === '') return ''
+      return this.$numeral(p.value).format('0,0.000')
+    },
+    fmtDate(p) {
+      return p.value ? this.$moment(p.value).format('YYYY-MM-DD') : ''
+    },
+    L(align) { return { textAlign: align || 'left' } },
+    // ===== columnDefs 빌더 (DHTMLX config.columns 매핑) =====
+    makeDefCols() {
+      const that = this
+      return [
+        { headerName: 'No.', valueGetter: p => p.node.rowIndex + 1, width: 45, cellStyle: that.L('center') },
+        { headerName: '유형', field: 'dcNm', width: 50, cellStyle: that.L('center') },
+        { headerName: '세금코드', field: 'taxCd', width: 70, cellStyle: that.L('center') },
+        { headerName: '비용부서', field: 'cctrCd', width: 100, cellStyle: that.L('center') },
+        { headerName: '비용부서명', field: 'cctrNm', width: 120, cellStyle: that.L('left') },
+        { headerName: '계정코드', field: 'acctCd', width: 80, cellStyle: that.L('center') },
+        { headerName: '계정명', field: 'acctNm', width: 140, cellStyle: that.L('left') },
+        { headerName: '보조계정코드', field: 'subAcctCd', width: 80, cellStyle: that.L('center') },
+        { headerName: '보조계정명', field: 'subAcctNm', width: 140, cellStyle: that.L('left') },
+        { headerName: '개발 프로젝트', field: 'productNm', width: 140, cellStyle: that.L('left') },
+        { headerName: '차변금액', field: 'debitAmt', width: 100, cellStyle: that.L('right'), valueFormatter: that.fmtAmt },
+        { headerName: '대변금액', field: 'creditAmt', width: 100, cellStyle: that.L('right'), valueFormatter: that.fmtAmt },
+        { headerName: '적요', field: 'lnSgtxt', flex: 1, minWidth: 150, cellStyle: that.L('left') },
+        { headerName: '선납부가세 증빙유형', field: 'attribute10', width: 90, cellStyle: that.L('center') }
+      ]
+    },
+    makeE5Cols() { return this.makeDefCols() },
+    makeE6Cols() {
+      const that = this
+      return [
+        { headerName: 'No.', valueGetter: p => p.node.rowIndex + 1, width: 45, cellStyle: that.L('center') },
+        { headerName: '사용일자', field: 'useDt', width: 100, cellStyle: that.L('center'), valueFormatter: that.fmtDate },
+        { headerName: '출발지', field: 'stptPlc', width: 80, cellStyle: that.L('left') },
+        { headerName: '도착지', field: 'dstnPlc', width: 80, cellStyle: that.L('left') },
+        { headerName: '출장목적', field: 'biztrpObj', width: 120, cellStyle: that.L('left') },
+        { headerName: '교통비유형', field: 'tpsTypeNm', width: 100, cellStyle: that.L('center') },
+        { headerName: '거리', field: 'tpsDst', width: 80, cellStyle: that.L('right'), valueFormatter: that.fmtAmt },
+        {
+          headerName: '유종', field: 'oilKindCd', width: 100, cellStyle: that.L('center'),
+          valueGetter: p => {
+            const r = (that.options['OIL_KIND_CD'] || []).filter(x => x.detailCd === (p.data && p.data.oilKindCd))[0]
+            return r ? r.detailNm : ''
+          }
+        },
+        {
+          headerName: '유류단가/연비', field: 'oilUpc', width: 100, cellStyle: that.L('center'),
+          valueGetter: p => {
+            const v = p.data || {}
+            return (v.oilUpc && v.oilEff) ? `${that.$numeral(v.oilUpc).format('0,0')} / ${that.$numeral(v.oilEff).format('0,0')}` : ''
+          }
+        },
+        { headerName: '사용금액', field: 'acctAmt', width: 100, cellStyle: that.L('right'), valueFormatter: that.fmtAmt },
+        { headerName: '계정코드', field: 'acctCd', width: 60, cellStyle: that.L('center') },
+        { headerName: '계정명', field: 'acctNm', flex: 1, minWidth: 100, cellStyle: that.L('left') }
+      ]
+    },
+    makeE2Cols() {
+      const that = this
+      const krw = this.$parent && this.$parent.value && this.$parent.value.curCd === 'KRW'
+      return [
+        { headerName: 'No.', valueGetter: p => p.node.rowIndex + 1, width: 45, cellStyle: that.L('center') },
+        { headerName: '비용부서코드', field: 'deptCd', hide: true },
+        { headerName: '부서', field: 'deptNm', width: 100, cellStyle: that.L('left') },
+        { headerName: '계정코드', field: 'acctCd', hide: true },
+        { headerName: '계정명', field: 'acctNm', width: 140, cellStyle: that.L('left') },
+        { headerName: '보조계정코드', field: 'acctCdSub', hide: true },
+        { headerName: '보조계정명', field: 'acctNmSub', width: 140, cellStyle: that.L('left') },
+        { headerName: '개발 프로젝트', field: 'detailNm', width: 140, cellStyle: that.L('center') },
+        { headerName: '금액', field: 'useAmt', width: 110, cellStyle: that.L('right'), valueFormatter: krw ? that.fmtAmt : that.fmtAmt3 },
+        { headerName: '적요', field: 'lnSgtxt', flex: 1, minWidth: 200, cellStyle: that.L('left') }
+      ]
+    },
+    makeE1Cols() {
+      const that = this
+      return [
+        { headerName: 'No.', valueGetter: p => p.node.rowIndex + 1, width: 45, cellStyle: that.L('center') },
+        { headerName: '회계일자', field: 'postDt', width: 100, cellStyle: that.L('left'), valueFormatter: that.fmtDate },
+        { headerName: '부서', field: 'deptCd', hide: true },
+        { headerName: '부서', field: 'deptNm', width: 120, cellStyle: that.L('left') },
+        { headerName: '', field: 'expenseAcctCode', hide: true },
+        { headerName: '계정명', field: 'expenseAcctName', width: 120, cellStyle: that.L('left') },
+        { headerName: '보조계정명', field: 'expenseAcctNameSub', width: 180, cellStyle: that.L('left') },
+        { headerName: '공급가액', field: 'supAmt', width: 100, cellStyle: that.L('right'), valueFormatter: that.fmtAmt },
+        { headerName: '세액', field: 'vatAmt', width: 100, cellStyle: that.L('right'), valueFormatter: that.fmtAmt },
+        { headerName: '금액', field: 'useAmt', width: 100, cellStyle: that.L('right'), valueFormatter: that.fmtAmt },
+        { headerName: '가맹점명', field: 'crdMerchNm', width: 150, cellStyle: that.L('left') },
+        { headerName: '적요', field: 'lnSgtxt', width: 150, cellStyle: that.L('left') },
+        { headerName: '개발 프로젝트', field: 'detailNm', width: 120, cellStyle: that.L('left') },
+        { headerName: '세금코드', field: 'vatNm', width: 120, cellStyle: that.L('center') },
+        { headerName: '카드소유주', field: 'crdPssrNm', width: 120, cellStyle: that.L('center') },
+        { headerName: '카드정보', field: 'crdInfo', width: 90, cellStyle: that.L('center'), cellRenderer: 'crdInfoBtn' },
+        { headerName: '스캔증빙', field: 'scanCt', width: 100, cellStyle: that.L('center'), cellRenderer: 'scanCtCell' }
+      ]
+    },
+    makeE1_2Cols() {
+      const that = this
+      return [
+        { headerName: 'No.', valueGetter: p => p.node.rowIndex + 1, width: 45, cellStyle: that.L('center') },
+        { headerName: '회계일자', field: 'eaSlipDt', width: 100, cellStyle: that.L('left'), valueFormatter: that.fmtDate },
+        { headerName: '부서', field: 'deptCd', hide: true },
+        { headerName: '부서', field: 'deptNm', width: 100, cellStyle: that.L('left') },
+        { headerName: '계정명', field: 'expenseAcctName2', width: 120, cellStyle: that.L('left') },
+        { headerName: '보조계정명', field: 'expenseAcctNameSub2', width: 180, cellStyle: that.L('left') },
+        { headerName: '금액', field: 'useAmt2', width: 120, cellStyle: that.L('right'), valueFormatter: that.fmtAmt },
+        { headerName: '통화', field: 'curCd', width: 80, cellStyle: that.L('center') },
+        { headerName: '환율', field: 'excRt', width: 100, cellStyle: that.L('right'), valueFormatter: that.fmtAmt3 },
+        { headerName: '원화금액', field: 'krwTotAmt', width: 130, cellStyle: that.L('right'), valueFormatter: that.fmtAmt },
+        { headerName: '가맹점', field: 'evdCustNm', width: 200, cellStyle: that.L('left') },
+        { headerName: '지급처', field: 'payCustNm', width: 200, cellStyle: that.L('left') },
+        { headerName: '적요', field: 'lnSgtxt', width: 200, cellStyle: that.L('left') },
+        { headerName: '개발 프로젝트', field: 'detailNm2', width: 120, cellStyle: that.L('left') },
+        { headerName: '스캔증빙', field: 'scanCt', width: 100, cellStyle: that.L('center'), cellRenderer: 'scanCtCell', __sub: true }
+      ]
+    },
+    // ===== 셀 렌더러가 호출하는 부모 메서드 =====
+    openCrdInfo(crdNo, apprNo) {
+      this.$modal.open({
+        component: CardInfoDetailPop,
+        parent: this,
+        props: { apprNo, crdNo },
+        width: 700
       })
     },
+    fetchScanCt(row) {
+      return this.$http.get(`/api/evid/fileList/${row.eaSlipNo}`)
+        .then(response => ((response.data || {}).aFiles || []).length)
+        .catch(() => undefined)
+    },
+    openEvidence(index, val, isSub) {
+      const vm = this
+      const popups = isSub ? this.objectPopupSub : this.objectPopup
+      let rdoCtrl = this.status.readonly
+      const memento = this.status.memento[0]
+      const loginId = this.$store.state.loginInfo.loginId
+      const roleCd = this.$store.state.loginInfo.authorities[0].roleCd
+
+      if (memento.slipStatCd === '20' || memento.slipStatCd === '30' || memento.slipStatCd === '50') {
+        if (memento.wrtId === loginId) rdoCtrl = false
+        if (this.attachRoles.filter(x => x.detailCd === roleCd).length > 0) rdoCtrl = false
+      }
+
+      const url = '/evidAtchPopModeless?docMngNo=' + val.eaSlipNo + '&readonly=' + this.status.readonly + '&readonlyCtrl=' + rdoCtrl
+
+      if (!(!popups[index] || popups[index].closed)) {
+        popups[index].focus()
+      } else {
+        popups[index] = window.open(url, '_blank', 'toolbar=0,location=0,menubar=0,resizable=yes')
+      }
+
+      const agent = navigator.userAgent.toLowerCase()
+      const onClose = () => {
+        val.scanCt = localStorage.getItem("popFileCnt")
+        vm.$forceUpdate()
+        if (isSub ? vm.gridApi : vm.gridApi) {
+          const api = isSub ? vm.gridApi2 : vm.gridApi
+          if (api) api.refreshCells({ force: true })
+        }
+      }
+      if ((navigator.appName === 'Netscape' && navigator.userAgent.search('Trident') !== -1) || (agent.indexOf("msie") !== -1)) {
+        popups[index].attachEvent("onunload", onClose)
+      } else {
+        popups[index].onbeforeunload = onClose
+      }
+    },
+    // DHTMLX else 분기의 attribute10(증빙유형) 매핑 재현 (def/E5 등)
+    mapAttribute10() {
+      const st = this.value.slipTypeCd
+      if (st === 'E6' || st === 'E1' || st === 'E2') return
+      this.data.forEach(x => {
+        if (x.dcCd === 'D' && x.lnTypeCd === 'TAX') {
+          if (x.attribute10 === '0') x.attribute10 = '기타'
+          else if (x.attribute10 === '1') x.attribute10 = '종이'
+          else if (x.attribute10 === '2') x.attribute10 = '전자'
+          else x.attribute10 = (st === 'E4') ? '종이' : '전자'
+        }
+      })
+    },
+    setAttachRoles() {
+      this.$store.commit('loading')
+      this.$http.get('/api/code/detail', { params: { groupCd: "ATTACH_ROLE" } })
+        .then(response => { this.attachRoles = response.data })
+        .catch(response => { console.error("getAttchRole Error " + response.message) })
+        .finally(() => { this.$store.commit('finish') })
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .slip-grid {
-  :global(.xhdr table tbody tr:last-child) {
-    background-color: #f9f9f3;
-  }
-
-  :global(.xhdr table tbody tr:last-child td) {
-    background-color: transparent !important;
-  }
-
-  :global(.xhdr table tbody tr:last-child td div) {
-    background-color: transparent !important;
-    color: inherit !important;
-    text-align: inherit !important;
-  }
+  margin-bottom: 8px;
+}
+/* 합계 푸터(pinned bottom) 강조 */
+.slip-grid :global(.ag-row-pinned) {
+  background-color: #f9f9f3;
+  font-weight: bold;
+}
+.slip-grid :global(.ag-row-pinned .ag-cell) {
+  color: #c00;
 }
 </style>

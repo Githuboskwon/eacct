@@ -315,6 +315,18 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 
 **권장 전환 순서(전표 영역):** 가장 단순한 config부터 — 읽기전용 `GridRO` → `config_def`/`config_E6` → `config_E2`(보조계정·예산연동) → `config_E1`(법인카드, 2그리드). 각 단계 후 해당 슬립유형 E2E.
 
+### 8.9 `GridRO`(읽기전용 전표 조회) ag-grid 전환 (2026-06-16) — 첫 A그룹 실전
+
+- `components/slip/GridRO.vue`를 `<dhx-grid>` → `<ag-grid-vue>`로 전환(읽기전용 6 config: def/E5/E6/E2/E1/E1_2).
+- **합계 푸터**(`attachHeader #stat_total`) → ag-grid `pinnedBottomRowData`(def/E5: 차·대변 합, E6: 사용금액 합).
+- **셀 내부 컴포넌트** → frameworkComponent + `gridOptions.context`:
+  - 카드정보 버튼(`crdInfoBtn`) → `openCrdInfo()`로 `CardInfoDetailPop` 오픈
+  - 스캔증빙(`scanCtCell`) → 파일수 조회 + `openEvidence()`로 증빙 팝업 `window.open`(IE 분기/상태별 readonly 로직 부모 메서드로 이관)
+  - 유종/유가·날짜·금액 → `valueGetter`/`valueFormatter`(천단위·소수점·YYYY-MM-DD)
+  - 숨김컬럼 `setColumnHidden` → `hide:true`, `attribute10`(증빙유형) 매핑은 `mapAttribute10()`로 이관
+- vatYn(GridSelect)은 원본에서 `hide:true`였으므로 컬럼 생략.
+- 검증: ESLint 통과. ⚠️ **머지 전 슬립유형별(E1/E2/E5/E6/일반) 런타임 검증 필수**(합계 푸터·카드정보·스캔증빙 팝업·금액/날짜 포맷). 별도 브랜치 `poc/grided-aggrid`.
+
 ---
 
 ## 9. 다음 액션
@@ -324,7 +336,8 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 4. [x] **(완료 2026-06-16)** 런타임 확인 — `/apprRuleSet`·`/apprMndSet`·`/apprLineMng` 정상 동작 확인 (※ `ApprMndPop` 사원검색 팝업은 `/apprMndSet` 신규/수정 흐름에서 추가 확인 권장)
 5. [x] **(완료 2026-06-16)** 저위험 정리 — 죽은 `DhxGrid` import 27개 파일 일괄 제거 + 죽은 파일 `PopupGrid.vue` 삭제 (그리드 동작 변화 없음, DhxGrid no-undef/구문오류 0)
 6. [x] **(완료 2026-06-16)** 편집형 전표 `GridED` ag-grid PoC — 4대 난관 전부 검증(독립 컴포넌트 `poc/GridEDPoc.vue`, `/gridEdPoc`). 기술적 전환 가능 확인, 공수는 config 4종 분량에서 발생 (§8.8)
-7. [ ] 검색 `_new` 변형(활성 DHTMLX 그리드) 전환 — A그룹과 함께 (Account_new/Cctr_new/Emp_new/IO_new/Vendor_new) + 직접호출(`Account/Cctr/Emp/Vendor/Product/Expend/ErpAccountPop`)
+7. [~] **(진행 2026-06-16)** A그룹 착수 — `GridRO`(읽기전용 전표) ag-grid 전환 완료(런타임 검증 대기, §8.9). 다음: `GridED`(편집형) 본전환 → `SlipGr`/`SlipCrdLstModal`/`BdgReq` 등
+8. [ ] 검색 `_new` 변형(활성 DHTMLX 그리드) 전환 — A그룹과 함께 (Account_new/Cctr_new/Emp_new/IO_new/Vendor_new) + 직접호출(`Account/Cctr/Emp/Vendor/Product/Expend/ErpAccountPop`)
 8. [ ] 0단계 잔여: 미사용 의존성 9종 제거 + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
 9. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정
 10. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
