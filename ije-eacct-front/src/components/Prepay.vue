@@ -34,9 +34,15 @@
     </div>
     <!-- //검색영역 -->
 
-    <!-- DHX 그리드 영역 -->
-    <dhx-grid ref="grid" class="gridbox" v-model="data" :config="config" @constructGridSuccessful="constructGridSuccessful"/>
-    <!-- //DHX 그리드 영역 -->
+    <!-- 그리드 영역 (ag-grid) -->
+    <ag-grid-vue ref="grid" class="gridbox ag-theme-alpine" style="width:100%; height:300px;"
+                 rowSelection="single"
+                 :columnDefs="columnDefs"
+                 :rowData="data"
+                 :gridOptions="gridOptions"
+                 :defaultColDef="defaultColDef"
+                 @grid-ready="onGridReady"/>
+    <!-- //그리드 영역 -->
   </div>
 </layout>
 </template>
@@ -45,7 +51,7 @@
 import { url as _url } from '@/libs/join'
 
 import Layout from '@/components/ModalSlot.vue'
-import DhxGrid from '@/components/DhxGrid.vue'
+import { AgGridVue } from 'ag-grid-vue'
 import NumberInput from '@/components/NumberInput.vue'
 import assert from '@/libs/assert'
 
@@ -67,119 +73,58 @@ export default {
   },
   components: {
     Layout,
-    DhxGrid,
+    AgGridVue,
     NumberInput
   },
   data() {
+    const fmtAmt = (p) => (p.value == null || p.value === '') ? '' : this.$numeral(p.value).format('0,0')
+    const fmtDate = (p) => (p.value !== undefined && p.value !== null && String(p.value).match(/^\d{8}/)) ? String(p.value).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3') : ''
     return {
       value: {
         mrAmt : 0
       },
-      config: {
-        columns: [{
-          id: 'no',
-          type: 'cntr',
-          align: 'center',
-          sort: 'int',
-          value: 'No.',
-          width: 30
-        }, {
-          id: 'preInvoiceNum',
-          type: 'ro',
-          align: 'center',
-          sort: 'str',
-          value: '선급금전표번호',
-          width: 100
-        }, {
-          id: 'hdRef7',
-          type: 'ro',
-          align: 'center',
-          sort: 'str',
-          value: '라인',
-          width: 30
-        }, {
-          id: 'preInvoiceDt',
-          type: 'ron',
-          align: 'center',
-          value: '선급금전표일자',
-          width: 90
-        }, {
-          id: 'preAmt',
-          type: 'ron',
-          align: 'right',
-          value: '선급금',
-          width: 120
-        }, {
-          id: 'preAmtRm',
-          type: 'ron',
-          align: 'right',
-          value: '선급금 잔액',
-          width: 120
-        }, {
-          id: 'preDesc',
-          type: 'ro',
-          align: 'center',
-          sort: 'str',
-          value: '적요',
-          width: 180
-        }],
-        events: {
-          // onRowDblClicked(rid) {
-          //   var index = rid - 1
-          //   var vm = this.$parent.$parent
-          //   let mrAmt = vm.data[index].mrAmt = this.$parent.$parent.value.mrAmt
-          //   let preAmtRm = vm.data[index].preAmtRm
-
-          //   if(vm.$numeral(mrAmt).value() > vm.$numeral(preAmtRm).value()){
-          //     this.$swal({type: 'warning', text: '반제금액이 선급금 잔액보다 큽니다.'});
-          //   } else if (vm.$numeral(mrAmt).value() > vm.$numeral(vm.totAmt).value()) {
-          //     this.$swal({type: 'warning', text: '반제금액이 전표금액 잔액보다 큽니다.'});
-          //   } else {
-          //     vm.$emit('close', vm.data[index])
-          //   }
-            
-          // }
-        },
-        height: 300
-      },
+      gridApi: null,
+      gridOptions: {},
+      defaultColDef: { resizable: true, sortable: false, filter: false },
+      columnDefs: [
+        { headerName: 'No.', width: 50, cellStyle: { textAlign: 'center' }, valueGetter: p => p.node.rowIndex + 1 },
+        { headerName: '선급금전표번호', field: 'preInvoiceNum', width: 130, cellStyle: { textAlign: 'center' } },
+        { headerName: '라인', field: 'hdRef7', width: 50, cellStyle: { textAlign: 'center' } },
+        { headerName: '선급금전표일자', field: 'preInvoiceDt', width: 110, cellStyle: { textAlign: 'center' }, valueFormatter: fmtDate },
+        { headerName: '선급금', field: 'preAmt', width: 120, cellStyle: { textAlign: 'right' }, valueFormatter: fmtAmt },
+        { headerName: '선급금 잔액', field: 'preAmtRm', width: 120, cellStyle: { textAlign: 'right' }, valueFormatter: fmtAmt },
+        { headerName: '적요', field: 'preDesc', flex: 1, minWidth: 180, cellStyle: { textAlign: 'left' } }
+      ],
       data: []
     }
   },
   methods: {
-    constructGridSuccessful(grid) {
-      grid.setDateFormat('%Y-%m-%d', '%Y%m%d')
-      grid.setNumberFormat('0,000', 4, '.', ',')
-      grid.setNumberFormat('0,000', 5, '.', ',')
+    onGridReady(params) {
+      this.gridApi = params.api
     },
     apply() {
-      
-      try{
-        if(this.$refs.grid.instance.getSelectedRowId() == null)
-        throw '선택된 행이 없습니다.'
-        let index = this.$refs.grid.instance.getSelectedRowId() - 1
+      try {
+        const nodes = this.gridApi ? this.gridApi.getSelectedNodes() : []
+        if (!nodes.length) throw '선택된 행이 없습니다.'
+        const row = nodes[0].data
 
-        let totAmt = this.$numeral(this.totAmt).value()
-        let mrAmt = this.data[index].mrAmt = this.value.mrAmt
-        let preAmtRm = this.data[index].preAmtRm
-        
-        if(this.$numeral(mrAmt).value() > this.$numeral(preAmtRm).value()){
-          this.$swal({type: 'warning', text: '반제금액이 선급금 잔액보다 큽니다.'});
+        const totAmt = this.$numeral(this.totAmt).value()
+        const mrAmt = row.mrAmt = this.value.mrAmt
+        const preAmtRm = row.preAmtRm
+
+        if (this.$numeral(mrAmt).value() > this.$numeral(preAmtRm).value()) {
+          this.$swal({ type: 'warning', text: '반제금액이 선급금 잔액보다 큽니다.' })
         } else if (this.$numeral(mrAmt).value() > this.$numeral(totAmt).value()) {
-          this.$swal({type: 'warning', text: '반제금액이 전표금액 잔액보다 큽니다.'});
+          this.$swal({ type: 'warning', text: '반제금액이 전표금액 잔액보다 큽니다.' })
         } else {
-          this.$emit('close', this.data[index])
+          this.$emit('close', row)
         }
-      }catch(e){
+      } catch (e) {
         this.$swal({
           type: 'warning',
           text: e
         })
       }
-      
-      // this.value[this.field] = this.$numeral(this.number).value()
-      // if (this.onSubmit !== undefined && typeof this.onSubmit === 'function') {
-      //   this.onSubmit.apply(this, [])
-      // }
     },
     $dismiss() {
       this.$emit('dismiss')
@@ -192,7 +137,7 @@ export default {
         .then(response => {
           // console.log(response)
           this.data = response.data
-          if (!slow && this.data.length === 1)
+          if (this.data.length === 1)
             this.$emit('close', this.data[0])
           return response
         })
