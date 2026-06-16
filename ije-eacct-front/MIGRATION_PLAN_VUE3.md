@@ -356,7 +356,9 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
    - 죽은 파일 삭제: `Account.vue`/`Account_new.vue`/`Expend.vue`(import 0 확정)
    - `SlipGr.vue`(전표 그룹, 읽기전용) ag-grid 전환 완료
    - ⚠️ 감사 주의: import가 `'`/`"` + `.vue` 유무로 혼재 → 양쪽 매칭으로 재확인 필요(예: `JiniAtchBatchPop`·`Cctr`는 쌍따옴표 import라 live)
-   - 잔여(live, 전환 필요): `SlipCrdLstModal`/`BdgReq`/`Prepay`/`JiniAtchPop`/`JiniAtchBatchPop`/`Cctr_new`/`Emp_new`/`IO_new`/`Vendor_new`/`ErpAccountPop`. `_Ag` 존재분(`Cctr`/`ErpAccount`/`Emp`/`Vendor`/`Product`)은 호출처를 `_Ag`로 교체 검토
+   - **`_Ag` 호출처 교체 → 원본 삭제:** `HrExpendPop`의 `Cctr`→`Cctr_Ag` 교체 후 **`Cctr.vue` 삭제**, `Vendor.vue` 삭제(`CardInfo`가 이미 `Vendor_Ag` 사용). (드롭인: props `param`, close `deptCd/deptNm` 확인)
+   - 잔여(live, 전환 필요): `SlipCrdLstModal`/`BdgReq`/`Prepay`/`JiniAtchPop`/`JiniAtchBatchPop`/`Cctr_new`/`Emp_new`/`IO_new`/`Vendor_new`/`ErpAccountPop`.
+   - ⚠️ `ErpAccount`/`Emp`/`Product` 원본은 **운영 `GridED.vue`·`SlipCrdLstModal`**(아직 DHTMLX, 전환 예정)이 사용 중 → 그 파일 전환 시 함께 `_Ag`로 교체. (`GridED_Ag`의 `ErpAccount`→`ErpAccount_Ag`는 emit 필드 검증 후 교체 TODO)
 8. [ ] 0단계 잔여: 미사용 의존성 9종 제거 + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
 9. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정
 10. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
