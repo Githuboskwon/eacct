@@ -265,7 +265,6 @@ import mixinSlip from '@/mixin/slip';
 import _ from 'lodash'
 
 import DhxCalendar from '@/components/DhxCalendar.vue'
-import DhxGrid from '@/components/DhxGrid.vue'
 // import Emp from '@/components/Emp.vue';
 import Emp from '@/components/Emp_Ag.vue';
 import CardInfo from '@/components/CardInfo.vue';
@@ -274,7 +273,7 @@ import CheckboxCellRenderer from "@/components/agGrid/checkbox-cell-renderer";
 export default {
   name: 'CardInfoMng',
   mixins: [mixin, mixinSlip],
-  components: {Emp, CardInfo, DhxGrid, DhxCalendar},
+  components: {Emp, CardInfo, DhxCalendar},
   data() {
     return {
       // config : {

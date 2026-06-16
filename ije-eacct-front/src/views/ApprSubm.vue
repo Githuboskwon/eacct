@@ -48,7 +48,6 @@
 <script>
 import _ from 'lodash'
 import mixin from '@/mixin';
-import DhxGrid from '@/components/DhxGrid.vue'
 
 import ApprLineSet from '@/components/ApprLineSet.vue'
 import ApprActPop from '@/components/ApprActPop.vue'
@@ -82,7 +81,6 @@ export default {
   mixins: [mixin],
   components: {
     ApprDtl,
-    DhxGrid,
     ApprLineSet,
     Layout,
     ApprBundlePopDrafter,

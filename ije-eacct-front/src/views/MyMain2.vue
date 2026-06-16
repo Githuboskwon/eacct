@@ -206,7 +206,6 @@
 </template>
 
 <script>
-import DhxGrid from '@/components/DhxGrid.vue';
 import router from '@/router';
 import menual from '@/components/Menual.vue';
 
@@ -214,7 +213,6 @@ import menual from '@/components/Menual.vue';
 export default {
   name: 'MyMain2',
   components: {
-    DhxGrid,
     menual
   },
   data() {

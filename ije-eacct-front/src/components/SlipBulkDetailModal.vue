@@ -196,7 +196,6 @@ import mixinSlip from '@/mixin/slip';
 import _ from 'lodash'
 import Layout from '@/components/ModalSlot2.vue'
 import DhxCalendar from '@/components/DhxCalendar.vue'
-import DhxGrid from '@/components/DhxGrid.vue'
 
 import {
   url as _url
@@ -233,7 +232,7 @@ export default {
       required:false,
     }
   },
-  components: {DhxGrid, DhxCalendar, Layout},
+  components: {DhxCalendar, Layout},
   mixins: [ mixin, mixinSlip,],
   data() {
     return {

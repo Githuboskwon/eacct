@@ -57,7 +57,6 @@
 
 
 <script>
-    import DhxGrid from '@/components/DhxGrid.vue'
 
     import ApprLineSet from '@/components/ApprLineSet.vue'
     import ApprActPop from '@/components/ApprActPop.vue'
@@ -114,7 +113,6 @@
         },
         mixins: [mixinSlip],
         components: {
-            DhxGrid,
             ApprLineSet,
             ApprErpDtl,
             Loading,

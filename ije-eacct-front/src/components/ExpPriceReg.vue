@@ -233,7 +233,6 @@ import _ from "lodash";
 
 import Emp from '@/components/Emp_Ag.vue'
 import DhxCalendar from '@/components/DhxCalendar.vue'
-import DhxGrid from '@/components/DhxGrid.vue'
 import DatepickerCellRenderer from "@/components/agGrid/datepicker-cell-renderer";
 import SelectCellRenderer from "@/components/agGrid/select-cell-renderer";
 import CheckboxCellRenderer from '@/components/agGrid/checkbox-cell-renderer'
@@ -254,7 +253,7 @@ function _url(...args) {
 
 export default {
   mixins: [common],
-  components: {Emp, DhxCalendar, DhxGrid, AgGridVue},
+  components: {Emp, DhxCalendar, AgGridVue},
   name: "codeMng",
   data() {
     return {

@@ -164,7 +164,6 @@
     import _ from 'lodash'
 
     import DhxCalendar from '@/components/DhxCalendar.vue'
-    import DhxGrid from '@/components/DhxGrid.vue'
 
 
     /*   import SlipDetailModal from '@/components/SlipDetailModal.vue'
@@ -183,7 +182,7 @@
     export default {
         name: 'SlipList',
         mixins: [mixin, mixinSlip],
-        components: {DhxCalendar, DhxGrid, AgGridVue},
+        components: {DhxCalendar, AgGridVue},
         props: {
           dateSet: {
             type: Object,

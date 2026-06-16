@@ -7,7 +7,6 @@
 </template>
 
 <script>
-    import DhxGrid from '@/components/DhxGrid.vue'
     import ApprErpHeader from '@/components/ApprErpHeader.vue'
     import ApprLineSet from '@/components/ApprLineSet.vue'
 
@@ -45,7 +44,6 @@
             },
         },
         components: {
-            DhxGrid,
             ApprErpHeader,
             ApprLineSet,
         },

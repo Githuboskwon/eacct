@@ -265,7 +265,6 @@ import mixin from '@/mixin';
 import mixinSlip from '@/mixin/slip';
 import _ from 'lodash'
 import DhxCalendar from '@/components/DhxCalendar.vue'
-import DhxGrid from '@/components/DhxGrid.vue'
 import Emp from '@/components/Emp_Ag.vue';
 import DeptEmp from '@/components/DeptEmp.vue';
 import { AgGridVue } from 'ag-grid-vue'
@@ -278,7 +277,7 @@ import AgGridSearchBtn from "@/components/agGrid/AgGridSearchBtn";
 export default {
   name: 'CardUseLst',
   mixins: [mixin, mixinSlip],
-  components: {Emp, DhxGrid, DhxCalendar, AgGridVue},
+  components: {Emp, DhxCalendar, AgGridVue},
   data() {
     return {
       columnDefs : [],
