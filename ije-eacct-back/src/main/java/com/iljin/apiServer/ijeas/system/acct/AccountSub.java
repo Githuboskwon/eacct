@@ -4,7 +4,7 @@ import com.iljin.apiServer.core.audit.BaseEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @NoArgsConstructor

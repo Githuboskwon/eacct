@@ -3,12 +3,12 @@ package com.iljin.apiServer.ijeas.slip.history;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Getter
 @NoArgsConstructor
-@Table(name = "APPS.PO_HEADERS_ALL")
+@Table(name = "PO_HEADERS_ALL", schema = "APPS")
 @Entity
 public class PoHeadersAll implements Serializable {
     private static final long serialVersionUID = 1712525407826733830L;

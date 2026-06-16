@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.util.List;
 
 import static com.iljin.apiServer.ijeas.system.trx.QTrx.trx;
@@ -284,7 +284,7 @@ public class TrxQdslRepositoryImpl implements TrxQdslRepository {
             query.setParameter("trxTypeNm", trxDto.trxTypeNm);
         }
 
-        return new JpaResultMapper().list(query, TrxDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, TrxDto.class);
 
     }
 
@@ -360,7 +360,7 @@ public class TrxQdslRepositoryImpl implements TrxQdslRepository {
         query.setParameter("awtGroupId", trxDto.awtGroupId);
         query.setParameter("orgId", compCd);
 
-        return new JpaResultMapper().list(query, TrxDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, TrxDto.class);
     }
 }
 

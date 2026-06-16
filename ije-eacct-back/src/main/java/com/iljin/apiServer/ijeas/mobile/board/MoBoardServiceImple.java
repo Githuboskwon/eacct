@@ -31,7 +31,7 @@ public class MoBoardServiceImple implements MoBoardService{
     public MoBoard detailBoard(Long id, String writeId) {
         User loginUser = util.getLoginUser();
         String compCd = loginUser.getCompCd();
-        return moBoardRepository.findByIdContainsAndCompCdContainsAndLoginId(id,compCd,writeId);
+        return moBoardRepository.findByIdAndCompCdAndLoginId(id,compCd,writeId);
     }
 
     @Override

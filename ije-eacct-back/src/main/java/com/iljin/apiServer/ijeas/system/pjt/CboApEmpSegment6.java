@@ -3,7 +3,7 @@ package com.iljin.apiServer.ijeas.system.pjt;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 

@@ -3,9 +3,9 @@ package com.iljin.apiServer.ijeas.slip.hr;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 @Repository
 public class SlipHrRepositoryCustomImpl implements SlipHrRepositoryCustom{
@@ -23,11 +23,11 @@ public class SlipHrRepositoryCustomImpl implements SlipHrRepositoryCustom{
 
         Query query = entityManager.createNativeQuery(sb.toString());
 
-        if((new JpaResultMapper().list(query, SlipHrDto.class)).isEmpty()){
+        if((com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipHrDto.class)).isEmpty()){
             return -1;
         }
 
-        Integer batchId = (new JpaResultMapper().list(query, SlipHrDto.class)).get(0).tempPayrollBatchId.intValue();
+        Integer batchId = (com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipHrDto.class)).get(0).tempPayrollBatchId.intValue();
 
         sb = new StringBuilder();
 
@@ -42,7 +42,7 @@ public class SlipHrRepositoryCustomImpl implements SlipHrRepositoryCustom{
         query.setParameter("orgId", orgId);
         query.setParameter("payrollBatchId", batchId);
 
-        if(!(new JpaResultMapper().list(query, SlipHrDto.class)).isEmpty()){
+        if(!(com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipHrDto.class)).isEmpty()){
             return -1;
         }
 

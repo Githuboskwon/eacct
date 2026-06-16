@@ -11,9 +11,9 @@ import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -198,7 +198,7 @@ public class PjtProcessRatePlanRepositoryCustomImpl implements PjtProcessRatePla
             query.setParameter("yyyymm", yyyymm);
             query.setParameter("itemCode", item_code);
 
-            BigDecimal count = new JpaResultMapper().uniqueResult(query, PjtProcessRatePlanDto.class).getCount();
+            BigDecimal count = com.iljin.apiServer.core.util.ResultMapperUtil.uniqueResult(query, PjtProcessRatePlanDto.class).getCount();
 
             if(count.intValue() == 0){
 

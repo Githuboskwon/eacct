@@ -9,9 +9,9 @@ import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -492,7 +492,7 @@ public class PjtPersonnelPlanRepositoryCustomImpl implements PjtPersonnelPlanRep
             query.setParameter("yyyymm", yyyymm);
             query.setParameter("positionCode", position_code);
 
-            BigDecimal count = new JpaResultMapper().uniqueResult(query, PjtPersonnelPlanDto.class).getCount();
+            BigDecimal count = com.iljin.apiServer.core.util.ResultMapperUtil.uniqueResult(query, PjtPersonnelPlanDto.class).getCount();
 
 
             if("Y".equals(insert_yn)){
@@ -558,7 +558,7 @@ public class PjtPersonnelPlanRepositoryCustomImpl implements PjtPersonnelPlanRep
             query2.setParameter("yyyymm", yyyymm);
             query2.setParameter("positionCode", position_code);
 
-            BigDecimal count2 = new JpaResultMapper().uniqueResult(query2, PjtPersonnelPlanDto.class).getCount();
+            BigDecimal count2 = com.iljin.apiServer.core.util.ResultMapperUtil.uniqueResult(query2, PjtPersonnelPlanDto.class).getCount();
 
             if("Y".equals(insert_yn)){
                 if(count2.intValue() != 0){

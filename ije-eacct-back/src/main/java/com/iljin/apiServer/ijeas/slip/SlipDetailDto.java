@@ -455,7 +455,7 @@ public class SlipDetailDto implements Serializable {
                          BigDecimal createdPersonId, String createdEmpNo, String creationDate, BigDecimal lastUpdatedPersonId, String lastUpdatedEmpNo,
                          String lastUpdateDate, BigDecimal lastUpdateLogin, String drCr, String originalSupplyAmt, String originalVatAmt, String originalUsedAmt,
                          String originalTaxFlag, String originalTaxAcctCd, String taxFlag, String drcrType, String attribute1Code, String attribute2Code,
-                         String attribute3Code, String attribute4Code, String attribute5Code, String attribute6Code, Character withholdingTaxCode){
+                         String attribute3Code, String attribute4Code, String attribute5Code, String attribute6Code, String withholdingTaxCode){
         this.slipHeaderId = slipHeaderId;
         this.slipLineId = slipLineId;
         this.slipLineNumber = slipLineNumber;
@@ -647,7 +647,7 @@ public class SlipDetailDto implements Serializable {
                 BigDecimal createdPersonId, String createdEmpNo, String creationDate, BigDecimal lastUpdatedPersonId, String lastUpdatedEmpNo,
                 String lastUpdateDate, BigDecimal lastUpdateLogin,  String originalSupplyAmt, String originalVatAmt, String originalUsedAmt,
                 String originalTaxFlag, String originalTaxAcctCd, String taxFlag, String drcrType, String attribute1Code, String attribute2Code,
-                String attribute3Code, String attribute4Code, String attribute5Code, String attribute6Code, Character withholdingTaxCode*/
+                String attribute3Code, String attribute4Code, String attribute5Code, String attribute6Code, String withholdingTaxCode*/
         this.slipHeaderId = slipHeaderId;
         this.compCd = compCd;
         this.slipSeq = slipSeq;

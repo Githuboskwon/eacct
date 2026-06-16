@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @AllArgsConstructor
@@ -53,7 +53,7 @@ public class AcctPeriodRepositoryCustomImpl implements AcctPeriodRepositoryCusto
         query.setParameter("closYmTo", closYmTo);
 
 
-        return new JpaResultMapper().list(query, AcctPeriodDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, AcctPeriodDto.class);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class AcctPeriodRepositoryCustomImpl implements AcctPeriodRepositoryCusto
         query.setParameter("compCd", compCd);
         query.setParameter("closStatCd", closStatCd);
 
-        return new JpaResultMapper().list(query, AcctPeriodDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, AcctPeriodDto.class);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class AcctPeriodRepositoryCustomImpl implements AcctPeriodRepositoryCusto
 
         Query query = entityManager.createNativeQuery(sb.toString());
         query.setParameter("compCd", compCd);
-        return new JpaResultMapper().uniqueResult(query, AcctPeriodDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.uniqueResult(query, AcctPeriodDto.class);
     }
 
 }

@@ -3,14 +3,14 @@ package com.iljin.apiServer.ijeas.slip.etax;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-@Table(name = "CBOSLIP.CBO_AR_ETAX_ISSUE_INFO")
+@Table(name = "CBO_AR_ETAX_ISSUE_INFO", schema = "CBOSLIP")
 @IdClass(CboArEtaxIssueInfoKey.class)
 @Entity
 public class CboArEtaxIssueInfo implements Serializable {

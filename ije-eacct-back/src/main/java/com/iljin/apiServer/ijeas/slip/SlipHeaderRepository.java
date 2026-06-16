@@ -42,7 +42,7 @@ public interface SlipHeaderRepository extends JpaRepository<SlipHeader, SlipHead
 
     @Transactional
     @Modifying
-    @Query("UPDATE FROM SlipHeader b SET b.status = 'SD' WHERE b.compCd = :compCd AND b.slipType = '30' AND SUBSTR(b.postingDt,0,6) = :month AND (:div IS NULL OR b.remark LIKE CONCAT(:div, '%'))")
+    @Query("UPDATE SlipHeader b SET b.status = 'SD' WHERE b.compCd = :compCd AND b.slipType = '30' AND SUBSTR(b.postingDt,0,6) = :month AND (:div IS NULL OR b.remark LIKE CONCAT(:div, '%'))")
     void deleteByMonth(@Param("compCd") String compCd, @Param("month") String month, @Param("div") String div);
 
 }

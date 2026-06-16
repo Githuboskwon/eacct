@@ -8,13 +8,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.Parameter;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.StoredProcedureQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Parameter;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.StoredProcedureQuery;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.procedure.internal.ProcedureParameterImpl;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -112,7 +111,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
             query.setParameter("docTitleNm", docTitleNm);
         }
 
-        return new JpaResultMapper().list(query, ApprovalHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalHeaderDto.class);
     }
 
     @Override
@@ -193,7 +192,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
             query.setParameter("docTitleNm", docTitleNm);
         }
 
-        return new JpaResultMapper().list(query, ApprovalHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalHeaderDto.class);
     }
 
     @Override
@@ -269,7 +268,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
             query.setParameter("docTitleNm", docTitleNm);
         }
 
-        return new JpaResultMapper().list(query, ApprovalHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalHeaderDto.class);
     }
 
     @Override
@@ -297,7 +296,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
         query.setParameter("compCd", compCd);
         query.setParameter("docNo", docNo);
 
-        return new JpaResultMapper().list(query, ApprovalHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalHeaderDto.class);
     }
 
     @Override
@@ -324,7 +323,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
         query.setParameter("docNo", docNo);
         query.setParameter("compCd", compCd);
 
-        return new JpaResultMapper().list(query, ApprovalDetailDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalDetailDto.class);
     }
 
     @Override
@@ -351,7 +350,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
 
         Query query = entityManager.createNativeQuery(sb.toString());
 
-        return new JpaResultMapper().list(query, ApprovalEmployeeDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalEmployeeDto.class);
     }
 
     @Override
@@ -405,7 +404,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
             query.setParameter("actId", approvalDelegateDto.getActId());
         }
 
-        return new JpaResultMapper().list(query, ApprovalDelegateDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalDelegateDto.class);
     }
 
     @Override
@@ -482,7 +481,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
             query.setParameter("useYn", approvalRuleDto.getUseYn());
         }
 
-        return new JpaResultMapper().list(query, ApprovalRuleDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalRuleDto.class);
     }
 
     @Override
@@ -527,7 +526,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
             query.setParameter("searchDtmTo", searchDtmTo.replaceAll("-", ""));
         }
 
-        return new JpaResultMapper().list(query, ApprovalHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalHeaderDto.class);
     }
 
     @Override
@@ -578,7 +577,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
             query.setParameter("searchDtmTo", searchDtmTo.replaceAll("-", ""));
         }
 
-        return new JpaResultMapper().list(query, ApprovalHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalHeaderDto.class);
     }
 
     @Override
@@ -624,7 +623,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
             query.setParameter("searchDtmTo", searchDtmTo.replaceAll("-", ""));
         }
 
-        return new JpaResultMapper().list(query, ApprovalHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalHeaderDto.class);
     }
 
     @Override
@@ -646,7 +645,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
         Query query = entityManager.createNativeQuery(sb.toString());
         query.setParameter("compCd", compCd);
 
-        return new JpaResultMapper().list(query, ApprovalEmployeeDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalEmployeeDto.class);
     }
 
     @Override
@@ -711,7 +710,7 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
         query.setParameter("curCd", approvalRuleDto.getCurCd());
         query.setParameter("maxAmt", approvalRuleDto.getMaxAmt());
 
-        return new JpaResultMapper().list(query, ApprovalRuleDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalRuleDto.class);
     }
 
     @Override
@@ -737,16 +736,15 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
         query.setParameter("compCd", util.getLoginCompCd());
         query.setParameter("date", date);
 
-        return new JpaResultMapper().list(query, ApprovalHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ApprovalHeaderDto.class);
     }
 
     @Override
     public void callCreateSlipConcurrent(BigDecimal apprGroupId) {
 
         StoredProcedureQuery storedProcedureQuery = entityManager.createNamedStoredProcedureQuery("APPS.CBO_SP_SLIP_PKG.CREATE_SLIP_CONCURRENT");
-        for (Parameter parameter : storedProcedureQuery.getParameters()) {
-            ((ProcedureParameterImpl) parameter).enablePassingNulls(true);
-        }
+        // Hibernate 6 제거됨: ProcedureParameterImpl.enablePassingNulls(true) (Hibernate 5 null 전달 우회).
+        // null 파라미터(P_SLIP_PROCESS) 전달 동작은 런타임 검증 필요. (마이그레이션 TODO)
         storedProcedureQuery.setParameter("P_APPROVAL_GROUP_ID", apprGroupId);
         storedProcedureQuery.setParameter("P_SLIP_PROCESS", null);
         storedProcedureQuery.execute();

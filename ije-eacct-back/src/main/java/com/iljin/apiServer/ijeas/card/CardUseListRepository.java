@@ -33,6 +33,6 @@ public interface CardUseListRepository extends JpaRepository<CardUseList, CardUs
     void updateStatusByCompCdAndApprovalGroupId(@Param("status") String status, @Param("compCd") String compCd, @Param("approvalGroupId") BigDecimal approvalGroupId);
 
     @Modifying
-    @Query("UPDATE CardUseList c SET c.slipNo = '', c.status = '01', c.slipHeaderId = '', c.slipLineId = '' WHERE c.slipHeaderId IN (SELECT s.slipHeaderId FROM SlipHeader s WHERE s.compCd = :compCd AND s.approvalGroupId = :approvalGroupId) AND c.compCd = :compCd")
+    @Query("UPDATE CardUseList c SET c.slipNo = '', c.status = '01', c.slipHeaderId = null, c.slipLineId = null WHERE c.slipHeaderId IN (SELECT s.slipHeaderId FROM SlipHeader s WHERE s.compCd = :compCd AND s.approvalGroupId = :approvalGroupId) AND c.compCd = :compCd")
     void resetByCompCdAndApprovalGroupId(@Param("compCd") String compCd, @Param("approvalGroupId") BigDecimal approvalGroupId);
 }

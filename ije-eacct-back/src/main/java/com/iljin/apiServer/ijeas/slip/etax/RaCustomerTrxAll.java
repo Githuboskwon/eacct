@@ -3,7 +3,7 @@ package com.iljin.apiServer.ijeas.slip.etax;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 

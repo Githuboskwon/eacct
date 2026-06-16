@@ -3,9 +3,9 @@ package com.iljin.apiServer.ijeas.system.menu;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @Repository
@@ -32,6 +32,6 @@ public class MenuRepositoryCustomImpl implements MenuRepositoryCustom {
         Query query = entityManager.createNativeQuery(sb.toString());
         query.setParameter("menuNm", menuDto.getMenuNm());
 
-        return new JpaResultMapper().list(query, MenuDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, MenuDto.class);
     }
 }

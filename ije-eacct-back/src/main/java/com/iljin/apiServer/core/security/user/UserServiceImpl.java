@@ -28,9 +28,9 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.constraints.NotNull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.NotNull;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -185,8 +185,10 @@ public class UserServiceImpl implements UserService {
                             token = new UsernamePasswordAuthenticationToken(loginId, null, grantedAuthorities);
                         } else {
                             // Form login
-                            // 2. Form 로그인 검증을 위해 UsernamePasswordAuthenticationToken 을 authenticationManager 의 인스턴스로 전달
-                            authenticationManager.authenticate(token);// 3. 인증에 성공하면 Authentication 인스턴스 리턴
+                            // 2. Form 로그인 검증 후 "인증된" Authentication 으로 교체한다.
+                            //    Spring Security 6 의 authenticated() 는 Authentication.isAuthenticated()==true 를 요구하므로
+                            //    isAuthenticated()=false 인 2-arg 토큰이 아니라 authenticate() 결과를 세션에 저장해야 한다.
+                            token = (UsernamePasswordAuthenticationToken) authenticationManager.authenticate(token);
                         }
 
                         /*
@@ -243,89 +245,6 @@ public class UserServiceImpl implements UserService {
                     request.getRequestURI(),
                     LocalDateTime.now()
             );
-            loginHistoryRepository.save(loginHistory);
-
-            return new ResponseEntity<>(new AuthToken(
-                    null
-                    , null
-                    , null
-                    , null
-                    , null
-                    , null
-                    , null
-                    , null
-                    , null
-                    , null
-                    , null
-                    , null
-                    , null
-                    , null), HttpStatus.UNAUTHORIZED);
-        }
-    }
-
-    @Override
-    public ResponseEntity<AuthToken> ssoLogin(UserDto userDto, HttpSession session, HttpServletRequest request) {
-        try{
-            String loginId = userDto.loginId + "%";
-            String compCd = userDto.compCd;
-
-            //Optional<User> user = userRepository.findByLoginId(loginId);
-            //List<UserRole> roles = userRoleRepository.findRolesByUser_LoginId(loginId);
-            Optional<User> user = userRepository.findByCompCdAndLoginIdLike(compCd, loginId);
-            List<UserRole> roles = userRoleRepository.findByCompCdAndUser_LoginIdLike(compCd, loginId);
-    //        List<String> r = roles.stream().map(Role::getRole).map(RoleType::toString).collect(Collectors.toList());
-            List<String> r = roles.stream().map(x -> x.getRole()).collect(Collectors.toList());
-
-            List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList(r.get(0));
-
-            String setLoginId = user.get().loginId;
-
-            Optional<AuthToken> result =
-                    user.map(obj -> {
-                        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(setLoginId, null, grantedAuthorities);
-                        return getAuthToken(session, compCd, setLoginId, obj, token/*, token*/);
-                    });
-
-            /*
-            URI uri = null;
-            try {
-                uri = new URI("http://localhost:8080");
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(uri);
-            headers.set("Set-cookie", "sessionid=" + session.getId());
-    */
-            return result.map(authToken -> new ResponseEntity<>(authToken, HttpStatus.OK))
-                    .orElseGet(() -> new ResponseEntity<>(new AuthToken(
-                            null
-                            , null
-                            , null
-                            , null
-                            , null
-                            , null
-                            , null
-                            , null
-                            , null
-                            , null
-                            , null
-                            , null
-                            , null
-                            , null), HttpStatus.UNAUTHORIZED));
-
-        } catch(AuthenticationException e)  {
-            System.out.println("!!!!!error");
-
-            LoginHistory loginHistory = new LoginHistory();
-            loginHistory.setConnectId(userDto.loginId);
-            loginHistory.setConnectIp(this.getClientIp(request));
-            loginHistory.setConnectMthd(userDto.connectMthd);
-            loginHistory.setConnectError(e.getMessage());
-            loginHistory.setConnectUrl(request.getRequestURI());
-            loginHistory.setCreationDate(LocalDateTime.now());
-
             loginHistoryRepository.save(loginHistory);
 
             return new ResponseEntity<>(new AuthToken(

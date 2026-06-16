@@ -3,13 +3,13 @@ package com.iljin.apiServer.ijeas.slip.etax;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-@Table(name ="CBOTAX.XXSB_DTI_MAIN")
+@Table(name = "XXSB_DTI_MAIN", schema = "CBOTAX")
 @IdClass(XxsbDtiMainKey.class)
 @Entity
 public class XxsbDtiMain {

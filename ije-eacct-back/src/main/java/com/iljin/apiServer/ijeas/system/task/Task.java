@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @NoArgsConstructor
@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Entity
 public class Task extends BaseEntity {
 
+    @Id
     @Column(name = "COMP_CD")
     String compCd;
 

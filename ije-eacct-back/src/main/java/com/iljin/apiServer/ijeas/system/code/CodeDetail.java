@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -19,6 +19,7 @@ public class CodeDetail extends BaseEntity {
 	@Column(name="group_cd", nullable=false)
 	String groupCd;
 
+	@Id
 	@Column(name="detail_cd")
 	String detailCd;
 

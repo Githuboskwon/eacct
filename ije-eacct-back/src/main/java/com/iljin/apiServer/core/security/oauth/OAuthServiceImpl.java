@@ -19,8 +19,8 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Service;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.http.HttpSession;
-import javax.validation.constraints.NotNull;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.NotNull;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;

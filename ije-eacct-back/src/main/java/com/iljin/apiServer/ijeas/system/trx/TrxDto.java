@@ -216,7 +216,7 @@ public class TrxDto implements Serializable {
     public TrxDto(String trxTypeNm, String trxTypeCd, String trxSpTypeCd, String slipTypeCd, String slipTypeNm, String inputModule, String interfaceModule,
                   String interfaceSlipType, String prepaymentFlag, String clearingAcctCd, String addInfoType, String integrationVendorNum,
                   BigDecimal paymentReceiptTermId, BigDecimal acctCnt, String acctCd, String trxTypeDescription, String acctNm, String drCr,
-                  Character slipDisplayFlag, String slipCreationTargetFlag, BigDecimal awtGroupId, String awtGroupNm, String userVendorFlag,
+                  String slipDisplayFlag, String slipCreationTargetFlag, BigDecimal awtGroupId, String awtGroupNm, String userVendorFlag,
                   String locationCode, String locationName, String evidenceName, String evidenceCode, String lineAttribute1, String lineAttribute1Name,
                   String lineAttribute2, String lineAttribute3) {
         this.trxTypeCd = trxTypeCd;

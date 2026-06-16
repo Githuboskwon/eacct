@@ -187,56 +187,6 @@ export default {
         this.$store.commit('finish');
       });
     },
-    ssoLogin() {
-      this.$store.commit('loading');
-
-
-      this.$http.post('/login/sso', this.loginInfo)
-        .then(res => res.data)
-        .then(data => {
-          const loginInfo = {};
-          loginInfo.userName = data.userName;
-          loginInfo.loginId = data.loginId;
-          loginInfo.compCd = data.loginCompCd;
-          loginInfo.loginDeptNm = data.loginDeptNm;
-          loginInfo.loginDeptCd = data.loginDeptCd;
-          loginInfo.loginCctrNm = data.loginCctrNm;
-          loginInfo.loginCctrCd = data.loginCctrCd;
-          loginInfo.loginJobDutCd = data.loginJobDutCd;
-          loginInfo.loginJobDutNm = data.loginJobDutNm;
-          loginInfo.loginJobGradeCd = data.loginJobGradeCd;
-          loginInfo.loginJobGradeNm = data.loginJobGradeNm;
-          loginInfo.token = data.token;
-          loginInfo.menu = data.menu;
-          loginInfo.authorities = data.authorities;
-          loginInfo.loginPw = 'Not Use';
-
-          if(!loginInfo.color){
-            loginInfo.color = '/css/common.css'
-          }
-
-          this.$nextTick(() => {
-            this.$store.commit('login', loginInfo);
-            this.$cookie.set('loginInfo', JSON.stringify(loginInfo));
-            this.$cookie.set('sessionAlive', true);
-            this.$http.defaults.headers['x-auth-token'] = loginInfo.token;
-            this.$store.commit('register', '');
-            this.$store.commit("setLocale", this.locale);
-            this.$router.push({path: '/'});
-            //21.03.29 컬러테마
-            var link = document.createElement('link');
-            link.rel ='stylesheet';
-            link.href = this.$store.state.loginInfo.color;
-            document.head.appendChild(link);
-          });
-        })
-        .catch(() => {{
-          this.loginFail();
-        }})
-        .finally(() => {
-          this.$store.commit('finish');
-        });
-    },
     signOut() {
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
@@ -279,22 +229,6 @@ export default {
     }
   },
   created() {
-    try {
-      // Step.1 - 초기화
-      rathonsso.init();
-
-      // Step.2 - SSO 인증 & 갱신
-      // true: Authentication Required
-      // false: Authentication Successful
-      let result = rathonsso.requestAuthentication()
-      console.log("requestAuthentication: " + result)
-      if(!result) {
-        // '/login/sso' 호출
-        this.ssoLogin()
-      }
-    } catch(e) {
-      console.log("SSO not available, using form login")
-    }
 
     /*if(this.$store.state.loginInfo !== null && this.$store.state.loginInfo.token !== '') {
       this.loginId = this.$store.state.loginInfo.loginId;
@@ -392,7 +326,7 @@ export default {
       } else {
         console.log("Now redirect MainPage...")
         //this.socialLogIn();
-        this.ssoLogin();
+        // SSO 제거: 토큰 기반 SSO 로그인 비활성화 (id/pw 폼 로그인만 사용)
       }
     }
   },

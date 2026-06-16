@@ -755,7 +755,7 @@ public class CostBudgetDto implements Serializable {
                          String  currencyCode, BigDecimal  exchangeRate, BigDecimal  amount, Timestamp glDate, String  deptCode, String  deptName,
                          String  segment5, BigDecimal  codeCombinationId, String  projectNumber, String  taskNumber, String  createdBy, String  createdName,
                          BigDecimal  orgId, String  slipType, BigDecimal  slipHeaderId, BigDecimal  approvalGroupId, String  slipGroupNumber,
-                         Character slipGroupYn,  String  slipStatus, String  slipForm, String  ttypeInputModule){
+                         String slipGroupYn,  String  slipStatus, String  slipForm, String  ttypeInputModule){
         this.type = type;
         this.teamCd = teamCd;
         this.teamNm = teamNm;

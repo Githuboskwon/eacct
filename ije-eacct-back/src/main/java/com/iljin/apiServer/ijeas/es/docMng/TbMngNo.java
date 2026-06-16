@@ -3,7 +3,7 @@ package com.iljin.apiServer.ijeas.es.docMng;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @NoArgsConstructor

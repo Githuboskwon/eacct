@@ -9,10 +9,10 @@ import com.iljin.apiServer.ijeas.slip.history.SlipHistoryDto;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.StoredProcedureQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.StoredProcedureQuery;
 import lombok.RequiredArgsConstructor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
@@ -234,7 +234,7 @@ public class SlipRepositoryCustomImpl implements SlipRepositoryCustom {
             query.setParameter("intStatus", slipHistoryDto.getIntStatus());
         }
 
-        BigDecimal count = (new JpaResultMapper().uniqueResult(query, SlipHistoryDto.class)).getCount();
+        BigDecimal count = (com.iljin.apiServer.core.util.ResultMapperUtil.uniqueResult(query, SlipHistoryDto.class)).getCount();
 
         return count;
     }
@@ -627,7 +627,7 @@ public class SlipRepositoryCustomImpl implements SlipRepositoryCustom {
         query.setParameter("slipNo", slipNo);
 
 
-        return new JpaResultMapper().list(query, SlipHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipHeaderDto.class);
     }
 
 
@@ -880,7 +880,7 @@ public class SlipRepositoryCustomImpl implements SlipRepositoryCustom {
         query.setParameter("compCd", compCd);
         query.setParameter("slipNo", slipNo);
 
-        return new JpaResultMapper().list(query, SlipDetailDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipDetailDto.class);
     }
 
     //전표 교통비 라인 조회
@@ -1085,7 +1085,7 @@ public class SlipRepositoryCustomImpl implements SlipRepositoryCustom {
         query.setParameter("compCd", compCd);
         query.setParameter("slipNo", slipNo);
 
-        return new JpaResultMapper().list(query, SlipDetailDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipDetailDto.class);
     }
 
     //항공권 전표 조회
@@ -1253,7 +1253,7 @@ public class SlipRepositoryCustomImpl implements SlipRepositoryCustom {
             query.setParameter("slipHeaderId", slipHeaderDto.slipHeaderId);
         }
 
-        return new JpaResultMapper().list(query, SlipHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipHeaderDto.class);
     }
 
     @Override
@@ -1294,7 +1294,7 @@ public class SlipRepositoryCustomImpl implements SlipRepositoryCustom {
         query.setParameter("slipNo", slipNo);
         query.setParameter("compCd", compCd);
 
-        return new JpaResultMapper().list(query, SlipHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipHeaderDto.class);
     }
 
     @Override
@@ -1312,7 +1312,7 @@ public class SlipRepositoryCustomImpl implements SlipRepositoryCustom {
         query.setParameter("orgId", orgId);
         query.setParameter("ledgerId", ledgerId);
         query.setParameter("postingDt", postingDt);
-        return new JpaResultMapper().list(query, SlipHistoryDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipHistoryDto.class);
     }
 
     @Override
@@ -1407,7 +1407,7 @@ public class SlipRepositoryCustomImpl implements SlipRepositoryCustom {
             query.setParameter("deptCd", deptCd);
         }
 
-        return new JpaResultMapper().list(query, SlipDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipDto.class);
     }
 
 }

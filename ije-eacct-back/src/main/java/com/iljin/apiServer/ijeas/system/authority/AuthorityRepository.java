@@ -28,7 +28,7 @@ public interface AuthorityRepository extends JpaRepository<Role, RoleKey> {
             "       ,mr.roleCd" +
             "       ,menu.menuNo " +
             "       ,menu.menuNm " +
-            "       ,CONCAT(CONCAT(CONCAT('LV ', LTRIM(LENGTH(REPLACE(menu.menuNo, '0', '')))), ' - '), menu.menuNm) AS MENU_DC" +
+            "       ,CONCAT(CONCAT(CONCAT('LV ', CAST(LENGTH(REPLACE(menu.menuNo, '0', '')) AS string)), ' - '), menu.menuNm) AS MENU_DC" +
             "       ,mr.compCd" +
             "       ,LENGTH(REPLACE(menu.menuNo, '0', '')) AS menuLv" +
             "       ,menu.menuOrder" +
@@ -36,7 +36,7 @@ public interface AuthorityRepository extends JpaRepository<Role, RoleKey> {
             "  FROM Menu menu" +
             "       LEFT OUTER JOIN MenuAuth mr ON mr.roleCd = :roleCd AND mr.compCd = :compCd AND mr.menuNo = menu.menuNo" +
             " WHERE 1=1" +
-            "   AND menu.menuNo <> 0" +
+            "   AND menu.menuNo <> '0'" +
             " ORDER BY menu.menuNo, menu.menuOrder ")
     List<Object[]> getMenuByAuthority(@Param("compCd") String compCd, @Param("roleCd") String roleCd);
 

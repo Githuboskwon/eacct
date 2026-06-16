@@ -2,7 +2,7 @@ package com.iljin.apiServer.ijeas.slip.prepayment;
 
 import lombok.Data;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 import java.io.Serializable;
 import java.math.BigDecimal;
 

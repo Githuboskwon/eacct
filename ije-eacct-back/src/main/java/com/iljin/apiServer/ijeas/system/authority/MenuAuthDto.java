@@ -45,7 +45,7 @@ public class MenuAuthDto {
     }
 
     /* IJD eAcct 권한별 매뉴 조회 */
-    public MenuAuthDto(Character roleCk, String roleCd, String menuNo, String menuNm, String menuDc, String compCd, BigDecimal menuLv, BigDecimal menuOrder, String upperMenuNo) {
+    public MenuAuthDto(String roleCk, String roleCd, String menuNo, String menuNm, String menuDc, String compCd, BigDecimal menuLv, BigDecimal menuOrder, String upperMenuNo) {
         this.roleCk = String.valueOf(roleCk);
         this.roleCd = roleCd;
         this.menuNo = menuNo;

@@ -10,9 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -242,7 +242,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query.setParameter("periodYear", period_year);
         query.setParameter("deptCd", search_dept_code);
 
-        return new JpaResultMapper().list(query, CostBudgetDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CostBudgetDto.class);
     }
 
     @Override
@@ -654,7 +654,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query.setParameter("deptCd", search_dept_code);
 
 
-        costBudgetResult.setList(new JpaResultMapper().list(query, CostBudgetDto.class));
+        costBudgetResult.setList(com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CostBudgetDto.class));
 
         StringBuilder sb2 = new StringBuilder();
 
@@ -701,7 +701,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query2.setParameter("periodYear", period_year);
         query2.setParameter("deptCd", search_dept_code);
 
-        costBudgetResult.setPlanConfirm(new JpaResultMapper().list(query2, CostBudgetDto.class));
+        costBudgetResult.setPlanConfirm(com.iljin.apiServer.core.util.ResultMapperUtil.list(query2, CostBudgetDto.class));
 
         StringBuilder sb3 = new StringBuilder();
 
@@ -750,7 +750,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query3.setParameter("periodYear", period_year);
         query3.setParameter("deptCd", search_dept_code);
 
-        costBudgetResult.setSavePerformance(new JpaResultMapper().list(query3, CostBudgetDto.class));
+        costBudgetResult.setSavePerformance(com.iljin.apiServer.core.util.ResultMapperUtil.list(query3, CostBudgetDto.class));
 
         return costBudgetResult;
     }
@@ -875,7 +875,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query.setParameter("periodYear", period_year);
         query.setParameter("deptCd", search_dept_code);
 
-        return new JpaResultMapper().list(query, CostBudgetDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CostBudgetDto.class);
     }
 
     @Override
@@ -1089,7 +1089,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query.setParameter("periodYear", period_year);
         query.setParameter("deptCd", search_dept_code);
 
-        return new JpaResultMapper().list(query, CostBudgetDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CostBudgetDto.class);
     }
 
     @Override
@@ -1232,7 +1232,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
 
         Query query = entityManager.createNativeQuery(sb.toString());
 
-        return new JpaResultMapper().list(query, CostBudgetDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CostBudgetDto.class);
     }
 
     @Override
@@ -1315,7 +1315,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
 
         Query query = entityManager.createNativeQuery(sb.toString());
 
-        accountDetailResult.setList(new JpaResultMapper().list(query, CostBudgetDto.class));
+        accountDetailResult.setList(com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CostBudgetDto.class));
 
         sb = new StringBuilder();
 
@@ -1336,7 +1336,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
 
         Query query2 = entityManager.createNativeQuery(sb.toString());
 
-        accountDetailResult.setTotal((new JpaResultMapper().uniqueResult(query2, CostBudgetDto.class)).getCount());
+        accountDetailResult.setTotal((com.iljin.apiServer.core.util.ResultMapperUtil.uniqueResult(query2, CostBudgetDto.class)).getCount());
 
         return accountDetailResult;
     }
@@ -1409,7 +1409,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
             query.setParameter("periodMonth", period_dyn[a]);
             query.setParameter("deptCd", search_dept_code);
 
-            BigDecimal sf_cnt = new JpaResultMapper().uniqueResult(query, CostBudgetDto.class).getCount();
+            BigDecimal sf_cnt = com.iljin.apiServer.core.util.ResultMapperUtil.uniqueResult(query, CostBudgetDto.class).getCount();
 
             int b_cnt = sf_cnt.intValue();
             if(b_cnt == 0) {
@@ -1463,7 +1463,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query.setParameter("periodYear", period_year);
         query.setParameter("deptCd", search_dept_code);
 
-        List<CostBudgetDto> sf = new JpaResultMapper().list(query, CostBudgetDto.class);
+        List<CostBudgetDto> sf = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CostBudgetDto.class);
 
         // 검증(3) - 예산확정여부 월별 확인
         if(sf.size() > 0){
@@ -1582,7 +1582,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query.setParameter("periodMonth", period_month);
         query.setParameter("deptCd", search_dept_code);
 
-        BigDecimal sf_cnt = new JpaResultMapper().uniqueResult(query, CostBudgetDto.class).getCount();
+        BigDecimal sf_cnt = com.iljin.apiServer.core.util.ResultMapperUtil.uniqueResult(query, CostBudgetDto.class).getCount();
 
 
         int b_cnt = sf_cnt.intValue();
@@ -1628,7 +1628,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query2.setParameter("periodMonth", period_month);
         query2.setParameter("deptCd", search_dept_code);
 
-        List<CostBudgetDto> sf_a = new JpaResultMapper().list(query2, CostBudgetDto.class);
+        List<CostBudgetDto> sf_a = com.iljin.apiServer.core.util.ResultMapperUtil.list(query2, CostBudgetDto.class);
 
         if(sf_a.size() == 1 && "Y".equals(sf_a.get(0).getActualApprYn())){
             throw new CostBudgetException("예산부서 : "+ search_dept_name + "의 실적저장이 되어 수정 할 수 없습니다.");
@@ -1764,7 +1764,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
                 query.setParameter("periodMonth", period_m1[j]);
                 query.setParameter("deptCd", bdept_code);
 
-                List<CostBudgetDto> sf = new JpaResultMapper().list(query, CostBudgetDto.class);
+                List<CostBudgetDto> sf = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CostBudgetDto.class);
 
 
 
@@ -1829,7 +1829,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
                 query2.setParameter("itemGroupCd", itemgroup_code);
                 query2.setParameter("degree", degree[j]);
 
-                int cnt = new JpaResultMapper().uniqueResult(query2, CostBudgetDto.class).getCount().intValue();
+                int cnt = com.iljin.apiServer.core.util.ResultMapperUtil.uniqueResult(query2, CostBudgetDto.class).getCount().intValue();
 
                 // 검증 - 신규로 입력한 데이터가 존재 할 경우
                 if(cnt > 0 && "Y".equals(insert_yn)) {
@@ -1986,7 +1986,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
                 query0.setParameter("pjtCd", project_code);
                 query0.setParameter("itemGroupCd", itemgroup_code);
 
-                BigDecimal sf_cnt = new JpaResultMapper().uniqueResult(query0, CostBudgetDto.class).getCount();
+                BigDecimal sf_cnt = com.iljin.apiServer.core.util.ResultMapperUtil.uniqueResult(query0, CostBudgetDto.class).getCount();
 
 
                 int cnt = sf_cnt.intValue();
@@ -2044,7 +2044,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
                 query.setParameter("periodMonth", period_m1[j]);
                 query.setParameter("deptCd", bdept_code);
 
-                List<CostBudgetDto> sf = new JpaResultMapper().list(query, CostBudgetDto.class);
+                List<CostBudgetDto> sf = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CostBudgetDto.class);
 
                 // 검증(4) - 예산확정여부 확인
                 if(sf.size() == 1 && ("Y".equals(sf.get(0).getBudget01ApprYn()) || "Y".equals(sf.get(0).getBudget02ApprYn()) || "Y".equals(sf.get(0).getBudget03ApprYn()) )) {
@@ -2366,7 +2366,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
 
             Query query = entityManager.createNativeQuery(sb.toString());
 
-            draftListResult.setList(new JpaResultMapper().list(query, CostBudgetDto.class));
+            draftListResult.setList(com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CostBudgetDto.class));
 
         } else {
 
@@ -2404,7 +2404,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
             query2.setParameter("slipNo", slip_no);
             query2.setParameter("slipHeaderId", slip_header_id);
 
-            draftListResult.setData(new JpaResultMapper().list(query2, CostBudgetDto.class));
+            draftListResult.setData(com.iljin.apiServer.core.util.ResultMapperUtil.list(query2, CostBudgetDto.class));
 
 
 
@@ -2547,7 +2547,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
             query.setParameter("slipNo", slip_no);
             query.setParameter("slipHeaderId", slip_header_id);
 
-            draftListResult.setList(new JpaResultMapper().list(query, CostBudgetDto.class));
+            draftListResult.setList(com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CostBudgetDto.class));
 
 //            sb = new StringBuilder();
 //
@@ -2640,7 +2640,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
             query3.setParameter("slipNo", slip_no);
             query3.setParameter("slipHeaderId", slip_header_id);
 
-            draftListResult.setDtList(new JpaResultMapper().list(query3, CostBudgetDto.class));
+            draftListResult.setDtList(com.iljin.apiServer.core.util.ResultMapperUtil.list(query3, CostBudgetDto.class));
 
         }
 
@@ -2740,7 +2740,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query.setParameter("slipType", "90");
         query.setParameter("status", "SD");
 
-        BigDecimal sf = new JpaResultMapper().uniqueResult(query, CostBudgetDto.class).getCount();
+        BigDecimal sf = com.iljin.apiServer.core.util.ResultMapperUtil.uniqueResult(query, CostBudgetDto.class).getCount();
 
         if(sf.intValue() == 0) {
 
@@ -2795,7 +2795,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
 
             Query query1 = entityManager.createNativeQuery(sb.toString());
 
-            List<CostBudgetDto> budgetHdList = new JpaResultMapper().list(query1, CostBudgetDto.class);
+            List<CostBudgetDto> budgetHdList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query1, CostBudgetDto.class);
 
             for(CostBudgetDto hd : budgetHdList){
                 BudgetHd budgetHd = new BudgetHd().builder()
@@ -2965,7 +2965,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
 
             Query query1 = entityManager.createNativeQuery(sb.toString());
 
-            List<CostBudgetDto> budgetHdList = new JpaResultMapper().list(query1, CostBudgetDto.class);
+            List<CostBudgetDto> budgetHdList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query1, CostBudgetDto.class);
 
             CostBudgetDto budgetHdDto = budgetHdList.get(0);
 
@@ -3108,7 +3108,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query1.setParameter("ledger_id", ledger_id);
         query1.setParameter("search_bdept_code", search_bdept_code);
 
-        List<CostBudgetDto> sf = new JpaResultMapper().list(query1, CostBudgetDto.class);
+        List<CostBudgetDto> sf = com.iljin.apiServer.core.util.ResultMapperUtil.list(query1, CostBudgetDto.class);
 
         // 공통/판관/제조 구분
         String bdept_gubun = sf.get(0).getAttribute2();
@@ -3153,7 +3153,7 @@ public class CostBudgetRepositoryCustomImpl implements CostBudgetRepositoryCusto
         query2.setParameter("search", search);
 
 
-        return new JpaResultMapper().list(query2, AccountDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query2, AccountDto.class);
     }
 
     public CostBudgetDto getActualApprYnChk(CostBudgetDto planConfirmList , Integer month){

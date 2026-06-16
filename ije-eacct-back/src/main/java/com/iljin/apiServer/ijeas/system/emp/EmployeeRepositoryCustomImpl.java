@@ -2,9 +2,9 @@ package com.iljin.apiServer.ijeas.system.emp;
 
 import com.iljin.apiServer.core.util.Util;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
@@ -100,7 +100,7 @@ public class EmployeeRepositoryCustomImpl implements EmployeeRepositoryCustom {
         }
 
 
-        return new JpaResultMapper().list(query, EmployeeDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, EmployeeDto.class);
     }
 
     @Override
@@ -220,6 +220,6 @@ public class EmployeeRepositoryCustomImpl implements EmployeeRepositoryCustom {
             query.setParameter("value", value);
         }
 
-        return new JpaResultMapper().list(query, EmployeeDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, EmployeeDto.class);
     }
 }

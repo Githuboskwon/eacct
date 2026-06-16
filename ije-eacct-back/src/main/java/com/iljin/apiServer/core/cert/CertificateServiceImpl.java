@@ -14,9 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -71,7 +71,7 @@ public class CertificateServiceImpl implements CertificateService {
             query.setParameter("searchDate", searchDate);
         }
 
-        return new JpaResultMapper().list(query, CertFileDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CertFileDto.class);
     }
 
     @Override
@@ -191,6 +191,6 @@ public class CertificateServiceImpl implements CertificateService {
             query.setParameter("searchDate", searchDate);
         }
 
-        return new JpaResultMapper().list(query, CertFileDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CertFileDto.class);
     }
 }

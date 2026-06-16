@@ -10,9 +10,9 @@ import com.iljin.apiServer.ijeas.system.menu.UserMenuDto;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @Repository
@@ -48,7 +48,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
                 " ORDER BY M.MENU_NO, M.MENU_ORDR");
         Query query = entityManager.createNativeQuery(sb.toString());
 
-        return new JpaResultMapper().list(query, MenuDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, MenuDto.class);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("compCd", compCd);
         query.setParameter("loginId", loginId);
 
-        return new JpaResultMapper().list(query, UserMenuDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, UserMenuDto.class);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, CardUseListDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, CardUseListDto.class);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SlipHeaderDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipHeaderDto.class);
     }
 
     @Override
@@ -181,7 +181,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("loginId", loginId);
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
-        return new JpaResultMapper().list(query, EmployeeDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, EmployeeDto.class);
     }
 
     @Override
@@ -256,7 +256,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("loginId", loginId);
         query.setParameter("thisYear", thisYear +"%");
 
-        return new JpaResultMapper().list(query, SlipDetailDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipDetailDto.class);
     }
 
     @Override
@@ -287,7 +287,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("deptCd", deptCd);
         query.setParameter("thisYear", thisYear);
 
-        return new JpaResultMapper().list(query, SlipDetailDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SlipDetailDto.class);
     }
 
     @Override
@@ -315,7 +315,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -342,7 +342,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -367,7 +367,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -391,7 +391,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -418,7 +418,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -434,7 +434,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("compCd", compCd);
         query.setParameter("loginId", loginId);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -458,7 +458,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("compCd", compCd);
         query.setParameter("loginId", loginId);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -489,7 +489,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     // @Override
@@ -513,7 +513,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
     //     query.setParameter("loginId", loginId);
     //     query.setParameter("thisMonth", thisMonth + "%");
 
-    //     return new JpaResultMapper().list(query, SettingsDto.class);
+    //     return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     // }
 
     @Override
@@ -537,7 +537,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -560,7 +560,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -583,7 +583,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -608,7 +608,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("loginId", loginId);
         query.setParameter("roleCd", roleCd);
 
-        return new JpaResultMapper().list(query, MenuDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, MenuDto.class);
     }
 
     @Override
@@ -655,7 +655,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("roleCd", roleCd);
         query.setParameter("compCd", compCd);
 
-        return new JpaResultMapper().list(query, MenuAuthDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, MenuAuthDto.class);
     }
 
     @Override
@@ -681,7 +681,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -705,7 +705,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("previousDate", previousDate);
         query.setParameter("nextDate", nextDate);
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -727,7 +727,7 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("nextDate", nextDate);
         //query.setParameter("budStatCd", BudgetStatus.REJECT_APPROVAL.getCode());
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 
     @Override
@@ -749,6 +749,6 @@ public class SettingsRepositoryCustomImpl implements SettingsRepositoryCustom {
         query.setParameter("nextDate", nextDate);
         //query.setParameter("budStatCd", BudgetStatus.REJECT_PLANNING.getCode());
 
-        return new JpaResultMapper().list(query, SettingsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SettingsDto.class);
     }
 }

@@ -5,3 +5,6 @@
 # 시크릿: Firebase 서비스 계정 키 (절대 커밋 금지)
 ije-eacct-back/src/main/resources/ij-eas-415a0-firebase-adminsdk-88yn0-a3c441acba.json
 /_secret_backup_firebase-adminsdk.json
+
+# Claude Code 로컬 설정 (개인 환경별 설정, 공유 안 함)
+.claude/settings.local.json

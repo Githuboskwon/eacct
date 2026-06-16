@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.util.List;
 
 import static com.iljin.apiServer.ijeas.system.dff.QDff.dff;
@@ -86,7 +86,7 @@ public class DffQdslRepositoryImpl implements DffQdslRepository {
             query.setParameter("search", search);
         }
 
-        return new JpaResultMapper().list(query, DffDto.class).get(0).count;
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, DffDto.class).get(0).count;
     }
 
     @Override
@@ -129,6 +129,6 @@ public class DffQdslRepositoryImpl implements DffQdslRepository {
         query.setParameter("start", (100*page) + 1);
         query.setParameter("end", 100 * (page+1));
 
-        return new JpaResultMapper().list(query, DffDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, DffDto.class);
     }
 }

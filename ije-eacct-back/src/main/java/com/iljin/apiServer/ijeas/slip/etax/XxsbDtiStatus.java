@@ -3,11 +3,11 @@ package com.iljin.apiServer.ijeas.slip.etax;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @NoArgsConstructor
-@Table(name ="CBOTAX.XXSB_DTI_Status")
+@Table(name = "XXSB_DTI_Status", schema = "CBOTAX")
 @IdClass(XxsbDtiStatusKey.class)
 @Entity
 public class XxsbDtiStatus {

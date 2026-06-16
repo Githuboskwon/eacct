@@ -5,9 +5,9 @@ import com.iljin.apiServer.ijeas.es.erpViews.ErpGlCodesDto;
 import com.iljin.apiServer.ijeas.es.erpViews.ErpGlTermsDto;
 import com.iljin.apiServer.ijeas.es.erpViews.ErpSlipRequestDto;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
@@ -137,7 +137,7 @@ public class GlRepositoryCustomImpl implements GlRepositoryCustom {
 //        query.setParameter("ea_enabled_flag", ea_enabled_flag);
 //        query.setParameter("deptCd", dept_code);
 
-        return new JpaResultMapper().list(query, ErpGlTermsDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ErpGlTermsDto.class);
     }
 
     @Override
@@ -163,6 +163,6 @@ public class GlRepositoryCustomImpl implements GlRepositoryCustom {
             query.setParameter("search", erpGlSlipDto.getSearch());
         }
 
-        return new JpaResultMapper().list(query, ErpGlCodesDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ErpGlCodesDto.class);
     }
 }

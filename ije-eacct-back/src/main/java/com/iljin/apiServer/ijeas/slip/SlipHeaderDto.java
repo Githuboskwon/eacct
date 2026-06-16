@@ -549,7 +549,7 @@ public class SlipHeaderDto  implements Serializable {
                          String taxIssueTypeCode, String taxIssueTypeName, String personIntegrationVendorNum, String personIntegrationVendorName, BigDecimal personCustomerId,
                          BigDecimal personCustomerSiteId, BigDecimal personVendorId, BigDecimal personVendorSiteId, BigDecimal personVendorPartyId,
                          BigDecimal personVendorPartySiteId, BigDecimal personCustomerPartyId, BigDecimal personCustomerPartySiteId, BigDecimal amountToApply,
-                         String deptCd, String deptNm, String slipTypeCd, Character prepaymentYn, BigDecimal fileCnt, BigDecimal jiniCnt, BigDecimal jiniFileCnt
+                         String deptCd, String deptNm, String slipTypeCd, String prepaymentYn, BigDecimal fileCnt, BigDecimal jiniCnt, BigDecimal jiniFileCnt
     ){
         this.slipHeaderId = slipHeaderId;
         this.slipNumber = slipNumber;

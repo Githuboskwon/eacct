@@ -29,7 +29,7 @@ public class ConfirmQdslRepositoryImpl implements ConfirmQdslRepository {
                 .select(new QConfirmDto(
                         confirm.compCd,
                         confirm.deptCd,
-                        costCenter.deptNm.as("confirmUserNm"),
+                        costCenter.deptNm.as("deptNm"),
                         confirm.confirmUserId,
                         employee1.empNm.as("confirmUserNm"),
                         confirm.confirmSeq,

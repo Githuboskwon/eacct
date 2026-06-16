@@ -20,18 +20,22 @@ public class ApPaymentsItemKey implements Serializable {
 
     BigDecimal checkId;
 
+    Long aeHeaderId;
+
     Long aeLineId;
 
     Long aeLineNo;
 
     @Builder
     public ApPaymentsItemKey(String compCd, String slipNo, String slipType, BigDecimal checkId,
+        Long aeHeaderId,
         Long aeLineId,
         Long aeLineNo) {
         this.compCd = compCd;
         this.slipNo = slipNo;
         this.slipType = slipType;
         this.checkId = checkId;
+        this.aeHeaderId = aeHeaderId;
         this.aeLineId = aeLineId;
         this.aeLineNo = aeLineNo;
     }

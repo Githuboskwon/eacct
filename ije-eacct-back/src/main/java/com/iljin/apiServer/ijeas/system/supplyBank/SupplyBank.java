@@ -4,7 +4,7 @@ import com.iljin.apiServer.ijeas.system.payBank.PayBankKey;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

@@ -167,7 +167,8 @@ public class ApprovalHeaderDto implements Serializable {
         this.budApprDtm = budApprDtm;
     }
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+    // static: Jackson 직렬화/역직렬화 대상에서 제외 (Java 21 JPMS 가 java.time.format 내부 접근 차단 → InaccessibleObjectException 회피)
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
     @QueryProjection
     public ApprovalHeaderDto(BigDecimal apprGroupId, String slipNo, String slipType, String docTitleNm,

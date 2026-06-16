@@ -5,9 +5,9 @@ import static org.springframework.util.StringUtils.hasText;
 
 import com.iljin.apiServer.core.util.Util;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
@@ -149,7 +149,7 @@ public class BondRepositoryCustomImpl implements BondRepositoryCustom {
         if(nonNull(bondExpendDto.getGuaranteeAmt())) {
             query.setParameter("guaranteeAmt", bondExpendDto.getGuaranteeAmt());
         }
-        return new JpaResultMapper().list(query, BondExpendDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, BondExpendDto.class);
     }
 
     @Override
@@ -225,7 +225,7 @@ public class BondRepositoryCustomImpl implements BondRepositoryCustom {
         if(!StringUtils.isEmpty(bondMstDto.getCustomerNm())) {
             query.setParameter("customerNm", bondMstDto.getCustomerNm());
         }
-        return new JpaResultMapper().list(query, BondExpendDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, BondExpendDto.class);
     }
 
 }

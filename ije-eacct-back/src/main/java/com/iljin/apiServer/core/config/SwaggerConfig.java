@@ -1,42 +1,30 @@
 package com.iljin.apiServer.core.config;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
-import java.util.Collections;
 
 @Configuration
-@EnableSwagger2
-@EnableAutoConfiguration
 public class SwaggerConfig {
 
     @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.iljin.apiServer.ijeas"))
-                .paths(PathSelectors.any())
-                .build().apiInfo(getApiInfo());
+    public OpenAPI api() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("일진 전기 전자전표 시스템")
+                        .description("일진 전지 전자전표 API 서버 입니다.")
+                        .version("1.0.0")
+                        .contact(new Contact().name("NAME").url("URL").email("EMAIL")));
     }
 
-    private ApiInfo getApiInfo() {
-        return new ApiInfo(
-                "일진 전기 전자전표 시스템"
-                ,"일진 전지 전자전표 API 서버 입니다."
-                ,"1.0.0"
-                ,"TERMS OF SERVICE URL"
-                ,new Contact("NAME", "URL", "EMAIL")
-                ,"LICENSE"
-                ,"LICENSE URL"
-                , Collections.emptyList()
-        );
+    @Bean
+    public GroupedOpenApi ijeasApi() {
+        return GroupedOpenApi.builder()
+                .group("ijeas")
+                .packagesToScan("com.iljin.apiServer.ijeas")
+                .build();
     }
 }

@@ -2,9 +2,9 @@ package com.iljin.apiServer.ijeas.system.mailSend;
 
 import com.iljin.apiServer.core.util.Util;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
@@ -48,7 +48,7 @@ public class MailSendMngRepositoryCustomImpl implements MailSendMngRepositoryCus
 
         query.setParameter("compCd", util.getLoginCompCd());
         query.setParameter("searchDt", mailHistoryDto.getSearchDt());
-        return new JpaResultMapper().list(query, MailHistoryDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, MailHistoryDto.class);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class MailSendMngRepositoryCustomImpl implements MailSendMngRepositoryCus
 
         query.setParameter("compCd", util.getLoginCompCd());
         query.setParameter("searchDt", mailHistoryDto.getSearchDt());
-        return new JpaResultMapper().list(query, MailHistoryDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, MailHistoryDto.class);
 
     }
 

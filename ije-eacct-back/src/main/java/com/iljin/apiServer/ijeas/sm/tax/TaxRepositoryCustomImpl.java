@@ -3,9 +3,9 @@ package com.iljin.apiServer.ijeas.sm.tax;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @Repository
@@ -41,6 +41,6 @@ public class TaxRepositoryCustomImpl implements TaxRepositoryCustom {
         query.setParameter("compCd", compCd);
         query.setParameter("taxCd", taxCd);
 
-        return new JpaResultMapper().list(query, TaxDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, TaxDto.class);
     }
 }

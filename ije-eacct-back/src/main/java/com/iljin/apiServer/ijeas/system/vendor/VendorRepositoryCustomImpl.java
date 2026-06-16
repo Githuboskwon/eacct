@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class VendorRepositoryCustomImpl implements VendorRepositoryCustom{
         query.setParameter("vendorSiteId", vendorSiteId);
         query.setParameter("paymentCurrencyCode", paymentCurrencyCode);
 
-        List<VendorDto> result = new JpaResultMapper().list(query, VendorDto.class);
+        List<VendorDto> result = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, VendorDto.class);
 
         return result.get(0).prepayCnt;
     }

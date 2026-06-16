@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface MoBoardRepository extends JpaRepository<MoBoard, MoBoardKey> {
-    MoBoard findByIdContainsAndCompCdContainsAndLoginId(Long id, String compCd, String writeId);
+    MoBoard findByIdAndCompCdAndLoginId(Long id, String compCd, String writeId);
 
     @Query(value = "" +
             "select id, " +

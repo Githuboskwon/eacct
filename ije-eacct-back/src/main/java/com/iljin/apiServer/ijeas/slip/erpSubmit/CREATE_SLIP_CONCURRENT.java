@@ -3,7 +3,7 @@ package com.iljin.apiServer.ijeas.slip.erpSubmit;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @NamedStoredProcedureQuery(

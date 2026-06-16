@@ -2,8 +2,8 @@ package com.iljin.apiServer.ijeas.slip.detail;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
 import java.io.Serializable;
 import java.math.BigDecimal;
 

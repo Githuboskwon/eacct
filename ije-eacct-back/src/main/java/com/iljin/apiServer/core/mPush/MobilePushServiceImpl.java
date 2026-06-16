@@ -13,7 +13,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 
 @Slf4j
@@ -49,7 +49,7 @@ public class MobilePushServiceImpl implements MobilePushService {
             }
 
             Message message = Message.builder()
-                    .setNotification(new Notification(pushMessage.getTitle(), "Body"))
+                    .setNotification(Notification.builder().setTitle(pushMessage.getTitle()).setBody("Body").build())
                     .putData("data", "Data").setToken(pushMessage.getFcmToken()).build();
 
             ApiFuture<String> future = FirebaseMessaging.getInstance().sendAsync(message);
@@ -68,7 +68,7 @@ public class MobilePushServiceImpl implements MobilePushService {
             }
 
             Message message = Message.builder()
-                    .setNotification(new Notification(apprPushMessage.getTitle(), apprPushMessage.getDraftUser()))
+                    .setNotification(Notification.builder().setTitle(apprPushMessage.getTitle()).setBody(apprPushMessage.getDraftUser()).build())
                     .putData("apprNo", apprPushMessage.getApprNo()).setToken(apprPushMessage.getFcmToken()).build();
 
             ApiFuture<String> future = FirebaseMessaging.getInstance().sendAsync(message);

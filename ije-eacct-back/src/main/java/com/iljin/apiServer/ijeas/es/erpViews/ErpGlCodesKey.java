@@ -3,7 +3,7 @@ package com.iljin.apiServer.ijeas.es.erpViews;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 import java.io.Serializable;
 
 @Data

@@ -7,9 +7,9 @@ import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -39,7 +39,7 @@ public class ErpViewPopServiceImpl implements ErpViewPopService {
             query.setParameter("searchDate", searchDate);
         }
 
-        return new JpaResultMapper().list(query, ErpViewPopFundSlipDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ErpViewPopFundSlipDto.class);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ErpViewPopServiceImpl implements ErpViewPopService {
             query.setParameter("searchDate", searchDate);
         }
 
-        return new JpaResultMapper().list(query, ErpViewPopFundSlipDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, ErpViewPopFundSlipDto.class);
     }
 
 }

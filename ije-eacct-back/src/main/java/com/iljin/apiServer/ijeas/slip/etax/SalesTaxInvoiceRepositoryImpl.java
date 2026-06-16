@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -147,7 +147,7 @@ public class SalesTaxInvoiceRepositoryImpl implements SalesTaxInvoiceRepository{
             query.setParameter("empNo", salesTaxInvoiceDto.createEmpNo);
         }
 
-        return new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
     }
 
 
@@ -172,7 +172,7 @@ public class SalesTaxInvoiceRepositoryImpl implements SalesTaxInvoiceRepository{
 
         query.setParameter("trxId", trxId);
 
-        return new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
     }
 
 
@@ -352,7 +352,7 @@ public class SalesTaxInvoiceRepositoryImpl implements SalesTaxInvoiceRepository{
         }
 
 
-        return new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
     }
 
 
@@ -378,7 +378,7 @@ public class SalesTaxInvoiceRepositoryImpl implements SalesTaxInvoiceRepository{
 
         query.setParameter("etaxIssueId", etaxIssueId);
 
-        return new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
     }
 
     @Override
@@ -398,7 +398,7 @@ public class SalesTaxInvoiceRepositoryImpl implements SalesTaxInvoiceRepository{
 
         query.setParameter("etaxIssueId", etaxIssueId);
 
-        return new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
     }
 
     @Override
@@ -563,7 +563,7 @@ public class SalesTaxInvoiceRepositoryImpl implements SalesTaxInvoiceRepository{
         query.setParameter("compCd", compCd);
         query.setParameter("oriIssueId", oriIssueId);
 
-        return new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
     }
 
     @Override
@@ -752,6 +752,6 @@ public class SalesTaxInvoiceRepositoryImpl implements SalesTaxInvoiceRepository{
             query.setParameter("taxCode", salesTaxInvoiceDto.taxCode);
         }
 
-        return new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        return com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
     }
 }

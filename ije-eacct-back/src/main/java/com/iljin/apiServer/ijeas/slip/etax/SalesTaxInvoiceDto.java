@@ -3,9 +3,9 @@ package com.iljin.apiServer.ijeas.slip.etax;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.NamedStoredProcedureQuery;
-import javax.persistence.ParameterMode;
-import javax.persistence.StoredProcedureParameter;
+import jakarta.persistence.NamedStoredProcedureQuery;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureParameter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -63,7 +63,7 @@ public class SalesTaxInvoiceDto implements Serializable {
                               BigDecimal customerId, String customerName, String integrationVendorNum, String taxReference, String representativeName,
                               String custBusinessCondition, String custBusinessType, String corporationNumber, String customerAddress, String postalCode, String phoneNumber,
                               String faxNumber, String eMail, String comments, String currencyCode, String taxEvidenceType, String taxEvidenceTypeName, String trxType,
-                              String supbuyType, Character etaxIssueIdYn, String etaxIssueId, BigDecimal etaxIssueIdCnt, Character dtiStatus, String dtiStatusText,
+                              String supbuyType, String etaxIssueIdYn, String etaxIssueId, BigDecimal etaxIssueIdCnt, String dtiStatus, String dtiStatusText,
                               String taxCode, String dtiType, BigDecimal totalAmount, BigDecimal supplyAmount, BigDecimal taxAmount, String createDeptCode,
                               String createDeptName, String createEmpNo, String createEmpName, String etaxExcludeFlag, String taxLocation, String direction) {
         this.customerTrxId = customerTrxId;
@@ -177,7 +177,7 @@ public class SalesTaxInvoiceDto implements Serializable {
     String byrComRegno;
     //String customerName;
     String conversationId;
-    //Character dtiStatus;
+    //String dtiStatus;
     //String dtiStatusText;
     String byrEmail;
     //String taxCode;
@@ -230,7 +230,7 @@ public class SalesTaxInvoiceDto implements Serializable {
     String byrBizplaceCode;
     String sendRequest;
 
-    public SalesTaxInvoiceDto(String dtiWdate, String glDate, String byrComRegno, String customerName, String conversationId, Character dtiStatus, String dtiStatusText,
+    public SalesTaxInvoiceDto(String dtiWdate, String glDate, String byrComRegno, String customerName, String conversationId, String dtiStatus, String dtiStatusText,
                               String byrEmail, String taxCode, BigDecimal supplyAmount, BigDecimal taxAmount, BigDecimal totalAmount, String remark, BigDecimal orgId,
                               String etaxIssueId, String byrTelNum, BigDecimal customerId, String integrationVendorNum, String byrRepName, String byrComType,
                               String byrComClassify, String corporationNumber, String byrComAddr, String currencyCode, String supbuyType, String supbuyTypeText,
@@ -386,7 +386,7 @@ public class SalesTaxInvoiceDto implements Serializable {
     String wrtId;
     String empNo;
 
-    public SalesTaxInvoiceDto(BigDecimal orgId, String postDtFrom, String postDtTo, String integrationVendorNum, Character dtiStatus, String issueDtFrom,
+    public SalesTaxInvoiceDto(BigDecimal orgId, String postDtFrom, String postDtTo, String integrationVendorNum, String dtiStatus, String issueDtFrom,
                               String issueDtTo, String wrtDeptCd, String wrtId, String empNo){
         this.orgId = orgId;
         this.postDtFrom = postDtFrom;
@@ -401,7 +401,7 @@ public class SalesTaxInvoiceDto implements Serializable {
     }
 
 
-    public SalesTaxInvoiceDto(String conversationId, Character dtiStatus, String returnCode){
+    public SalesTaxInvoiceDto(String conversationId, String dtiStatus, String returnCode){
         this.conversationId = conversationId;
         this.dtiStatus = dtiStatus == null ? null : String.valueOf(dtiStatus);
         this.returnCode = returnCode;

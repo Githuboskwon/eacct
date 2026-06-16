@@ -104,7 +104,7 @@ public class EmployeeDto {
 
 
     @QueryProjection
-    public EmployeeDto(String compCd, String empNo, String empNm, String deptCd, String deptNm, String jobDutCd, String jobDutNm, String jobGradeCd, String jobGradeNm, String serveCd, String serveNm, Character deptRoleYn) {
+    public EmployeeDto(String compCd, String empNo, String empNm, String deptCd, String deptNm, String jobDutCd, String jobDutNm, String jobGradeCd, String jobGradeNm, String serveCd, String serveNm, String deptRoleYn) {
         this.compCd = compCd;
         this.empNo = empNo;
         this.empNm = empNm;

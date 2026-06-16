@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.StoredProcedureQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.StoredProcedureQuery;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
@@ -79,12 +79,12 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
         Query query = entityManager.createNativeQuery(sb.toString());
 
-        if((new JpaResultMapper().list(query, SalesTaxInvoiceDto.class)).isEmpty()){
+        if((com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class)).isEmpty()){
             result.put("Message", "매출채권 Accounting 확인 오류. CUSTOMER_TRX_ID : " + customerTrxId);
             return result;
         }
 
-        String completeYn = (new JpaResultMapper().list(query, SalesTaxInvoiceDto.class)).get(0).completeYn;
+        String completeYn = (com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class)).get(0).completeYn;
 
         if(completeYn.equals("N")){
             StoredProcedureQuery storedProcedureQuery = entityManager.createNamedStoredProcedureQuery("APPS.CBO_SP_SLIP_PKG.CREATE_ACCOUNT_OM");
@@ -141,7 +141,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
         Query query = entityManager.createNativeQuery(sb.toString());
 
-        BigDecimal newEtaxIssueId = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class).get(0).newEtaxIssueId;
+        BigDecimal newEtaxIssueId = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class).get(0).newEtaxIssueId;
 
         for(int i=0; i<list.size(); i++){
             CboArTrxMerge cboArTrxMerge = new CboArTrxMerge();
@@ -185,7 +185,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             Query query = entityManager.createNativeQuery(sb.toString());
 
-            BigDecimal newEtaxIssueId = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class).get(0).newEtaxIssueId;
+            BigDecimal newEtaxIssueId = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class).get(0).newEtaxIssueId;
 
 
             CboArTrxMerge cboArTrxMerge = new CboArTrxMerge();
@@ -230,7 +230,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             Query query = entityManager.createNativeQuery(sb.toString());
 
-            BigDecimal newEtaxIssueId = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class).get(0).newEtaxIssueId;
+            BigDecimal newEtaxIssueId = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class).get(0).newEtaxIssueId;
 
 
             CboArTrxMerge cboArTrxMerge = new CboArTrxMerge();
@@ -259,7 +259,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             query = entityManager.createNativeQuery(sb.toString());
 
-            String completeYn = (new JpaResultMapper().list(query, SalesTaxInvoiceDto.class)).get(0).completeYn;
+            String completeYn = (com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class)).get(0).completeYn;
 
             if(completeYn.equals("N")){
                 StoredProcedureQuery storedProcedureQuery = entityManager.createNamedStoredProcedureQuery("APPS.CBO_SP_SLIP_PKG.CREATE_ACCOUNT_OM");
@@ -348,7 +348,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
         Query query = entityManager.createNativeQuery(sb.toString());
         query.setParameter("orgId", list.get(0).orgId);
-        List<SalesTaxInvoiceDto> corperInfo = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        List<SalesTaxInvoiceDto> corperInfo = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
         if(corperInfo.size() != 1){
             result.put("Message", "법인정보 Error");
@@ -372,7 +372,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             query = entityManager.createNativeQuery(sb.toString());
 
-            BigDecimal newInterfaceBatchId = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
+            BigDecimal newInterfaceBatchId = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
 
 
             //발행 메인 작업
@@ -425,7 +425,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
                 query = entityManager.createNativeQuery(sb.toString());
                 query.setParameter("etaxIssueId", list.get(i).etaxIssueId);
-                List<SalesTaxInvoiceDto> cboArMergeList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+                List<SalesTaxInvoiceDto> cboArMergeList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
                 for(int j=0; j<cboArMergeList.size(); j++){
 
@@ -484,7 +484,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
                 query = entityManager.createNativeQuery(sb.toString());
                 query.setParameter("conversationId", list.get(i).conversationId);
-                List<SalesTaxInvoiceDto> dtiStatusList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+                List<SalesTaxInvoiceDto> dtiStatusList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
                 if(dtiStatusList.size() != 1){
                     result.put("Message", "세금계산서 상태값 error");
@@ -660,7 +660,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             query = entityManager.createNativeQuery(sb.toString());
             query.setParameter("etaxIssueId", list.get(i).etaxIssueId);
-            List<SalesTaxInvoiceDto> dtiInvoiceList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+            List<SalesTaxInvoiceDto> dtiInvoiceList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
             for(int j=0; j<dtiInvoiceList.size(); j++){
                 XxsbDtiInvoice xxsbDtiInvoice = new XxsbDtiInvoice();
@@ -700,7 +700,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
         Query query = entityManager.createNativeQuery(sb.toString());
         query.setParameter("orgId", list.get(0).orgId);
-        List<SalesTaxInvoiceDto> corperInfo = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        List<SalesTaxInvoiceDto> corperInfo = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
         if(corperInfo.size() != 1){
             result.put("Message", "법인정보 Error");
@@ -724,7 +724,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             query = entityManager.createNativeQuery(sb.toString());
 
-            BigDecimal newInterfaceBatchId = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
+            BigDecimal newInterfaceBatchId = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
 
             //여러건 for문
             for(int i=0; i<list.size(); i++){
@@ -748,7 +748,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
                     query = entityManager.createNativeQuery(sb.toString());
                     query.setParameter("conversationId", list.get(i).conversationId);
 
-                    List<SalesTaxInvoiceDto> dtiStatusList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+                    List<SalesTaxInvoiceDto> dtiStatusList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
                     if(dtiStatusList.size() != 1){
                         result.put("Message", "세금계산서 상태값 error");
@@ -801,7 +801,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
                 query = entityManager.createNativeQuery(sb.toString());
                 query.setParameter("etaxIssueId", list.get(i).etaxIssueId);
-                List<SalesTaxInvoiceDto> cboArMergeList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+                List<SalesTaxInvoiceDto> cboArMergeList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
                 for(int j=0; j<cboArMergeList.size(); j++){
 
@@ -873,7 +873,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
         Query query = entityManager.createNativeQuery(sb.toString());
         query.setParameter("orgId", list.get(0).orgId);
-        List<SalesTaxInvoiceDto> corperInfo = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        List<SalesTaxInvoiceDto> corperInfo = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
         if(corperInfo.size() != 1){
             result.put("Message", "법인정보 Error");
@@ -897,7 +897,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             query = entityManager.createNativeQuery(sb.toString());
 
-            BigDecimal newInterfaceBatchId = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
+            BigDecimal newInterfaceBatchId = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
 
             //Main 작업 프로시저
             result = cancelIssueTaxInvoiceSub(list, result, newInterfaceBatchId);
@@ -961,7 +961,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
                 query = entityManager.createNativeQuery(sb.toString());
                 query.setParameter("conversationId", list.get(i).conversationId);
-                List<SalesTaxInvoiceDto> dtiStatusList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+                List<SalesTaxInvoiceDto> dtiStatusList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
                 if(dtiStatusList.size() != 1){
                     result.put("Message", "세금계산서 상태값 error");
@@ -1009,7 +1009,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
         Query query = entityManager.createNativeQuery(sb.toString());
         query.setParameter("orgId", list.get(0).orgId);
-        List<SalesTaxInvoiceDto> corperInfo = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        List<SalesTaxInvoiceDto> corperInfo = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
         if(corperInfo.size() != 1){
             result.put("Message", "법인정보 Error");
@@ -1044,7 +1044,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
                     query = entityManager.createNativeQuery(sb.toString());
                     query.setParameter("conversationId", list.get(i).conversationId);
-                    List<SalesTaxInvoiceDto> dtiStatusList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+                    List<SalesTaxInvoiceDto> dtiStatusList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
                     if(dtiStatusList.size() != 1){
                         result.put("Message", "세금계산서 상태값 error");
@@ -1117,7 +1117,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
         Query query = entityManager.createNativeQuery(sb.toString());
 
-        BigDecimal newInterfaceBatchId = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
+        BigDecimal newInterfaceBatchId = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
 
         //회사 정보 조회
         sb = new StringBuilder();
@@ -1136,7 +1136,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
         query = entityManager.createNativeQuery(sb.toString());
         query.setParameter("orgId", list.get(0).orgId);
-        List<SalesTaxInvoiceDto> corperInfo = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        List<SalesTaxInvoiceDto> corperInfo = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
         if(corperInfo.size() != 1){
             result.put("Message", "법인정보 Error");
@@ -1228,7 +1228,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
                 query = entityManager.createNativeQuery(sb.toString());
                 query.setParameter("etaxIssueId", list.get(i).etaxIssueId);
-                List<SalesTaxInvoiceDto> cboArMergeList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+                List<SalesTaxInvoiceDto> cboArMergeList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
                 for(int j=0; j<cboArMergeList.size(); j++){
 
@@ -1283,7 +1283,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
             Query query = entityManager.createNativeQuery(sb.toString());
             query.setParameter("etaxIssueId", list.get(i).etaxIssueId);
 
-            BigDecimal cnt = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId; //임시로 DTO 사용
+            BigDecimal cnt = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId; //임시로 DTO 사용
 
             if(cnt.intValue() == 0){
                 cboArEtaxIssueRepository.deleteByEtaxIssueId(new BigDecimal(list.get(i).etaxIssueId));
@@ -1324,7 +1324,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
         Query query = entityManager.createNativeQuery(sb.toString());
         query.setParameter("orgId", list.get(0).orgId);
-        List<SalesTaxInvoiceDto> corperInfo = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        List<SalesTaxInvoiceDto> corperInfo = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
         if(corperInfo.size() != 1){
             result.put("Message", "법인정보 Error");
@@ -1348,7 +1348,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             query = entityManager.createNativeQuery(sb.toString());
 
-            BigDecimal newInterfaceBatchId = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
+            BigDecimal newInterfaceBatchId = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
 
             //여러건 for문
             for(int i=0; i<list.size(); i++){
@@ -1371,7 +1371,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
                     query = entityManager.createNativeQuery(sb.toString());
                     query.setParameter("conversationId", list.get(i).conversationId);
-                    List<SalesTaxInvoiceDto> dtiStatusList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+                    List<SalesTaxInvoiceDto> dtiStatusList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
                     if(dtiStatusList.size() != 1){
                         result.put("Message", "세금계산서 상태값 error");
@@ -1483,7 +1483,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             query = entityManager.createNativeQuery(sb.toString());
             query.setParameter("newInterfaceBatchId", newInterfaceBatchId);
-            List<SalesTaxInvoiceDto> valCheck1 = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+            List<SalesTaxInvoiceDto> valCheck1 = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
             for(int i=0; i<valCheck1.size(); i++){
                 if(valCheck1.get(i).count.intValue() != 2){
@@ -1509,7 +1509,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             query = entityManager.createNativeQuery(sb.toString());
             query.setParameter("newInterfaceBatchId", newInterfaceBatchId);
-            List<SalesTaxInvoiceDto> valCheck2 = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+            List<SalesTaxInvoiceDto> valCheck2 = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
             for(int i=0; i<valCheck2.size(); i++){
                 sb.append(
@@ -1528,7 +1528,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
                 query = entityManager.createNativeQuery(sb.toString());
                 query.setParameter("orgId", list.get(0).orgId);
                 query.setParameter("oriIssueId", valCheck2.get(i).oriIssueId);
-                List<SalesTaxInvoiceDto> valCheck2Sub = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+                List<SalesTaxInvoiceDto> valCheck2Sub = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
 
                 if(valCheck2Sub.size() != 1){
@@ -1563,7 +1563,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             query = entityManager.createNativeQuery(sb.toString());
             query.setParameter("newInterfaceBatchId", newInterfaceBatchId);
-            List<SalesTaxInvoiceDto> valCheck3 = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+            List<SalesTaxInvoiceDto> valCheck3 = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
             for(int i=0; i<valCheck3.size(); i++){
                 if(valCheck3.get(i).taxCode.indexOf("로컬") < 0){
@@ -1605,7 +1605,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
                 query = entityManager.createNativeQuery(sb.toString());
                 query.setParameter("etaxIssueId", list.get(i).etaxIssueId);
-                List<SalesTaxInvoiceDto> cboArMergeList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+                List<SalesTaxInvoiceDto> cboArMergeList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
                 for(int j=0; j<cboArMergeList.size(); j++){
 
@@ -1784,7 +1784,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
         query = entityManager.createNativeQuery(sb.toString());
         query.setParameter("etaxIssueId", list.get(i).etaxIssueId);
-        List<SalesTaxInvoiceDto> dtiInvoiceList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        List<SalesTaxInvoiceDto> dtiInvoiceList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
         for(int j=0; j<dtiInvoiceList.size(); j++){
             XxsbDtiInvoice xxsbDtiInvoice = new XxsbDtiInvoice();
@@ -1824,7 +1824,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
         Query query = entityManager.createNativeQuery(sb.toString());
         query.setParameter("orgId", salesTaxInvoiceDto.orgId);
-        List<SalesTaxInvoiceDto> corperInfo = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+        List<SalesTaxInvoiceDto> corperInfo = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
         if(corperInfo.size() != 1){
             result.put("Message", "법인정보 Error");
@@ -1844,7 +1844,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
             query = entityManager.createNativeQuery(sb.toString());
 
-            BigDecimal newInterfaceBatchId = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
+            BigDecimal newInterfaceBatchId = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class).get(0).newInterfaceBatchId;
 
 
             //개인사용자
@@ -1866,7 +1866,7 @@ public class SalesTaxInvoiceServiceImpl implements SalesTaxInvoiceService{
 
                 query = entityManager.createNativeQuery(sb.toString());
                 query.setParameter("conversationId", salesTaxInvoiceDto.conversationId);
-                List<SalesTaxInvoiceDto> dtiStatusList = new JpaResultMapper().list(query, SalesTaxInvoiceDto.class);
+                List<SalesTaxInvoiceDto> dtiStatusList = com.iljin.apiServer.core.util.ResultMapperUtil.list(query, SalesTaxInvoiceDto.class);
 
                 if(dtiStatusList.size() != 1){
                     result.put("Message", "세금계산서 상태값 error");

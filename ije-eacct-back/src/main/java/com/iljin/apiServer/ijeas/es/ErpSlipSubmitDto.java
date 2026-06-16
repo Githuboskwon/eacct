@@ -29,11 +29,11 @@ public class ErpSlipSubmitDto implements Serializable {
 
     String createUser;
 
-    Character reportArraign;
+    String reportArraign;
 
-    Character approvalArraign;
+    String approvalArraign;
 
-    Character sealArraign;
+    String sealArraign;
 
     String integrationVendorNum;
 
@@ -93,7 +93,7 @@ public class ErpSlipSubmitDto implements Serializable {
 
     @QueryProjection
     public ErpSlipSubmitDto(String slipType,BigDecimal compCd,String slipNo,BigDecimal slipHeaderId,BigDecimal approvalGroupId,
-                            String slipTypeText,String createUser,Character reportArraign,Character approvalArraign,Character sealArraign,
+                            String slipTypeText,String createUser,String reportArraign,String approvalArraign,String sealArraign,
                             String integrationVendorNum,String storeName,String erpValidation,BigDecimal enteredAmount,BigDecimal usedAmt,
                             String approvalStatus,String slipCurrencyCode,BigDecimal usedFAmt,Timestamp glDate,String slipDataFixFlag,
                             String slipIfFlag,String slipInterfaceErrorMsg,String transferType,String status,String postingDt,

@@ -3,12 +3,12 @@ package com.iljin.apiServer.ijeas.slip.etax;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Getter
 @NoArgsConstructor
-@Table(name ="CBOTAX.XXSB_DTI_INVOICE")
+@Table(name = "XXSB_DTI_INVOICE", schema = "CBOTAX")
 @IdClass(XxsbDtiInvoiceKey.class)
 @Entity
 public class XxsbDtiInvoice {

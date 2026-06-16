@@ -2,7 +2,7 @@ package com.iljin.apiServer.ijeas.mobile.menu;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Data

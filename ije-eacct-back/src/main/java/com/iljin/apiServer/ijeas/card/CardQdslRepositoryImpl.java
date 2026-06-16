@@ -68,7 +68,6 @@ public class CardQdslRepositoryImpl implements CardQdslRepository {
                         ,crdCompCdEq(cardDto.getCrdCompCd())
                         ,crdFgCdEq(cardDto.getCrdFgCd())
                 )
-                .orderBy(card.crdNo.desc() , codeDetail4.detailNm.asc(), card.crdPubcDt.desc() )
                 .fetchFirst();
     }
 
@@ -84,18 +83,18 @@ public class CardQdslRepositoryImpl implements CardQdslRepository {
                 .select(new QCardDto(
                         card.crdNo,
                         card.compCd,
-                        codeDetail1.detailNm.as("compNm"),
+                        codeDetail1.detailNm.trim().as("compNm"),
                         card.crdStatCd,
-                        codeDetail2.detailNm.as("crdStatNm"),
+                        codeDetail2.detailNm.trim().as("crdStatNm"),
                         card.crdFgCd,
-                        codeDetail3.detailNm.as("crdFgNm"),
+                        codeDetail3.detailNm.trim().as("crdFgNm"),
                         card.crdPssrId,
                         employee.empNm.as("crdPssrNm"),
                         card.crdPubcDt,
                         card.crdVldYm,
                         card.crdPlmtAmt,
                         card.crdCompCd,
-                        codeDetail4.detailNm.as("crdCompNm"),
+                        codeDetail4.detailNm.trim().as("crdCompNm"),
                         card.crdOln
                         ))
                 .from(card)
@@ -131,18 +130,18 @@ public class CardQdslRepositoryImpl implements CardQdslRepository {
                 .select(new QCardDto(
                         card.crdNo,
                         card.compCd,
-                        codeDetail1.detailNm.as("compNm"),
+                        codeDetail1.detailNm.trim().as("compNm"),
                         card.crdStatCd,
-                        codeDetail2.detailNm.as("crdStatNm"),
+                        codeDetail2.detailNm.trim().as("crdStatNm"),
                         card.crdFgCd,
-                        codeDetail3.detailNm.as("crdFgNm"),
+                        codeDetail3.detailNm.trim().as("crdFgNm"),
                         card.crdPssrId,
                         employee.empNm.as("crdPssrNm"),
                         card.crdPubcDt,
                         card.crdVldYm,
                         card.crdPlmtAmt,
                         card.crdCompCd,
-                        codeDetail4.detailNm.as("crdCompNm"),
+                        codeDetail4.detailNm.trim().as("crdCompNm"),
                         card.crdOln
                 ))
                 .from(card)
