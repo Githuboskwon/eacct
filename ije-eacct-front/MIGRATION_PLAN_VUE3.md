@@ -292,6 +292,29 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 > ⚠️ 런타임 확인 필요: `ApprRuleSet`/`ApprMndSet`(조회·더블클릭·엑셀), `ApprLineSet`(`/apprLineMng`: 부서트리→임직원목록→추가/삭제/순서이동/적용).
 > 커밋: `refactor(front): DHTMLX → ag-grid ...`(B그룹) + `refactor(front): 죽은 AuthMngUser/AuthMngMenu 삭제 + AuthMngMenu2 정리`.
 
+### 8.8 편집형 전표 `GridED` ag-grid PoC 결과 (2026-06-16)
+
+> **목적:** 운영 `GridED.vue`(약 3,658줄, 슬립유형별 config 4종 `def/E2/E6/E1`)를 통째로 건드리지 않고, **4대 난관의 실현성·공수만 실측.**
+> **산출물:** 독립 실증 컴포넌트 `src/components/poc/GridEDPoc.vue` (라우트 `/gridEdPoc`, 운영 영향 0). 슬립 기본유형(config_def) 핵심 패턴을 ag-grid로 재현.
+
+**4대 난관 실현성 — 전부 ✅ 검증됨:**
+
+| 난관 | DHTMLX(현행) | ag-grid 대응 | 결과 |
+|------|--------------|--------------|------|
+| ① 셀 내부 Vue 컴포넌트 | `config.columns[].component:{template,methods}` (검색버튼·GridSelect·예산표시) | `cellRenderer`(frameworkComponent) / `cellEditor`. 검색버튼은 `Vue.extend` 렌더러에서 `$modal.open(...)` 호출 → `params.node.setDataValue`로 주입 | ✅ (프로젝트 기존 `agGrid/*-cell-renderer.js`가 동일 패턴 사용 — 이미 검증된 방식) |
+| ② 셀/행 잠금 | `grid.lockRow()` + `setColumnClassName('bg-lightpink')` (afterRefreshData에서 대변/세액 행 잠금) | `colDef.editable=(params)=>!isLocked(row)` + `cellStyle=(params)=>음영` | ✅ |
+| ③ 키보드 Tab 네비 | DHTMLX 편집셀 Tab 이동 | `gridOptions.tabToNextCell`로 **편집 가능 셀만** 점프 구현 | ✅ |
+| ④ 인라인 편집 + 포맷 + 연동계산 | `type:ed/edn`, `onEditCell`/`onCellChanged`의 합계·검색 로직 | `editable` + `valueParser`/`valueFormatter`(천단위) + `@cell-value-changed`(차/대변 합계 자동) + `agSelectCellEditor`(셀렉트) | ✅ |
+
+> **참고:** GridED의 슬립 그리드는 **페이징을 쓰지 않음**(`height` 고정, `enablePaging` 없음) → §8.4의 "가상 페이징" 난관은 GridED에는 **해당 없음**.
+
+**결론 — 기술적 전환 가능(난관 모두 해소). 단, 공수는 "패턴"이 아니라 "분량"에서 발생:**
+- 4대 난관은 PoC로 해소됐고, 검색 컴포넌트(`Cctr_Ag`/`Account_Ag`/`Product_Ag`)·셀 렌더러(`agGrid/*`)도 이미 존재.
+- 실제 공수 = **config 4종(def/E2/E6/E1) × 각 15~20컬럼 + 슬립유형별 `onEditCell`/`onCellChanged`/`afterRefreshData` 비즈니스 로직 포팅**. 화면 의존성(예산조회·계정애드온·유가계산·세액계산 등)이 많아 **화면 단위 신중 전환 + 회귀 테스트** 필요.
+- 추정: `GridED`(+`GridRO`) 본전환 **2~3주 + 슬립유형별 E2E 1~2주** (기존 §8.4 추정 유지).
+
+**권장 전환 순서(전표 영역):** 가장 단순한 config부터 — 읽기전용 `GridRO` → `config_def`/`config_E6` → `config_E2`(보조계정·예산연동) → `config_E1`(법인카드, 2그리드). 각 단계 후 해당 슬립유형 E2E.
+
 ---
 
 ## 9. 다음 액션
@@ -300,7 +323,7 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 3. [x] **(완료 2026-06-16)** 죽은 구버전 `AuthMngUser.vue`/`AuthMngMenu.vue` 삭제 + 활성본 `AuthMngMenu2.vue` 죽은 import 정리 (권한관리 활성본은 기전환됨) (§8.7)
 4. [x] **(완료 2026-06-16)** 런타임 확인 — `/apprRuleSet`·`/apprMndSet`·`/apprLineMng` 정상 동작 확인 (※ `ApprMndPop` 사원검색 팝업은 `/apprMndSet` 신규/수정 흐름에서 추가 확인 권장)
 5. [x] **(완료 2026-06-16)** 저위험 정리 — 죽은 `DhxGrid` import 27개 파일 일괄 제거 + 죽은 파일 `PopupGrid.vue` 삭제 (그리드 동작 변화 없음, DhxGrid no-undef/구문오류 0)
-6. [ ] **(선결)** §8.5 — 편집형 전표 `GridED` 1화면 ag-grid PoC로 4대 난관(셀잠금/키보드/페이징/인라인 컴포넌트) 실현성·공수 실측
+6. [x] **(완료 2026-06-16)** 편집형 전표 `GridED` ag-grid PoC — 4대 난관 전부 검증(독립 컴포넌트 `poc/GridEDPoc.vue`, `/gridEdPoc`). 기술적 전환 가능 확인, 공수는 config 4종 분량에서 발생 (§8.8)
 7. [ ] 검색 `_new` 변형(활성 DHTMLX 그리드) 전환 — A그룹과 함께 (Account_new/Cctr_new/Emp_new/IO_new/Vendor_new) + 직접호출(`Account/Cctr/Emp/Vendor/Product/Expend/ErpAccountPop`)
 8. [ ] 0단계 잔여: 미사용 의존성 9종 제거 + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
 9. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정

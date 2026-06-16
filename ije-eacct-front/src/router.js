@@ -55,7 +55,14 @@ export default new Router({
             name: 'GridComponent',
             component: () =>
                 import ('./views/GridComponent.vue'),
-        },        
+        },
+        {
+            // PoC: GridED → ag-grid 전환 실증 (운영 영향 없음, 검증용)
+            path: '/gridEdPoc',
+            name: 'gridEdPoc',
+            component: () =>
+                import ('./components/poc/GridEDPoc.vue'),
+        },
         {
             path: '/deptAuthMng',
             name: 'deptAuthMng',
