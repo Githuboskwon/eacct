@@ -147,13 +147,14 @@ export default {
       const n = Number(String(v).replace(/,/g, ''));
       return isNaN(n) ? 0 : n;
     },
-    // ③ Tab 이동: 다음 편집 가능 셀로 점프(비편집/잠금 셀 skip)
+    // ③ Tab 이동: 편집 가능한 다음 셀로만 이동(비편집/잠금 skip), 끝에서 처음으로 순환(그리드 밖으로 안 나감)
     // 주의: getAllDisplayedColumns()는 columnApi 의 메서드 (gridApi 아님)
     nextEditableCell(params) {
-      const next = params.nextCellPosition;
-      if (!next || !this.columnApi) return next;
-
+      if (!this.columnApi || !this.gridApi) return params.nextCellPosition;
       const cols = this.columnApi.getAllDisplayedColumns();
+      const rowCount = this.gridApi.getDisplayedRowCount();
+      if (!cols.length || !rowCount) return params.nextCellPosition;
+
       const isEditable = (col, rowIndex) => {
         const colDef = col.getColDef();
         const ed = colDef.editable;
@@ -165,23 +166,28 @@ export default {
         return false;
       };
 
-      const startIdx = cols.findIndex(c => c.getColId() === next.column.getColId());
-      // 다음 위치(포함)부터 앞으로 탐색하여 편집 가능한 첫 셀로 이동
-      for (let i = startIdx; i < cols.length; i++) {
-        if (isEditable(cols[i], next.rowIndex)) {
-          return { rowIndex: next.rowIndex, column: cols[i], rowPinned: next.rowPinned };
+      const backwards = params.backwards === true;
+      // 현재(이동 전) 위치
+      const cur = params.previousCellPosition || params.nextCellPosition;
+      if (!cur) return params.nextCellPosition;
+      let r = cur.rowIndex;
+      let c = cols.findIndex(x => x.getColId() === cur.column.getColId());
+
+      // 한 칸씩 이동하며(row-major, 순환) 편집 가능한 첫 셀 탐색
+      const total = rowCount * cols.length;
+      for (let step = 0; step < total; step++) {
+        if (backwards) {
+          c--;
+          if (c < 0) { c = cols.length - 1; r = (r - 1 + rowCount) % rowCount; }
+        } else {
+          c++;
+          if (c >= cols.length) { c = 0; r = (r + 1) % rowCount; }
+        }
+        if (isEditable(cols[c], r)) {
+          return { rowIndex: r, column: cols[c], rowPinned: null };
         }
       }
-      // 현재 행에 더 없으면 다음 행의 첫 편집 가능 셀로
-      const lastRow = this.gridApi.getDisplayedRowCount() - 1;
-      if (next.rowIndex < lastRow) {
-        for (let i = 0; i < cols.length; i++) {
-          if (isEditable(cols[i], next.rowIndex + 1)) {
-            return { rowIndex: next.rowIndex + 1, column: cols[i], rowPinned: next.rowPinned };
-          }
-        }
-      }
-      return next;
+      return params.nextCellPosition;
     },
     // ④ 금액 편집 시 차/대변 합계 자동계산 (onEditCell 'debitAmt' 로직 재현)
     onCellValueChanged(params) {
