@@ -351,7 +351,7 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 4. [x] **(완료 2026-06-16)** 런타임 확인 — `/apprRuleSet`·`/apprMndSet`·`/apprLineMng` 정상 동작 확인 (※ `ApprMndPop` 사원검색 팝업은 `/apprMndSet` 신규/수정 흐름에서 추가 확인 권장)
 5. [x] **(완료 2026-06-16)** 저위험 정리 — 죽은 `DhxGrid` import 27개 파일 일괄 제거 + 죽은 파일 `PopupGrid.vue` 삭제 (그리드 동작 변화 없음, DhxGrid no-undef/구문오류 0)
 6. [x] **(완료 2026-06-16)** 편집형 전표 `GridED` ag-grid PoC — 4대 난관 전부 검증(독립 컴포넌트 `poc/GridEDPoc.vue`, `/gridEdPoc`). 기술적 전환 가능 확인, 공수는 config 4종 분량에서 발생 (§8.8)
-7. [~] **(진행 2026-06-16)** A그룹 진행 — `GridRO` 전환 완료(§8.9) / `GridED` 본전환 진행: `GridED_Ag.vue` **증분1~4(def/E6/E2/E5/E1) 전부 완성**(§8.10). 다음: `SlipBase.vue`에서 `GridED`→`GridED_Ag` 교체 + 슬립유형별 런타임 검증 → `SlipGr`/`SlipCrdLstModal`/`BdgReq` 등
+7. [중단] **(보류 2026-06-17, §10 참조)** A그룹(`GridED`/`GridRO`/`SlipCrdLstModal`/`BdgReq`) — `GridED_Ag.vue` 증분1~4 완성·`SlipBase` 연결(PR #4)까지 했으나, **해당 경로(`/exctpExpense`)가 운영 네비게이션에서 도달 불가한 레거시로 확인됨** → 전환 중단. PR #4는 죽은 경로라 영향 없어 유지, **PR #7(SlipCrdLstModal) 보류/CLOSE**.
 8. [~] **(진행 2026-06-16)** 잔여 그리드 정리/전환 (브랜치 `refactor/dhtmlx-remaining-grids`):
    - 죽은 파일 삭제: `Account.vue`/`Expend.vue`/`Cctr.vue`/`Vendor.vue` (참조 0 확정). **`Account_new.vue`는 유지** — `SearchAccount.vue`가 상대경로 `./Account_new.vue`로 사용(삭제했다가 빌드 깨져 복원).
    - `SlipGr.vue`(전표 그룹, 읽기전용) ag-grid 전환 완료
@@ -360,6 +360,137 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
    - 잔여(live, 전환 필요): `SlipCrdLstModal`/`BdgReq`/`Prepay`/`JiniAtchPop`/`JiniAtchBatchPop`/`Cctr_new`/`Emp_new`/`IO_new`/`Vendor_new`/`ErpAccountPop`.
    - ⚠️ `ErpAccount`/`Emp`/`Product` 원본은 **운영 `GridED.vue`·`SlipCrdLstModal`**(아직 DHTMLX, 전환 예정)이 사용 중 → 그 파일 전환 시 함께 `_Ag`로 교체. (`GridED_Ag`의 `ErpAccount`→`ErpAccount_Ag`는 emit 필드 검증 후 교체 TODO)
 8. [ ] 0단계 잔여: 미사용 의존성 9종 제거 + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
-9. [ ] 1단계: vue-cli 5 vs Vite PoC 브랜치로 빌드 환경 결정
+9. [x] **(완료 2026-06-17)** 1단계: 빌드 환경 결정·교체 — **vue-cli 5(webpack5)** 적용, build/serve openssl 플래그 없이 통과 (§11.6, 브랜치 `migration/vue-cli5`)
 10. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
-8. [ ] `$bus` 대체 방식(mitt vs Pinia) 결정
+11. [ ] `$bus` 대체 방식(mitt vs Pinia) 결정
+
+---
+
+## 10. 🔁 전략 전환: 레거시 GridED 경로 중단 → 활성 화면 우선 (2026-06-17)
+
+### 10.1 발견 — `GridED_Ag` / `SlipCrdLstModal` / `BdgReq`는 죽은 경로
+런타임/코드 추적으로 다음 확인:
+
+| 경로 | 실제 동작 | GridED_Ag 사용 |
+|------|----------|----------------|
+| 전표관리 `/slipMng` 더블클릭 | `ApprovalModal`(신규 accrualSlip 결재 모달) | ❌ |
+| 전표내역조회 `/slipLst` 더블클릭 | `/accrualSlip/{slipNo}` 라우팅(신규) | ❌ |
+| `/slipLst` "개인비용외/전자세금계산서/수기세금계산서" 버튼 | **블록 전체 주석 처리** (SlipLst.vue 56~60) | ❌ (진입점 제거) |
+| 활성 메인 `MyMain.vue` | `/exctpExpense` **미참조** (구버전 MyMain2/MyMain_pub에만 잔존) | ❌ |
+
+→ `/exctpExpense`(`SlipBase`→`GridED_Ag`) 및 그 안의 **`SlipCrdLstModal`(법인카드내역 버튼, config_E1)·`BdgReq`** 는 메뉴·버튼·대시보드 어디로도 도달 불가. **직접 URL 입력으로만 접근**. 운영 전표 작성/조회/결재는 전부 신규 **`/accrualSlip`** 서브시스템(이미 ag-grid)으로 이전됨. (신규 법인카드 팝업도 `accrualSlip/Modals/CorpCardHstModal.vue`로 별도 존재 = 이미 ag-grid)
+
+### 10.2 결정 (사용자 승인: 선택지 1)
+- **레거시 GridED 경로 전환 작업 중단(보류):** `GridED_Ag`/`GridRO`/`SlipCrdLstModal`/`BdgReq`.
+- 이미 머지된 **PR #4**(`GridED_Ag` 연결)는 죽은 경로라 운영 영향 없음 → 롤백 불필요, 유지. **PR #7(`SlipCrdLstModal`) 보류/CLOSE.**
+- 공수를 **실제 메뉴로 도달 가능한 활성 DHTMLX 그리드 화면**으로 이동.
+
+### 10.3 ⚠️ 정정 (2026-06-17) — 활성 화면 DHTMLX 그리드 전환은 **이미 완료** 상태
+
+최초 `<dhx-grid>` grep이 **주석 처리된 라인까지 카운트**하여 "활성 14개 DHTMLX 그리드"로 오판했음. **주석 제외 활성 기준**으로 재검증한 정확한 실태:
+
+| 구분 | 실태 |
+|------|------|
+| ERP전표/결재/법인카드 **목록 14개**(PaySlipList, PurSlipList, ApprPendLst, ApprCompLst, ApprReqLst, CardUseLst, CardInfoMng, GLSlipList, FundSlipLst, CollectionSlipLst, EtcSalesSlipLst, ForeignSlipLst, ExportSlipLst, ESlipSubmit) | **이미 `<ag-grid-vue>` 전환 완료**. `<dhx-grid>`는 전부 주석 잔재 |
+| 주석 아닌 **활성 `<dhx-grid>`** | **8개 파일뿐**: `Account_new`/`Emp_new`/`Cctr_new`/`Vendor_new`/`IO_new`/`ErpAccount`(검색팝업) + `BdgReq` + `GridED`(죽은 원본) |
+
+**활성 `<dhx-grid>` 8개 = 전부 레거시 죽은 경로:**
+- `GridED.vue`: SlipBase가 `GridED_Ag`로 대체 → 죽은 원본
+- `BdgReq`/검색팝업(`_new`): `ApprDtl`→`slip-table` 레거시 체인에서만 사용. **활성 결재화면(`ApprPendLst` 등)은 신규 `ApprovalModal`(`accrualSlip/Approval/Main.vue`) + `Emp_Ag`/`Cctr_Ag`(ag-grid) 사용** → 레거시 검색팝업은 죽은 경로. (신규 accrualSlip는 자체 ag-grid 모달 `accrualSlip/GridModal/AccountModal` 등 사용)
+
+→ **결론: 활성 화면의 DHTMLX→ag-grid 그리드 전환은 사실상 완료. 추가 변환할 활성 그리드 없음.**
+
+### 10.3.1 실제 남은 DHTMLX 작업 (그리드 아님)
+1. **`<dhx-calendar>` 날짜 위젯 → `el-date-picker`** — 활성 화면 잔존(예: `CardInfoMng`, `CertificateMng`, `ProjectLst`, `ExpPriceReg/List`, `EstimateReg/List` 등). 소규모·기계적 치환(PaySlipList가 이미 이 패턴으로 전환 완료).
+2. **죽은 코드 정리** — 14개 기전환 화면의 주석 `<dhx-grid>` + 죽은 `DhxGrid`/`DhxCalendar` import 제거. 죽은 레거시 파일(`GridED.vue`, `ApprDtl` 체인, `_new` 검색팝업, `BdgReq`, `slip-table` 서브시스템) 참조 0 확정 후 일괄 삭제 대상.
+
+### 10.4 다음 액션
+1. [ ] PR #7(`SlipCrdLstModal`) CLOSE — *gh 실행 대기(분류기 일시 장애)*
+2. [ ] (선택) `<dhx-calendar>`→`el-date-picker` 치환 — 활성 화면 우선
+3. [ ] (선택) 죽은 레거시 슬립/검색팝업/`DhxGrid` 잔재 정리 후 삭제(참조 0 확정 필수, `npm run build` 검증)
+4. [x] **(완료 2026-06-17)** 그리드 전환이 사실상 끝나 **Vue 3 선행 1단계(빌드 툴체인)로 이동** → vue-cli 5 교체 완료 (§11.6)
+
+---
+
+## 11. 빌드 툴체인 결정 (1단계) — 현황 분석 + 권고 (2026-06-17)
+
+### 11.1 현재 빌드 설정 실측
+| 파일 | 핵심 내용 | 이관 시 영향 |
+|------|----------|-------------|
+| `package.json` scripts | `set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build` | webpack4+Node18 OpenSSL 우회 → 툴 교체 시 제거 가능 |
+| `vue.config.js` | `runtimeCompiler: true`, `chainWebpack`(alias `@`), 커스텀 `postcss-loader`+`sass-loader` 규칙, `HtmlWebpackPlugin`, `ts-loader` 규칙(**TS 파일 0 = 죽은 규칙**) | ⚠️ **`configureWebpack` 키 중복**(객체가 함수 덮어씀 → 해시 파일명 설정 사문화). 재작성 필요 |
+| `babel.config.js` | `@babel/preset-env`(esmodules, core-js 3) | 유지 가능(vue-cli5) / Vite는 esbuild라 babel 최소화 |
+| `.gitlab-ci.yml` | `sass-migrator division` → `build:staging` → `dist` → nginx | 산출물 `dist` 동일하면 변경 최소 |
+| `.env` | `VUE_APP_*` 컨벤션 | vue-cli5 유지 / **Vite는 `VITE_*`로 일괄 rename 필요** |
+| 코드 | jQuery/jquery-ui 전역 225곳, DHTMLX 전역 스크립트, `Vue.extend({template})` 다수 | `runtimeCompiler` 필요 → Vite는 `vue.esm-bundler` alias 명시 필요 |
+
+### 11.2 vue-cli 5 (webpack 5) vs Vite 비교
+| 기준 | vue-cli 5 | Vite |
+|------|-----------|------|
+| 마이그레이션 위험 | **낮음** — `vue.config.js`(chainWebpack/configureWebpack) 구조·`VUE_APP_*`·webpack 멘탈모델 그대로 | 높음 — config 패러다임 변경(no chainWebpack), env rename, CJS config 변환 |
+| Vue 2 유지 가능 | ✅ Vue 2.6/2.7 그대로 빌드 → **빌드 툴만 먼저 교체 후 Vue 3은 별도 단계** | △ `@vitejs/plugin-vue2` 필요(과도기) |
+| `runtimeCompiler` | 옵션 그대로 지원 | alias 수동 설정 필요 |
+| jQuery/DHTMLX 전역 | 기존 방식 유지 | ProvidePlugin 대체(`@rollup/plugin-inject`) 등 추가 작업 |
+| 빌드/HMR 속도 | 보통(webpack5) | 빠름 |
+| 장기성 | 유지보수 모드(신규 개발 적음) | 생태계 표준·활발 |
+| `--openssl-legacy-provider` 제거 | ✅ | ✅ |
+
+### 11.3 권고: **vue-cli 5 우선 (Vue 2 유지 상태로 교체) → 이후 Vue 3 → 말미에 Vite 재평가**
+근거: 본 앱은 레거시 의존(jQuery 225곳, DHTMLX 전역, element-ui/buefy, `runtimeCompiler`, CJS config)이 많아 **Vite + Vue 3 동시 전환은 동시 리스크가 과대**. vue-cli 5로 **빌드 툴만 먼저(여전히 Vue 2.6)** 교체하면: ① `--openssl-legacy-provider` 제거 ② webpack5/Node20+ 확보 ③ `vue.config.js` 정리(죽은 ts-loader·중복 키) ④ Vue 3 점프 전 빌드 안정화 — 가 저위험으로 달성됨. Vite는 element-plus/ag-grid-vue3까지 끝난 뒤 마지막에 재평가.
+
+### 11.4 vue-cli 5 PoC 단계 (선정 시)
+1. `@vue/cli-service` 3 → 5, `@vue/cli-plugin-*` 5, eslint parser `babel-eslint`→`@babel/eslint-parser`
+2. `vue.config.js` 재작성(중복 `configureWebpack` 제거, 죽은 `ts-loader` 제거, alias/sass 규칙 정리)
+3. `package.json` scripts에서 `--openssl-legacy-provider` 제거
+4. `npm run build` 통과 + `/` 런타임 스모크(로그인·전표목록·ag-grid 1화면) 확인
+5. CI(`.gitlab-ci.yml`) 빌드스텝 점검(`dist` 동일 → 최소 변경)
+
+### 11.5 vue-cli 5 교체 사양 (확정 2026-06-17 · 셸 복구 후 실행 대기)
+> 사용자 결정: **vue-cli 5 우선**. 셸 명령 분류기 일시 장애로 `npm install`/`build` 실행 대기 중.
+> 교체용 config 초안 = `vue.config.cli5.js` (검증 후 `vue.config.js`로 교체).
+
+**(a) `package.json` devDependencies 변경**
+```
+@vue/cli-service        ^3.12.1 → ^5.0.8
+@vue/cli-plugin-babel   ^3.12.1 → ^5.0.8
+@vue/cli-plugin-eslint  ^3.12.1 → ^5.0.8
+@vue/cli-plugin-unit-mocha ^3.12.1 → ^5.0.8
+sass-loader             ^10.2.1 → ^12.6.0   (webpack5 호환)
+webpack                 ^4.46.0 → 제거       (cli5가 webpack5 제공)
+webpack-cli             ^3.3.9  → 제거       (충돌 방지)
+html-webpack-plugin     ^4.4.0  → 제거       (cli5 내장)
++ @babel/eslint-parser  추가 ^7.23.0         (babel-eslint 대체)
+```
+**(b) eslint parser 교체**: `eslintConfig.parserOptions.parser`: `"babel-eslint"` → `"@babel/eslint-parser"`
+**(c) scripts에서 `set NODE_OPTIONS=--openssl-legacy-provider && ` 5곳 제거**
+**(d) `vue.config.js` ← `vue.config.cli5.js` 내용으로 교체**
+
+**⚠️ 알려진 리스크:** `@vue/eslint-config-airbnb@^3.0.5`가 eslint 7/8(cli5 동반)과 비호환 가능 → lint 단계에서 충돌 시 `^6`/`^7`로 상향 또는 lint 일시 완화 필요. babel-polyfill(6)·@babel/polyfill(7) 중복도 정리 후보.
+
+**실행 순서(셸 복구 시):**
+```
+git switch -c migration/vue-cli5
+# package.json 위 변경 적용
+npm install --legacy-peer-deps
+copy vue.config.cli5.js vue.config.js   # 또는 내용 교체
+npm run build        # openssl 플래그 없이 통과 확인
+# 런타임 스모크: / 로그인 → 전표목록(ag-grid 1화면) 정상 확인
+```
+
+### 11.6 ✅ vue-cli 5 교체 실행 결과 (2026-06-17 완료, 브랜치 `migration/vue-cli5`)
+
+**`npm run build` / `npm run serve` 모두 `--openssl-legacy-provider` 없이 webpack5에서 통과.**
+(build: `DONE Build complete`, modern/legacy 듀얼 번들·해시 파일명·`dist/dhtmlx` 정적자산 복사 정상 / serve: `App running at http://localhost:19050/`)
+
+**§11.5 확정 사양 대비 실제 적용/추가 변경 4건:**
+
+| # | 사양/이슈 | 조치 |
+|---|-----------|------|
+| 1 | eslint 미설치로 cli-plugin-eslint가 `eslint.version` 읽기 실패 + airbnb@3.0.5가 eslint7/8 비호환(§11.5 ⚠️ 예견) | `@vue/eslint-config-airbnb` **3.0.5 → ^6.0.0**(eslint ^7.32‖^8.2·cli-service ^5 지원), **eslint ^7.32.0 / eslint-plugin-import ^2.25.3 / eslint-plugin-vue ^8 / eslint-plugin-vuejs-accessibility ^1.1.0** 명시 추가 |
+| 2 | webpack5 css-loader가 SCSS 루트절대 `url(/img/*.png)`(public 참조)을 모듈 해석하려다 실패(`DhxGrid`/`MyMain` 등) | `vue.config.js`에 `css.loaderOptions.css.url.filter = (u)=>!u.startsWith('/')` 추가 |
+| 3 | airbnb v6 스타일 규칙(max-len/indent/quotes)이 기존 277파일 코드를 빌드에서 에러 처리 | `vue.config.js` **`lintOnSave: false`** (빌드 차단 해제, `npm run lint` 수동 실행은 유지). 전체 재포맷은 별도 단계로 보류 |
+| 4 | webpack5 node core 폴리필 제거 → `DhxGrid.vue`의 `import { setInterval } from 'timers'` 모듈 해석 실패 | 불필요 import 제거(`setInterval`은 브라우저 전역) |
+
+- `vue.config.cli5.js`(초안)는 적용 완료되어 삭제. 최종본 = `vue.config.js`.
+- **CI(`.gitlab-ci.yml`) 변경 불필요:** openssl 플래그는 `package.json` scripts에만 존재(제거 완료), `dist` 산출물 구조·`npm install --legacy-peer-deps`·`build:staging`·sass-migrator 스텝 모두 그대로 유효.
+- ⚠️ **남은 검증:** 실제 브라우저 런타임 스모크(로그인 → 전표목록 ag-grid 1화면·DHTMLX 잔존 화면)는 dev 기동 후 별도 확인 권장. **lint 재베이스라인**(airbnb v6 스타일로 전체 정리 or 규칙 완화)은 후속 과제.
