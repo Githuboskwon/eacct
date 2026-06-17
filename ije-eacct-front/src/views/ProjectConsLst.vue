@@ -149,6 +149,7 @@
 
 <script>
 import Vue from "vue";
+import createBus from '@/libs/eventBus';
 import DhxCalendar from "@/components/DhxCalendar.vue";
 
 import mixin from "@/mixin";
@@ -159,7 +160,7 @@ import NumberInputCellRenderer from "@/components/agGrid/numberinput-cell-render
 import DatepickerCellRenderer from "@/components/agGrid/datepicker-cell-renderer";
 import ProjectMngPop from "@/components/ims/ProjectMngPop";
 
-const bus = new Vue();
+const bus = createBus();
 
 const options = {};
 const lock = {};
@@ -180,7 +181,7 @@ function queryMngItemCd() {
           .then(response => {
             options["OIL_KIND_CD"] = response.data;
             delete lock["OIL_KIND_CD"];
-            bus.$emit("OIL_KIND_CD", response.data);
+            bus.emit("OIL_KIND_CD", response.data);
             return resolve(response);
           })
           .catch(response => {

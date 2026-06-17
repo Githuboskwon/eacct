@@ -38,12 +38,13 @@
 
 <script>
     import Vue from 'vue'
+import createBus from '@/libs/eventBus';
     import mixin from '@/mixin';
     import mixinSlip from '@/mixin/slip';
     import SelectCellRenderer from '@/components/agGrid/select-cell-renderer'
     import CheckboxCellRenderer from '@/components/agGrid/checkbox-cell-renderer'
 
-    const bus = new Vue()
+    const bus = createBus()
     
     export default {
         name: 'QuickSetting',
@@ -182,7 +183,7 @@
                 this.$http.get(`/api/code/combo`, {params: {groupCd: "MENU_ICON_CD"}})
                     .then(response => {
                         this.menuIconCds = response.data;
-                        bus.$emit('selectBox.updated')
+                        bus.emit('selectBox.updated')
                     });
             },
             /*아이콘 셀렉트박스 이벤트*/
@@ -322,7 +323,7 @@
             }
         },
         created() {
-            bus.$on('selectBox.updated', () => {
+            bus.on('selectBox.updated', () => {
                  //셀렉트 박스 안에 맵핑될 데이터가 그리드에 반영되기 위해 비동기 처리
                  this.createColumnDefs();
             })

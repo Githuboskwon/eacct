@@ -78,6 +78,7 @@
 
 <script>
 import Vue from "vue";
+import createBus from '@/libs/eventBus';
 import DhxCalendar from "@/components/DhxCalendar.vue";
 
 import mixin from "@/mixin";
@@ -87,7 +88,7 @@ import SelectCellRenderer from "@/components/agGrid/select-cell-renderer";
 import NumberInputCellRenderer from "@/components/agGrid/numberinput-cell-renderer";
 import DatepickerCellRenderer from "@/components/agGrid/el-datepicker-cell-renderer";
 
-const bus = new Vue();
+const bus = createBus();
 
 const options = {};
 const lock = {};
@@ -108,7 +109,7 @@ function queryMngItemCd() {
         .then(response => {
           options["OIL_KIND_CD"] = response.data;
           delete lock["OIL_KIND_CD"];
-          bus.$emit("OIL_KIND_CD", response.data);
+          bus.emit("OIL_KIND_CD", response.data);
           return resolve(response);
         })
         .catch(response => {

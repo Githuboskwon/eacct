@@ -176,6 +176,7 @@
 
 <script>
 import Vue from "vue";
+import createBus from '@/libs/eventBus';
 import DhxCalendar from "@/components/DhxCalendar.vue";
 
 import mixin from "@/mixin";
@@ -193,7 +194,7 @@ import Vendor from "@/components/Vendor_Ag";
 import ApprovalModal from "@/components/accrualSlip/Approval/Main";
 import SlipDetailModal from "@/components/SlipDetailModal";
 
-const bus = new Vue();
+const bus = createBus();
 
 const options = {};
 const lock = {};
@@ -214,7 +215,7 @@ function queryMngItemCd() {
           .then(response => {
             options["EXPEND_MONEY_CD"] = response.data;
             delete lock["EXPEND_MONEY_CD"];
-            bus.$emit("EXPEND_MONEY_CD", response.data);
+            bus.emit("EXPEND_MONEY_CD", response.data);
             return resolve(response);
           })
           .catch(response => {

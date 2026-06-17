@@ -73,6 +73,7 @@
 
 <script>
 import Vue from "vue";
+import createBus from '@/libs/eventBus';
 
 import mixin from "@/mixin/slip-common";
 import mixinSlip from '@/mixin/slip';
@@ -87,7 +88,7 @@ import common from '@/mixin/common';
 
 import CertAtchPop from '@/components/CertAtchPop.vue'
 
-var eventBus = new Vue();
+var eventBus = createBus();
 
 const options = {};
 

@@ -351,7 +351,7 @@ export default {
                 editable: prepaymentApplyFlag !== 'K'
             }
             //그리드 
-            this.$bus.$emit('setGridEditingStatus', params)
+            this.$bus.emit('setGridEditingStatus', params)
         },
         /**
          * 전표 유형 변화
@@ -361,7 +361,7 @@ export default {
             const { slipHeaderId } = this.$route.params; 
             //1. 그리드 재 초기화 bus push 
             if(!slipHeaderId) {
-                this.$bus.$emit('setGridColDef', val)
+                this.$bus.emit('setGridColDef', val)
             }
             //2. 서브 헤더 로드 결정
             /**
@@ -373,7 +373,7 @@ export default {
                 if (typeCode === 'EXPEND') {
                     
                     if(!slipHeaderId) { //전표번호가 있는 경우는 행 추가 안함.
-                        this.$bus.$emit('addRow');
+                        this.$bus.emit('addRow');
                     }
                 }
                 return ['EXPEND', 'TRAFFIC', 'TRIP', 'BOND', 'AWT', 'ETCAWT', 'MCARD', 'ACARD', 'CARD', 'PO', 'IM'].includes(typeCode);
@@ -460,7 +460,7 @@ export default {
                     this.initTaxBill();
                     this.initTerm();
                     this.initBank();
-                    self.$bus.$emit('setGridColDef', self.value.slipTypeCd)
+                    self.$bus.emit('setGridColDef', self.value.slipTypeCd)
                 },
                 /**
                  * 세무증빙 유형 초기화
@@ -632,7 +632,7 @@ export default {
                     this.initEvidenceVendor();
                     this.initSubDatas();
                     // this.initExpend();
-                    // self.$bus.$emit('setGridColDef', self.value.slipTypeCd)
+                    // self.$bus.emit('setGridColDef', self.value.slipTypeCd)
                 }
             };
 
@@ -674,7 +674,7 @@ export default {
                         this.value.totAmtKrw = this.$numeral(Math.round((this.$numeral(this.value.totAmt).value() * this.$numeral(this.value.excRt).value()))).format(`0,0`);
                         this.gridUpdate();
                         if(refresh) {
-                            this.$bus.$emit('supplyAmountInit');
+                            this.$bus.emit('supplyAmountInit');
                         }
                     } else {
                         this.$alert(`환율정보가 없어 원화로 재설정합니다.`, '확인', {
@@ -688,7 +688,7 @@ export default {
                                 this.value.totAmtKrw = this.$numeral(Math.round((this.$numeral(this.value.totAmt).value() * this.$numeral(this.value.excRt).value()))).format(`0,0`);
                                 this.gridUpdate();
                                 if(refresh) {
-                                    this.$bus.$emit('supplyAmountInit');
+                                    this.$bus.emit('supplyAmountInit');
                                 }
                             }
                         });
@@ -700,7 +700,7 @@ export default {
             })
             .finally(_ => {
                 if(refresh) {
-                    this.$bus.$emit('supplyAmountInit');
+                    this.$bus.emit('supplyAmountInit');
                 }
                 // this.initialize(`initTerm`);
                 // this.initialize(`initBank`);
@@ -1615,7 +1615,7 @@ export default {
 
                         if(!['PO', 'IM'].includes(self.value.slipTypeCd)) {
                             //3. 상세내역 자동 기입( 공급가액, 세액 합계 등 )
-                            self.$bus.$emit('setDefaultTaxLine', {
+                            self.$bus.emit('setDefaultTaxLine', {
                                 chargetotal,
                                 taxtotal: taxtotal || 0,
                                 dtiType: dtiType || ''
@@ -1720,7 +1720,7 @@ export default {
                 })
                 .finally(() => {
                     this.$store.commit('finish');
-                    this?.$refs?.subHD?.setHeaderVat();
+                    this?.$refs?.subHD?.setHeaderVat?.();
                 });
             })
         },
@@ -1766,7 +1766,7 @@ export default {
             })
             .finally(() => {
                 this.$store.commit('finish');
-                this?.$refs?.subHD?.setHeaderVat();
+                this?.$refs?.subHD?.setHeaderVat?.();
             });
 
         },
@@ -1804,7 +1804,7 @@ export default {
                         self.value.lineAttribute6 = lineAttribute6;
                         self.taxReadOnly(lineAttribute1, lineAttribute3);
 
-                        self.$refs?.subHD?.setHeaderVat();
+                        self.$refs?.subHD?.setHeaderVat?.();
                     }
                 }
             });
@@ -2494,7 +2494,7 @@ export default {
                 readApprove: !['SV', 'VC', ''].includes(data.slipStatus),
                 cardException: ['SPAP004'].includes(data.trxTypeCode)
             }
-            this.$bus.$emit('setShowingButton', params);
+            this.$bus.emit('setShowingButton', params);
         },
         
         /**
@@ -2755,7 +2755,7 @@ export default {
                                 }
                                 
                                 // 상세내역 자동 기입( 공급가액, 세액 합계 등 )
-                                self.$bus.$emit('setDefaultTaxLine', {
+                                self.$bus.emit('setDefaultTaxLine', {
                                     chargetotal: data?.chargetotal || 0,
                                     taxtotal: data?.taxtotal || 0,
                                     dtiType: data?.dtiType

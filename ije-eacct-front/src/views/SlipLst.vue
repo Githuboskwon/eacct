@@ -342,6 +342,7 @@
 
 <script>
     import Vue from 'vue';
+import createBus from '@/libs/eventBus';
     import mixin from '@/mixin';
     import mixinSlip from '@/mixin/slip';
     import slip from '@/mixin/slip-basic'
@@ -366,7 +367,7 @@
     import Draft from "@/components/costBudget/SlipBudgetDetailModal";
     import TermsPop from "@/components/TermsPop";
 
-    const bus = new Vue()
+    const bus = createBus()
     export default {
         name: 'SlipLst',
         mixins: [mixin, mixinSlip, slip],

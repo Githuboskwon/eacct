@@ -83,6 +83,7 @@
 
 <script>
 import Vue from "vue";
+import createBus from '@/libs/eventBus';
 
 import GridSelect from "@/components/grid/GridSelect.vue";
 import mixin from "@/mixin/slip-common";
@@ -97,7 +98,7 @@ import NumberInputCellRenderer from '@/components/agGrid/numberinput-cell-render
 
 import common from '@/mixin/common';
 
-var eventBus = new Vue();
+var eventBus = createBus();
 
 const options = {};
 
@@ -131,7 +132,7 @@ function queryTpsTypeCd() {
           return response;
         })
         .finally(() => {
-          eventBus.$emit("evdTypeCd.updated");
+          eventBus.emit("evdTypeCd.updated");
           queryEvdTypeCd_run = false;
         });
   }

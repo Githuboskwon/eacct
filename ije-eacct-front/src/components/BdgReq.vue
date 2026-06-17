@@ -135,6 +135,7 @@
 
 <script>
 import Vue from 'vue'
+import createBus from '@/libs/eventBus';
 import assert from '@/libs/assert'
 import {
   url as _url
@@ -314,7 +315,7 @@ const DateRenderer = {
   },
 }
 
-const $bus = new Vue()
+const $bus = createBus()
 
 const budget = {}
 const bdg_mutex = {}
@@ -334,7 +335,7 @@ function queryRemainBudget(postDt, cctrCd, acctCd, subAcctCd) {
         budSubAcctCd: subAcctCd
       }).then(response => {
         budget[id] = this.$numeral(response.data).value()
-        $bus.$emit('BUDGET_CMPL', id)
+        $bus.emit('BUDGET_CMPL', id)
       }).finally(() => {
         delete bdg_mutex[id]
         resolve(budget[id])
@@ -576,7 +577,7 @@ export default {
                 queryRemainBudget.apply(this, [this.value.sndYm, this.value.sndCctrCd, this.value.sndAcctCd, this.value.sndSubAcctCd])
               }
 
-              $bus.$on('BUDGET_CMPL', () => {
+              $bus.on('BUDGET_CMPL', () => {
                 this.data = this.value.rmdAmt = budget[id]
               })
             },
