@@ -372,8 +372,11 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 9. [x] **(완료 2026-06-17)** 1단계: 빌드 환경 결정·교체 — **vue-cli 5(webpack5)** 적용, build/serve openssl 플래그 없이 통과 (§11.6, 브랜치 `migration/vue-cli5`)
 10. [x] **(완료 2026-06-17)** 2단계 도약판: **Vue 2.6 → 2.7.16** 브리지(`vue-template-compiler` 제거, 라이브러리 무변경), build/serve 통과 (§12, 브랜치 `migration/vue2.7`)
 11. [ ] 2단계 본체: `@vue/compat` + router4/vuex4/i18n9 + `createApp` (UI 라이브러리 교체와 묶어 진행, §12.4)
-12. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
-13. [ ] `$bus` 대체 방식(mitt vs Pinia) 결정
+12. [x] **(완료 2026-06-17)** element-plus 자동 치환 도구(gogocode) 검증 — 인벤토리·자동화율·전략 실측. gogocode 통짜 적용 비권장(재포맷 노이즈) → 변환종류별 스코프 코드모드 권장 (§13, 브랜치 `poc/element-plus`)
+13. [x] **(완료 2026-06-17)** buefy 흡수 PoC — 사용 2종뿐(`b-select` 108→native select / `b-modal` 활성 9→`$modal.open`), `$buefy` API 0. **Vue 2.7에서 단독 제거 가능**(b-select→select 빌드검증 완료) (§14, 브랜치 `poc/buefy`)
+14. [ ] **(권장 차순위)** buefy 단독 제거 실행 — Vue 2.7 위 단독 PR(b-select 108·b-modal 9·main.js), 빌드+런타임 검증. Vue3 블로커 3종 중 1종 선제거
+15. [ ] `$bus`(23파일) 대체 방식(mitt vs Pinia) 결정
+16. [ ] element-ui/ag-grid 정리 후 Vue 3 빅뱅 브랜치 착수(@vue/compat + 코어 플러그인 + UI 교체)
 
 ---
 
@@ -533,3 +536,69 @@ npm run build        # openssl 플래그 없이 통과 확인
 2. **동시에** element-ui→element-plus / ag-grid-vue→ag-grid-vue3 / buefy 흡수(3단계, 최대 공수)
 3. `$bus`(new Vue()) 23파일 → mitt, `Vue.filter`/`.native`/lifecycle 등 API 패턴 정리(4단계)
 > 그리드 DHTMLX→ag-grid 통합은 사실상 완료(§10) → ag-grid는 `ag-grid-vue3` 업그레이드만 남음.
+
+---
+
+## 13. element-ui → element-plus 치환 PoC (2026-06-17 · 브랜치 `poc/element-plus`)
+
+> **전제:** element-plus는 **Vue 3 전용** → 현재 Vue 2.7 스택에선 실행/빌드 검증 불가. 본 PoC는 "동작 확인"이 아니라 **치환 공수·자동화율 실측 + 전략 수립**이 목적. 실제 치환은 Vue 3 점프와 동시에(3단계).
+
+### 13.1 사용 인벤토리 (src 전수, 99파일)
+**컴포넌트 태그 (등장 횟수):** `el-button` 298 · `el-input` 170 · **`el-date-picker` 103** · `el-form-item` 40 · `el-col` 39 · `el-checkbox` 29 · `el-radio` 27 · `el-radio-group` 15 · `el-option` 13 · `el-select` 12 · `el-row` 7 · `el-form` 6 · `el-link` 5 · `el-divider` 3 · `el-radio-button` 2 · `el-input-number` 1
+
+**JS API:** `this.$message` 196 · `this.$confirm` 43 · `this.$alert` 40 (전부 `main.js`의 `Vue.prototype.$*` 전역; **컴포넌트 외 직접 `from 'element-ui'` import는 0건** → 치환면이 main.js+템플릿+전역호출로 한정되어 유리)
+
+**등록 방식:** `main.js`에서 **개별 컴포넌트 `Vue.use()` 27종** + `el_locale.use(ko)` + `$ELEMENT={size:'small'}` + `$loading/$msgbox/$alert/$confirm/$prompt/$notify/$message` 프로토타입 7종.
+
+### 13.2 gogocode 코드모드 실측 (`gogocode-plugin-element`, 대표 3파일)
+| 항목 | 결과 |
+|------|------|
+| ✅ **아이콘 변환** | `icon="el-icon-search"`(문자열) → `:icon="ElIconSearch"`(컴포넌트) + `import {Search as ElIconSearch}` 및 components 등록 **자동 추가**. 가장 손 많이 가는 부분을 처리 |
+| ⚠️ **date-picker 포맷 미변환** | `format="yyyyMMdd"` 그대로 둠. element-plus는 **dayjs 토큰**(`yyyy`→`YYYY`, `dd`→`DD`) 필요 → **별도 처리 필수** |
+| ⚠️ **아이콘 import 경로 구버전** | gogocode가 `@element-plus/icons` 출력. element-plus 2.x는 **`@element-plus/icons-vue`** → 일괄 치환 필요 |
+| ❌ **파일 전체 prettier 재포맷** | 들여쓰기/속성 줄바꿈/`{{x}}`→`{{ x }}`/hex 소문자화/주석 reflow를 **모든 파일에 강제** → 99파일 적용 시 **git blame 파괴 + 의미/포맷 변경 분리 불가 → 리뷰 불가능**. 통짜 적용 비권장 |
+
+### 13.3 수작업 핫스팟 (코드모드가 못 잡는 breaking change)
+1. **date-picker 포맷 토큰 ~90곳**: `yyyy`→`YYYY`, `dd`→`DD` (`value-format="yyyyMMdd"` ×22, `format="yyyy-MM"` ×19, `format="yyyyMMdd"` ×14 …). format/value-format 속성에 한정한 **스코프 정규식**으로 기계적 처리 가능하나 코드모드 밖.
+2. **size 시각 회귀**: `size="large"`가 **el-button 107곳**. element-ui v2 Button은 large 미지원→전역 small로 무시되어 작게 렌더 중. **element-plus는 large 유효 → 버튼이 커짐**(시각 회귀). + `size="medium"` 29(→`default`)·`mini` 2(→`small`) 매핑 필요.
+3. **`type="text"` 버튼**: el-button `type="text"` → element-plus `text` prop(deprecated 경로). (`type="text"` 포함 파일 151개, el-button 외 혼재라 컨텍스트 확인 필요)
+4. **main.js 재작성**(Vue 3 동시): 개별 `Vue.use` 27종 → `app.use(ElementPlus,{locale})` 또는 선별 `app.use`; `$message/$alert/$confirm` → `app.config.globalProperties` 또는 `import {ElMessage,ElMessageBox}`; `$ELEMENT` size 기본값 → element-plus는 `<el-config-provider>` 또는 app 옵션.
+5. radio/checkbox: 선택값 `label` → `value`(element-plus 2.6 deprecation) 검토.
+
+### 13.4 공수 추정 / 권장 전략
+- **자동화 가능(~60%)**: 아이콘 변환(gogocode 또는 자체 스코프 코드모드) + date 토큰 정규식 + size/button 스코프 치환.
+- **수작업(~40%)**: main.js, edge 컴포넌트, 슬롯/스코프드슬롯 API, **그리고 전 화면 Vue 3 런타임 회귀 테스트**(현재 불가, Vue 3 점프 후).
+- **권장:** gogocode **통짜 적용 금지**(재포맷 노이즈). 대신 **변환 종류별 스코프 코드모드/정규식**으로 나눠 리뷰 가능한 단위로:
+  1. date-picker 토큰(yyyy→YYYY, dd→DD) — 독립 PR 가능(단 element-plus 전엔 런타임 무의미하므로 Vue3 브랜치에서)
+  2. 아이콘(`el-icon-*`→컴포넌트, import 경로 `-vue`)
+  3. main.js 등록/전역 재작성
+  4. size/type 시각속성 정리
+- **element-ui는 buefy(52파일)와 함께 Vue 3 빅뱅에 포함** → 이 PoC는 그 브랜치 작업의 사전 설계도. 별도 단독 배포 불가.
+
+> **PoC 산출물:** 본 문서 §13(인벤토리+자동화율+전략). 코드 변경 없음(gogocode 트라이얼은 `/tmp` 폐기). 다음: buefy 흡수 PoC 또는 `$bus`(23파일)→mitt 결정 후 Vue 3 빅뱅 브랜치 착수.
+
+---
+
+## 14. buefy 흡수 PoC (2026-06-17 · 브랜치 `poc/buefy`)
+
+> **핵심 결론(중요):** buefy는 §2에서 "54파일/126곳·직접 대체 없음(최대 난관)"으로 분류했으나, **전수 재조사 결과 사용면이 매우 얕고 — 컴포넌트 2종뿐·프로그래매틱 API 0 — 둘 다 Vue 버전 비의존 치환이 가능해 빅뱅 없이 현재 Vue 2.7에서 제거 가능**하다. element-ui(Vue3 필수)와 달리 **buefy는 단독 선제거 가능한 블로커.**
+
+### 14.1 사용 인벤토리 (src 전수)
+- **컴포넌트 2종뿐:** `<b-select>` **108곳** + `<b-modal>` **14곳(활성 9 / 주석 5)**. 그 외 b-* 태그 0.
+- **프로그래매틱 API `this.$buefy.*` (dialog/toast/snackbar/modal): 0건.** → JS 치환면 없음.
+- 등록: `main.js`의 `Vue.use(Buefy, {defaultModalCanCancel})` 한 곳 + `buefy/dist/buefy.css`(이미 주석).
+- `<b-modal>` 활성 5파일: `CardInfo`(2)·`SlipCrdLstModal`(3)·`ApprDtlQryPop`(1)·`ApprMndSet`(2)·`ApprRuleSet`(1).
+
+### 14.2 대체 매핑 + 검증
+| buefy | 대체 | 난이도 | 비고 |
+|-------|------|--------|------|
+| `<b-select>` 108 | **native `<select>`** | 하(거의 기계적) | 내부가 이미 native `<option v-for>`. `class="select ..."`(bulma 스타일) 유지. `<b-select>`→`<select>` 태그 치환 + **`@change.native`→`@change`**(native 모디파이어). ✅ **MailSendMng.vue 1건 변환→`npm run build` 통과로 검증**(Vue 2.7에서 동작) |
+| `<b-modal>` 활성 9 | **`this.$modal.open({component, events})`** | 중 | 앱에 `$modal.open` **이미 471곳 사용** = 정착된 패턴. `:active.sync`+`@receive`(검색팝업 emit) → `$modal.open`의 `events`로 매핑(§8.6과 동일 전환). 호출처별 component/이벤트 확인 필요 |
+| `Vue.use(Buefy)` | 제거 | 하 | main.js 1곳 + (주석된) buefy css. bulma 자체 CSS는 유지 검토(레이아웃 클래스 의존) |
+
+### 14.3 공수 / 권장
+- **자동화 높음:** `<b-select>`→`<select>` + `@change.native`→`@change`는 스코프 치환(108곳). b-modal 9곳은 수동(패턴 정착돼 빠름).
+- **⚠️ bulma CSS 의존 주의:** `class="select"`, `is-fullwidth` 등 **bulma 스타일 클래스**에 의존 → buefy 패키지는 제거해도 **bulma CSS는 당분간 유지**(레이아웃 전반 사용). buefy npm 의존만 제거.
+- **권장:** buefy 제거를 **Vue 3 빅뱅에서 분리해 Vue 2.7 위 단독 PR로 선처리.** 검증 가능(빌드+런타임 모두 현 스택)이고, Vue 3 블로커 3종 중 1종을 미리 제거 → 빅뱅 범위가 element-ui+ag-grid로 축소됨.
+
+> **PoC 산출물:** 본 §14(인벤토리+매핑+빌드검증). 검증용 1파일 변환은 되돌려 문서-only 유지. 다음: (a) buefy 단독 제거 실행 PR(권장) 또는 (b) `$bus`(23파일)→mitt 결정.
