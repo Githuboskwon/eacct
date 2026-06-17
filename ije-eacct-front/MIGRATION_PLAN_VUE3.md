@@ -10,8 +10,8 @@
 
 | 항목 | 현재 버전 | 비고 |
 |------|-----------|------|
-| Vue | 2.6.12 | EOL (2023-12 지원 종료) |
-| @vue/cli-service | 3.12.1 (2019) | EOL, Vue 3 미지원 |
+| Vue | ~~2.6.12~~ → **2.7.16** | (2026-06-17 브리지 완료 §12) Vue 2 최종, Vue 3 도약판 |
+| @vue/cli-service | ~~3.12.1~~ → **5.0.8** | (2026-06-17 교체 완료 §11.6) webpack5 |
 | webpack | 4.46.0 | EOL, `--openssl-legacy-provider` 우회 필요 |
 | Node | 18.20.8 (Volta 고정) | Node 20+ 빌드 깨짐 |
 | Vue Router | 3.3.4 | Vue 3는 v4 필요 |
@@ -370,8 +370,10 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
    - ⚠️ `ErpAccount`/`Emp`/`Product` 원본은 **운영 `GridED.vue`·`SlipCrdLstModal`**(아직 DHTMLX, 전환 예정)이 사용 중 → 그 파일 전환 시 함께 `_Ag`로 교체. (`GridED_Ag`의 `ErpAccount`→`ErpAccount_Ag`는 emit 필드 검증 후 교체 TODO)
 8. [x] **(완료 2026-06-17)** 0단계 잔여: 미사용 의존성 제거(후보 10종 전수 재검증 → 실제 제거 **5종**, 5종은 실사용/미선언 전이의존이라 유지) + `.env*` 4파일 `VUE_APP_SSO_URL` 제거(src 참조 0 확인). 빌드 통과. 브랜치 `chore/phase0-cleanup` (§2 🟢)
 9. [x] **(완료 2026-06-17)** 1단계: 빌드 환경 결정·교체 — **vue-cli 5(webpack5)** 적용, build/serve openssl 플래그 없이 통과 (§11.6, 브랜치 `migration/vue-cli5`)
-10. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
-11. [ ] `$bus` 대체 방식(mitt vs Pinia) 결정
+10. [x] **(완료 2026-06-17)** 2단계 도약판: **Vue 2.6 → 2.7.16** 브리지(`vue-template-compiler` 제거, 라이브러리 무변경), build/serve 통과 (§12, 브랜치 `migration/vue2.7`)
+11. [ ] 2단계 본체: `@vue/compat` + router4/vuex4/i18n9 + `createApp` (UI 라이브러리 교체와 묶어 진행, §12.4)
+12. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
+13. [ ] `$bus` 대체 방식(mitt vs Pinia) 결정
 
 ---
 
@@ -503,3 +505,31 @@ npm run build        # openssl 플래그 없이 통과 확인
 - `vue.config.cli5.js`(초안)는 적용 완료되어 삭제. 최종본 = `vue.config.js`.
 - **CI(`.gitlab-ci.yml`) 변경 불필요:** openssl 플래그는 `package.json` scripts에만 존재(제거 완료), `dist` 산출물 구조·`npm install --legacy-peer-deps`·`build:staging`·sass-migrator 스텝 모두 그대로 유효.
 - ⚠️ **남은 검증:** 실제 브라우저 런타임 스모크(로그인 → 전표목록 ag-grid 1화면·DHTMLX 잔존 화면)는 dev 기동 후 별도 확인 권장. **lint 재베이스라인**(airbnb v6 스타일로 전체 정리 or 규칙 완화)은 후속 과제.
+
+---
+
+## 12. ✅ Vue 2.7 브리지 (2단계 도약판, 2026-06-17 완료 · 브랜치 `migration/vue2.7`)
+
+> **결정(사용자 승인):** "Vue 3 코어만" 단독 전환은 불가 — Vue 3로 올리는 순간 **Vue 2 전용 UI 3종이 전부 빌드 실패**(`element-ui` 99파일 / `buefy` 52파일 / `ag-grid-vue` v25 166파일). 따라서 Vue 3는 UI 교체와 함께 빅뱅이어야 함(§5·§7 경고). 그 전에 **안전·즉시 배포 가능한 도약판으로 Vue 2.6 → 2.7** 을 먼저 적용.
+
+### 12.1 왜 2.7인가
+- Vue 2.6 → **2.7**(마지막 Vue 2): 근사 드롭인. **현 라이브러리(element-ui/buefy/ag-grid-vue v25/router3/vuex3/i18n8) 전부 그대로 동작** → 즉시 빌드·배포 가능.
+- Composition API / `<script setup>` 백포트 → Vue 3 스타일 코드를 **2.7 위에서 미리** 작성 가능(이후 3 점프 시 diff 축소).
+- 2.7은 `vue/compiler-sfc` 내장 → 빌드 도구가 Vue 3 방식 컴파일러 경로를 쓸 수 있어 이후 전환 정합.
+
+### 12.2 적용 변경 (최소)
+- `vue` `^2.6.12` → **`^2.7.16`** (실제 2.7.16)
+- **`vue-template-compiler` devDependency 제거** — 2.7은 컴파일러 내장(`vue/compiler-sfc`). cli5가 설치한 **vue-loader 17.4.2**가 이 경로를 사용하므로 별도 컴파일러 불필요.
+- 그 외 무변경: `vuex@3.5.1`/`vue-router@3.3.4`/`vue-i18n@8.22.2`/`@vue/test-utils@1.0.3` 모두 2.7과 호환되어 그대로 유지(브리지 단계 최소 변경 원칙).
+
+### 12.3 검증
+- ✅ `npm run build` 통과(첫 시도). Vue 관련 에러 0. 경고 2건은 **번들 크기 성능 힌트**(vendor 번들 대형)일 뿐 2.7 무관·비차단.
+- ✅ `npm run serve:local` 정상 컴파일·부팅(`App running at http://localhost:19050/`).
+- ⚠️ 브라우저 런타임 스모크(로그인·전표·그리드)는 dev 기동 후 별도 확인 권장.
+
+### 12.4 다음 (실제 2단계 = Vue 3)
+2.7 위에서 안정화 후, Vue 3 점프는 **UI 라이브러리 교체와 묶어** 진행:
+1. `@vue/compat` 마이그레이션 빌드로 Vue 3 + router4/vuex4/i18n9 + `createApp` 부트스트랩 도입
+2. **동시에** element-ui→element-plus / ag-grid-vue→ag-grid-vue3 / buefy 흡수(3단계, 최대 공수)
+3. `$bus`(new Vue()) 23파일 → mitt, `Vue.filter`/`.native`/lifecycle 등 API 패턴 정리(4단계)
+> 그리드 DHTMLX→ag-grid 통합은 사실상 완료(§10) → ag-grid는 `ag-grid-vue3` 업그레이드만 남음.

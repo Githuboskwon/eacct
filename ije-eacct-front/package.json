@@ -55,7 +55,7 @@
         "save": "^2.4.0",
         "sweetalert2": "^7.33.1",
         "swiper": "^4.5.1",
-        "vue": "^2.6.12",
+        "vue": "^2.7.16",
         "vue-class-component": "^7.2.3",
         "vue-cookie": "^1.1.4",
         "vue-i18n": "^8.22.2",
@@ -85,8 +85,7 @@
         "eslint-plugin-vuejs-accessibility": "^1.1.0",
         "expose-loader": "^0.7.5",
         "sass": "^1.49.7",
-        "sass-loader": "^12.6.0",
-        "vue-template-compiler": "^2.6.12"
+        "sass-loader": "^12.6.0"
     },
     "eslintConfig": {
         "root": true,
