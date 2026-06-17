@@ -26,45 +26,11 @@ import {LicenseManager} from "ag-grid-enterprise";
 
 LicenseManager.setLicenseKey("CompanyName=iljin cns,LicensedApplication=ijcns,LicenseType=SingleApplication,LicensedConcurrentDeveloperCount=1,LicensedProductionInstancesCount=0,AssetReference=AG-013981,ExpiryDate=3_March_2022_[v2]_MTY0NjI2NTYwMDAwMA==79ca3f5c5621088302aec8ce6faf7207");
 
-import {
-  Dialog,
-  Autocomplete,
-  Input,
-  InputNumber,
-  Radio,
-  RadioGroup,
-  RadioButton,
-  Checkbox,
-  CheckboxButton,
-  CheckboxGroup,
-  Select,
-  Option,
-  Button,
-  ButtonGroup,
-  DatePicker,
-  Popover,
-  Tooltip,
-  Breadcrumb,
-  BreadcrumbItem,
-  Form,
-  FormItem,
-  Alert,
-  Slider,
-  Icon,
-  Row,
-  Col,
-  Upload,
-  Transfer,
-  Link,
-  Divider,
-  Loading,
-  MessageBox,
-  Message,
-  Notification,
-  Drawer,
-} from 'element-ui';
-import el_locale from 'element-ui/lib/locale';
-import ko_locale from 'element-ui/lib/locale/lang/ko';
+// element-ui → element-plus (Vue 3). 컴포넌트 전역 등록은 createApp 이후 app.use(파일 하단).
+import ElementPlus, { ElMessage, ElMessageBox, ElNotification, ElLoading } from 'element-plus';
+import 'element-plus/dist/index.css';
+import elLocaleKo from 'element-plus/es/locale/lang/ko';
+import * as ElementPlusIcons from '@element-plus/icons-vue';
 
 /**
  * ag-grid License Manage
@@ -95,50 +61,14 @@ Vue.use(VueSweetalert2);
 Vue.use(VueCookie);
 Vue.use(VueMomentJS, moment);
 
-Vue.use(Dialog);
-Vue.use(Autocomplete);
-Vue.use(Input);
-Vue.use(InputNumber);
-Vue.use(Radio);
-Vue.use(RadioGroup);
-Vue.use(RadioButton);
-Vue.use(Checkbox);
-Vue.use(CheckboxButton);
-Vue.use(CheckboxGroup);
-Vue.use(Select);
-Vue.use(Option);
-Vue.use(Button);
-Vue.use(ButtonGroup);
-Vue.use(DatePicker);
-Vue.use(Popover);
-Vue.use(Tooltip);
-Vue.use(Breadcrumb);
-Vue.use(BreadcrumbItem);
-Vue.use(Form);
-Vue.use(FormItem);
-Vue.use(Alert);
-Vue.use(Slider);
-Vue.use(Icon);
-Vue.use(Row);
-Vue.use(Col);
-Vue.use(Upload);
-Vue.use(Transfer);
-Vue.use(Link);
-Vue.use(Divider);
-Vue.use(Drawer);
-
-Vue.use(Loading.directive);
-
-Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 };
-
-el_locale.use(ko_locale);
-Vue.prototype.$loading = Loading.service;
-Vue.prototype.$msgbox = MessageBox;
-Vue.prototype.$alert = MessageBox.alert;
-Vue.prototype.$confirm = MessageBox.confirm;
-Vue.prototype.$prompt = MessageBox.prompt;
-Vue.prototype.$notify = Notification;
-Vue.prototype.$message = Message;
+// element-plus 프로그래매틱 API → 전역 $ 매핑 (compat: Vue.prototype 전역 동작)
+Vue.prototype.$loading = ElLoading.service;
+Vue.prototype.$msgbox = ElMessageBox;
+Vue.prototype.$alert = ElMessageBox.alert;
+Vue.prototype.$confirm = ElMessageBox.confirm;
+Vue.prototype.$prompt = ElMessageBox.prompt;
+Vue.prototype.$notify = ElNotification;
+Vue.prototype.$message = ElMessage;
 
 // Vue 3 호환: new Vue() 이벤트버스 → mitt(리스너 예외 격리 래퍼). API: $on/$emit → on/emit
 Vue.prototype.$bus = createBus();
@@ -193,6 +123,9 @@ const app = createApp(App);
 app.use(store);
 app.use(router);
 app.use(i18n);
+app.use(ElementPlus, { locale: elLocaleKo, size: 'small', zIndex: 3000 });
+// element-plus 아이콘 컴포넌트 전역 등록 (구 icon="el-icon-*" 문자열 → :icon 컴포넌트는 후속 처리)
+Object.entries(ElementPlusIcons).forEach(([name, comp]) => app.component(name, comp));
 
 /**
  * HTTP 인터셉터 (구 root created에서 이관). 컴포넌트 밖이라 this 대신

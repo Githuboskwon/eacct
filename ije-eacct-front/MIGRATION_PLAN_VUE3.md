@@ -674,3 +674,26 @@ npm run build        # openssl 플래그 없이 통과 확인
 - **태그/표현식/key 5건:** ConfirmPop·SlipGlDetailModal·CardInfo의 누락 `</tr>`/중복 `<tr>` 보정, CardInfoMng 잉여 `</div>` 제거, TaxInvoiceAmtModifyPop `v-model` 표현식 → `:value`, MonthlyPicker v-if/else 고유 key.
 - 경고는 번들 크기 2건뿐(compat 컴파일 에러 0).
 - **다음:** dev 런타임 기동 → compat **deprecation 경고**(런타임) 수집 → element-plus/ag-grid-vue3/buefy 순차 교체.
+
+---
+
+## 17. element-ui → element-plus 교체 (2026-06-17 · `migration/vue3-compat`)
+
+> 런타임 검증서 element-ui가 Vue3 compat에서 mount 시 `$el` 접근 실패 → 달력·메뉴·레이아웃 연쇄 차단 확인(§16 후속). element-plus로 교체.
+
+### 17.1 1차 증분: 등록 전환 (main.js)
+- `element-plus` 2.14 + `@element-plus/icons-vue` 설치. **element-ui는 deps 유지**(`element-variables.scss`가 참조 → 빌드 깨짐 방지, 추후 정리).
+- `main.js`: element-ui 개별 `Vue.use(컴포넌트)` 27종 제거 → **`app.use(ElementPlus, {locale: ko, size:'small', zIndex:3000})`** + 아이콘 전역 등록. `$message/$msgbox/$alert/$confirm/$prompt/$notify/$loading` → `ElMessage/ElMessageBox/ElNotification/ElLoading`로 재매핑.
+- `<el-*>` 태그는 element-plus에 동명 컴포넌트 존재 → 대부분 그대로 resolve. `npm run build` 통과.
+
+### 17.2 알려진 후속(이번 증분 범위 밖)
+1. **날짜 포맷 토큰**: el-date-picker `value-format="yyyyMMdd"` → element-plus는 dayjs 토큰(`yyyy→YYYY`, `dd→DD`) 필요. ~90곳 스코프 치환(§13.3).
+2. **아이콘**: `icon="el-icon-search"` 문자열 → element-plus는 컴포넌트(`:icon="Search"`). 아이콘 전역등록은 했으나 문자열 구문은 미동작 → 코드모드 필요(§13.2).
+3. **size 시각차**: medium/mini 제거, large 유효(§13.3).
+4. **CSS 충돌 가능**: element-ui 테마(element-variables.scss) + element-plus CSS 동시 로드 → 정리 필요.
+5. **ag-grid 별개**: 그리드는 ag-grid-vue3 전환 전까지 여전히 미렌더.
+
+### 17.3 런타임 검증 포인트
+- 메뉴/레이아웃/달력 **렌더 복구** 여부(= `$el` 크래시 해소).
+- `$message/$confirm/$alert` 동작(196/43/40곳).
+- ⚠️ 그리드는 아직 안 보이는 게 정상(ag-grid epic 대기).
