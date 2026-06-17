@@ -54,9 +54,18 @@
 | `axios` | 0.18.1 → 1.x | `src/main.js` (`$http`) — 보안상 상향 권장 |
 
 ### 🟢 미사용 — 제거 가능 (package.json에 있으나 `src` 사용 0건)
-`ag-charts-vue`, `vue-class-component`, `vue-property-decorator`, `vue-pdf`,
+> ⚠️ **(2026-06-17 전수 재검증으로 정정) — 최초 10종 후보 중 실제 제거 가능은 5종뿐이었음.**
+> 나머지 5종은 (a) 실사용 또는 (b) 그리드 바인딩의 미선언 전이의존이라 **유지 필수.**
+
+**✅ 실제 제거 완료 (5종, 브랜치 `chore/phase0-cleanup`):**
 `vuejs-datepicker`, `vue-upload-component`, `vue-owl-carousel`, `vue-swiper`,
-`vue-loading-overlay`, `vue-the-mask`(전역 등록만 됨, 템플릿 사용 0)
+`vue-the-mask`(전역 등록만 됨 → `main.js` import+`Vue.component('TheMask')` 2줄도 제거)
+
+**❌ 유지 필수 (제거 후 빌드 깨짐 확인 → 정정):**
+- `ag-charts-vue` — `MyMain.vue`(활성 메인)에서 도넛차트 `<ag-charts-vue>` 실제 렌더링
+- `vue-pdf` — `PdfViewer.vue` → 증빙첨부 팝업 4종(`EvidAtchPop`/`EvidAtchBatchPop`/`EvidAtchPopGroupware`/`EvidAtchPopModeless`)에서 사용
+- `vue-loading-overlay` — `App.vue` + `ApprBundleSubm(/Slip/Temp)` 4파일 실사용
+- `vue-property-decorator`·`vue-class-component` — **`ag-grid-vue`/`ag-charts-vue`(v25)가 `dependencies:{}`로 선언했지만 lib 코드에서 import** → 루트 hoist에 암묵 의존. 직접 제거 시 `Module not found` 빌드 실패. ag-grid-vue3 업그레이드(3단계) 전까지 유지
 
 ### ⚠️ 별도 검토 필요
 | 항목 | 내용 |
@@ -359,7 +368,7 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
    - **`_Ag` 호출처 교체 → 원본 삭제:** `HrExpendPop`의 `Cctr`→`Cctr_Ag` 교체 후 **`Cctr.vue` 삭제**, `Vendor.vue` 삭제(`CardInfo`가 이미 `Vendor_Ag` 사용). (드롭인: props `param`, close `deptCd/deptNm` 확인)
    - 잔여(live, 전환 필요): `SlipCrdLstModal`/`BdgReq`/`Prepay`/`JiniAtchPop`/`JiniAtchBatchPop`/`Cctr_new`/`Emp_new`/`IO_new`/`Vendor_new`/`ErpAccountPop`.
    - ⚠️ `ErpAccount`/`Emp`/`Product` 원본은 **운영 `GridED.vue`·`SlipCrdLstModal`**(아직 DHTMLX, 전환 예정)이 사용 중 → 그 파일 전환 시 함께 `_Ag`로 교체. (`GridED_Ag`의 `ErpAccount`→`ErpAccount_Ag`는 emit 필드 검증 후 교체 TODO)
-8. [ ] 0단계 잔여: 미사용 의존성 9종 제거 + `.env*` SSO 잔존 정리(백엔드 SSO 제거와 연계)
+8. [x] **(완료 2026-06-17)** 0단계 잔여: 미사용 의존성 제거(후보 10종 전수 재검증 → 실제 제거 **5종**, 5종은 실사용/미선언 전이의존이라 유지) + `.env*` 4파일 `VUE_APP_SSO_URL` 제거(src 참조 0 확인). 빌드 통과. 브랜치 `chore/phase0-cleanup` (§2 🟢)
 9. [x] **(완료 2026-06-17)** 1단계: 빌드 환경 결정·교체 — **vue-cli 5(webpack5)** 적용, build/serve openssl 플래그 없이 통과 (§11.6, 브랜치 `migration/vue-cli5`)
 10. [ ] element-plus 자동 치환 도구(gogocode 등) 검증으로 element-ui 전환 공수 실측
 11. [ ] `$bus` 대체 방식(mitt vs Pinia) 결정
