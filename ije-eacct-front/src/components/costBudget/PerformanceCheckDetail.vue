@@ -20,7 +20,7 @@
                     <div class="td-s-thumb search-area" style="width: 150px">
                       <div class="form-input">
                         <el-date-picker
-                            v-model="periodYm"
+                            v-model="periodYmM"
                             type="month"
                             format="yyyy-MM"
                             value-format="yyyyMM"
@@ -38,8 +38,8 @@
                   </div>
                   <div class="search_con">
                     <div class="td-s-thumb search-area" style="width: 300px">
-                      <input class="input input-bg" type="text" style="width:100px; text-align: center" v-model="cctrCd" disabled>
-                      <input class="input input-bg" type="text" style="width:180px; margin-left: 5px;" v-model="cctrNm" disabled>
+                      <input class="input input-bg" type="text" style="width:100px; text-align: center" :value="cctrCd" disabled>
+                      <input class="input input-bg" type="text" style="width:180px; margin-left: 5px;" :value="cctrNm" disabled>
                     </div>
                   </div>
                 </div>
@@ -50,7 +50,7 @@
                   </div>
                   <div class="search_con">
                     <div class="td-s-thumb search-area" style="width: 150px">
-                      <input class="input" type="text" style="width:100px;" v-model="acctCd"  @keypress.enter="popAcct">
+                      <input class="input" type="text" style="width:100px;" v-model="acctCdM"  @keypress.enter="popAcct">
                       <button class="icon is-right" @click="popAcct(true)"><i class="fas fa-search"></i>
                       </button>
                     </div>
@@ -137,6 +137,8 @@ export default {
   },
   data() {
     return {
+      periodYmM: this.periodYm, // (Vue3) prop v-model 금지 → 로컬 복사
+      acctCdM: this.acctCd, // (Vue3) prop v-model 금지 → 로컬 복사
       title: '비용실적 상세조회',
       columnDefs: [],
       defaultColDef: {
@@ -313,8 +315,8 @@ export default {
     },
     goSearch(){
 
-      this.periodYear = this.$moment(this.periodYm).format('YYYY');
-      this.periodMonth = this.$moment(this.periodYm).format('MM');
+      this.periodYear = this.$moment(this.periodYmM).format('YYYY');
+      this.periodMonth = this.$moment(this.periodYmM).format('MM');
 
       this.$store.commit('loading');
 
@@ -322,7 +324,7 @@ export default {
         periodYear : this.periodYear,
         periodMonth : this.periodMonth,
         searchDeptCd : this.cctrCd,
-        acctCd : this.acctCd
+        acctCd : this.acctCdM
       }
 
       this.$http.post(`/api/cost/budget/pop/performanceCheck/detail`,params)
@@ -417,7 +419,7 @@ export default {
         width: 700,
         events: {
           close(object) {
-            vm.acctCd = object.acctCd;
+            vm.acctCdM = object.acctCd;
             vm.acctNm = object.acctNm;
           }
         }
@@ -445,7 +447,7 @@ export default {
     this.goSearch();
   },
   watch: {
-    'periodYm'() {
+    'periodYmM'() {
       this.goSearch();
     },
   }

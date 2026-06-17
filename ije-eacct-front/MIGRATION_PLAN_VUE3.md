@@ -664,3 +664,13 @@ npm run build        # openssl 플래그 없이 통과 확인
 2. 빌드 통과 후 **dev 런타임 기동** → compat **deprecation 경고** 수집(element-ui/buefy/ag-grid의 Vue3 비호환 런타임 지점 파악).
 3. 경고 기반으로 **element-ui→element-plus / ag-grid-vue3 / buefy($modal) 순차 교체** + `compatConfig` MODE를 파일별 3으로 좁히기.
 > ⚠️ 현 브랜치는 **빌드 미통과 WIP**. master(Vue 2.7)는 정상.
+
+### 16.4 ✅ 템플릿 컴파일 에러 수정 완료 — 빌드 GREEN (2026-06-17)
+- 24건(+연쇄 1건 `CardInfo.vue`) 전부 수정 → **`npm run build` 통과**(Vue3+compat).
+- **v-model on prop 19건:**
+  - 표시용 disabled/readonly 11건 → `v-model` → `:value`(단방향): Prepay(totAmt)·Approval/Print Top(refUserId)·costBudget 4팝업의 cctrCd/cctrNm.
+  - 편집형 6건 → **로컬 data 복사(`<prop>M`)** + 참조(템플릿/`this.x`/watch키) 일괄 rename: HrExcelUploadPop(periodYM)·AcctTypeSumPop/PerformanceCheck/PerformanceCheckDetail(periodYm)·PerformanceCheckDetail(acctCd)·YearPlanPop(periodYear).
+  - SlipTable 2건(`<component v-model="value">`, value=prop) → `:value` + `@input="$emit('input',$event)"` passthrough.
+- **태그/표현식/key 5건:** ConfirmPop·SlipGlDetailModal·CardInfo의 누락 `</tr>`/중복 `<tr>` 보정, CardInfoMng 잉여 `</div>` 제거, TaxInvoiceAmtModifyPop `v-model` 표현식 → `:value`, MonthlyPicker v-if/else 고유 key.
+- 경고는 번들 크기 2건뿐(compat 컴파일 에러 0).
+- **다음:** dev 런타임 기동 → compat **deprecation 경고**(런타임) 수집 → element-plus/ag-grid-vue3/buefy 순차 교체.

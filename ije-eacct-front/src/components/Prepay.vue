@@ -21,7 +21,7 @@
           <span class="pop-c-name">- 전표금액</span>
         </div>
         <div class="control is-expanded" style="width:50%; margin-right: 15px;">
-          <number-input class="input input-bg" v-model="totAmt" disabled="disabled" />
+          <number-input class="input input-bg" :value="totAmt" disabled="disabled" />
         </div>
 
         <div class="mr20 " style="width:20%">

@@ -73,7 +73,7 @@
             <div class="table-name">
                 <h3 class="ico_table_name">참조</h3>
             </div>
-            <el-input v-model="refUserId" readonly></el-input>
+            <el-input :value="refUserId" readonly></el-input>
         </div>
     </div>
 </template>

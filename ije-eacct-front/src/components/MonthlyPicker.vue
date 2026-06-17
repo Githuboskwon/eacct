@@ -24,11 +24,11 @@
                 :style="[{'background-color': getBackgroundColor(year, idx)}]"
                 v-if="isActive(idx)"
                 @click="selectMonth(idx)"
-                :key="idx">{{month}}
+                :key="'on'+idx">{{month}}
               </div>
               <div v-else
                 :class="{'selected': isCurrentSelected(year, idx)}"
-                :key="idx"
+                :key="'off'+idx"
                 class="item deactive">
                 {{ month }}
               </div>

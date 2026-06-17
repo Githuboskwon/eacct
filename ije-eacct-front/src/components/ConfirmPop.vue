@@ -88,7 +88,7 @@
                   </select>
                 </div>
               </td>
-
+            </tr>
 
             <tr>
               <th colspan="2" style="text-align: center">검인기준 시작금액</th>

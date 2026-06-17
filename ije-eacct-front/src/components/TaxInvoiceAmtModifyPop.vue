@@ -81,7 +81,7 @@
 
                 <th>부가세액 차액(수정부가세액 - 부가세액)</th>
                 <td>
-                  <input class="input" type="text" v-model="form.modiTaxAmt - rowData[0].taxAmount" readonly/>
+                  <input class="input" type="text" :value="form.modiTaxAmt - rowData[0].taxAmount" readonly/>
                 </td>
               </tr>
               </tbody>

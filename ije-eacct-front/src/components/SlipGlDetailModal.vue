@@ -203,6 +203,7 @@
                     <th style="height:30px;">대변</th>
                     <th>차변</th>
                     <th>대변</th>
+                  </tr>
                   <tr>
                     <td class="rightDt" style="height: 30px;">{{getDoubleNumberFormat(sumValues.enteredDr)}}</td>
                     <td class="rightDt">{{getDoubleNumberFormat(sumValues.enteredCr)}}</td>

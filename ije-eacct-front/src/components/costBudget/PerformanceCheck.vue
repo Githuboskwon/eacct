@@ -20,7 +20,7 @@
                     <div class="td-s-thumb search-area" style="width: 200px">
                       <div class="form-input">
                         <el-date-picker
-                            v-model="periodYm"
+                            v-model="periodYmM"
                             type="month"
                             format="yyyy-MM"
                             value-format="yyyyMM"
@@ -38,8 +38,8 @@
                   </div>
                   <div class="search_con">
                     <div class="td-s-thumb search-area" style="width: 300px">
-                      <input class="input input-bg" type="text" style="width:100px; text-align: center;" v-model="cctrCd" disabled>
-                      <input class="input input-bg" type="text" style="width:180px; margin-left: 5px;" v-model="cctrNm" disabled>
+                      <input class="input input-bg" type="text" style="width:100px; text-align: center;" :value="cctrCd" disabled>
+                      <input class="input input-bg" type="text" style="width:180px; margin-left: 5px;" :value="cctrNm" disabled>
                     </div>
                   </div>
                 </div>
@@ -111,6 +111,7 @@ export default {
   },
   data() {
     return {
+      periodYmM: this.periodYm, // (Vue3) prop v-model 금지 → 로컬 복사
       title: '비용예산관리 실적조회',
       columnDefs: [],
       defaultColDef: {
@@ -137,7 +138,7 @@ export default {
 
       let month = Number(this.periodMonth);
 
-      let yearMonth = Number(this.$moment(this.periodYm).format('YYYYMM'));
+      let yearMonth = Number(this.$moment(this.periodYmM).format('YYYYMM'));
 
       if(month == 11){
 
@@ -884,8 +885,8 @@ export default {
     },
     goSearch(){
 
-      this.periodYear = this.$moment(this.periodYm).format('YYYY');
-      this.periodMonth = this.$moment(this.periodYm).format('MM');
+      this.periodYear = this.$moment(this.periodYmM).format('YYYY');
+      this.periodMonth = this.$moment(this.periodYmM).format('MM');
 
       this.makeColDef();
 
@@ -920,7 +921,7 @@ export default {
         this.$modal.open({
           component: PerformerChkDetail,
           props: {
-            periodYm: this.$moment(this.periodYm).add(-1, 'month').startOf('month').format('YYYYMM'),
+            periodYm: this.$moment(this.periodYmM).add(-1, 'month').startOf('month').format('YYYYMM'),
             cctrCd : this.cctrCd,
             cctrNm : this.cctrNm,
             acctCd : params.data.acctCd
@@ -962,7 +963,7 @@ export default {
     this.goSearch();
   },
   watch: {
-    'periodYm'() {
+    'periodYmM'() {
       this.goSearch();
     },
   }

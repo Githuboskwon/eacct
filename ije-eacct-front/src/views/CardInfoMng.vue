@@ -256,7 +256,6 @@
       <emp :param="form.crdPssrNm"></emp>
   </b-modal> -->
   <!--//팝업 -->
-  </div>
 </template>
 
 <script>

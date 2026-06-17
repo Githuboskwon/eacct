@@ -10,7 +10,7 @@
           <div class="table-header">
             <div style="width:700px;" class="fl_left">
               <div>
-                <monthly-picker style="width:100px;" v-model="periodYM" />
+                <monthly-picker style="width:100px;" v-model="periodYMM" />
                 <span>업로드 작업구분명 : </span><input class="input" style="width:300px; background-color:#FFF5F5DC" type="text" v-model="uploadTitle">
               </div>
             </div>
@@ -78,6 +78,7 @@ export default {
   },
   data() {
     return {
+      periodYMM: this.periodYM, // (Vue3) prop v-model 금지 → 로컬 복사
       title: 'HR 엑셀 업로드',
       columnDefs: [],
       defaultColDef: {
@@ -209,7 +210,7 @@ export default {
         return
       }
 
-      if(!this.periodYM){
+      if(!this.periodYMM){
         this.$swal({ type: "error", text: "지급년월을 선택해주세요." })
         return
       }
@@ -220,7 +221,7 @@ export default {
       }
 
       for(var i=0; i<this.data.length; i++){
-        this.data[i].batchPeriod = this.periodYM
+        this.data[i].batchPeriod = this.periodYMM
         this.data[i].payrollBatchName = this.uploadTitle
         this.data[i].orgId = this.$store.state.loginInfo.compCd
         this.data[i].uploadEmpNo = this.$store.state.loginInfo.loginId

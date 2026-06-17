@@ -25,7 +25,7 @@
                     <div class="td-s-thumb search-area" style="width: 200px">
                       <div class="form-input">
                         <el-date-picker
-                            v-model="periodYear"
+                            v-model="periodYearM"
                             type="year"
                             format="yyyy"
                             value-format="yyyy"
@@ -43,8 +43,8 @@
                   </div>
                   <div class="search_con">
                     <div class="td-s-thumb search-area" style="width: 300px">
-                      <input class="input input-bg" type="text" style="width:100px; text-align: center;" v-model="cctrCd" disabled>
-                      <input class="input input-bg" type="text" style="width:180px; margin-left: 5px;" v-model="cctrNm" disabled>
+                      <input class="input input-bg" type="text" style="width:100px; text-align: center;" :value="cctrCd" disabled>
+                      <input class="input input-bg" type="text" style="width:180px; margin-left: 5px;" :value="cctrNm" disabled>
                     </div>
                   </div>
                 </div>
@@ -114,6 +114,7 @@ export default {
   },
   data() {
     return {
+      periodYearM: this.periodYear, // (Vue3) prop v-model 금지 → 로컬 복사
       title: '비용예산관리 사업계획 조회',
       columnDefs: [],
       defaultColDef: {
@@ -179,7 +180,7 @@ export default {
       this.$store.commit('loading');
 
       const params = {
-        periodYear: this.periodYear,
+        periodYear: this.periodYearM,
         searchDeptCd: this.cctrCd
       }
 
@@ -213,7 +214,7 @@ export default {
     this.goSearch();
   },
   watch: {
-    'periodYear'() {
+    'periodYearM'() {
       this.goSearch();
     },
   }

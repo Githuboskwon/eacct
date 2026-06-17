@@ -20,7 +20,7 @@
                     <div class="td-s-thumb search-area" style="width: 200px">
                       <div class="form-input">
                         <el-date-picker
-                            v-model="periodYm"
+                            v-model="periodYmM"
                             type="month"
                             format="yyyy-MM"
                             value-format="yyyyMM"
@@ -38,9 +38,9 @@
                   </div>
                   <div class="search_con">
                     <div class="td-s-thumb search-area" style="width: 300px">
-                      <input class="input input-bg" type="text" style="width:100px;" v-model="cctrCd" disabled>
+                      <input class="input input-bg" type="text" style="width:100px;" :value="cctrCd" disabled>
                       <div class="ip-box ip-box-w02" style="width:120px;">
-                        <input class="input input-bg" type="text" style="width:150px;" v-model="cctrNm" disabled>
+                        <input class="input input-bg" type="text" style="width:150px;" :value="cctrNm" disabled>
                       </div>
                     </div>
                   </div>
@@ -111,6 +111,7 @@ export default {
   },
   data() {
     return {
+      periodYmM: this.periodYm, // (Vue3) prop v-model 금지 → 로컬 복사
       title: '비용예산관리 계정별 요약',
       columnDefs: [],
       defaultColDef: {
@@ -137,7 +138,7 @@ export default {
 
       let month = Number(this.periodMonth);
 
-      let yearMonth = Number(this.$moment(this.periodYm).format('YYYYMM'));
+      let yearMonth = Number(this.$moment(this.periodYmM).format('YYYYMM'));
 
       if(month == 11){
 
@@ -340,8 +341,8 @@ export default {
     },
     goSearch(){
 
-      this.periodYear = this.$moment(this.periodYm).format('YYYY');
-      this.periodMonth = this.$moment(this.periodYm).format('MM');
+      this.periodYear = this.$moment(this.periodYmM).format('YYYY');
+      this.periodMonth = this.$moment(this.periodYmM).format('MM');
 
       this.makeColDef();
 
@@ -383,7 +384,7 @@ export default {
     this.goSearch();
   },
   watch: {
-    'periodYm'() {
+    'periodYmM'() {
       this.goSearch();
     },
   }

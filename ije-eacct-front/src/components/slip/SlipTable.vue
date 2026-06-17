@@ -4,11 +4,11 @@
       <div class="table-name">
         <h3 class="ico_table_name">기본정보</h3>
       </div>
-      <component :is="tableId" v-model="value" :status="status" />
+      <component :is="tableId" :value="value" @input="$emit('input', $event)" :status="status" />
       <div v-if="slipType === 'E2'" class="table-name">
         <h3 class="ico_table_name">공급자 & 결제조건</h3>
       </div>
-      <component v-if="slipType === 'E2'" :is="tableId+'_BTM'" v-model="value" :status="status" />
+      <component v-if="slipType === 'E2'" :is="tableId+'_BTM'" :value="value" @input="$emit('input', $event)" :status="status" />
     </div>
   </div>
 </template>
