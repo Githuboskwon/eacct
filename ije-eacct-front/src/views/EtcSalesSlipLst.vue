@@ -102,7 +102,7 @@
                 <span class="search_tit">지급방법</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth w100p" v-model="form.paymentMethod">
+                <select class="select is-fullwidth w100p" v-model="form.paymentMethod">
                   <option value="">==전체==</option>
                   <option
                       v-for="item in paymentMethodCombo"
@@ -110,7 +110,7 @@
                       :value="item.key"
                       v-text="item.key"
                   />
-                </b-select>
+                </select>
               </div>
             </div>
 

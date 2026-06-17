@@ -29,11 +29,11 @@
             <div class="form-group">
                 <label class="control-label">조회조건2</label>
                 <div class="form-input">
-                    <b-select class="select is-fullwidth" id="use_yn" v-model="form.search2">
+                    <select class="select is-fullwidth" id="use_yn" v-model="form.search2">
                     <option value="">-전체-</option>
                     <option value="Y">예</option>
                     <option value="N">아니오</option>
-                    </b-select>
+                    </select>
                 </div>
             </div>
             <div class="form-group">

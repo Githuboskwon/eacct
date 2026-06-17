@@ -19,10 +19,10 @@
       <label class="control-label">{{this.$i18n.messages[this.$store.state.locale].useYn}}</label>
       
       <div class="form-input">
-        <b-select class="select is-fullwidth" id="use_yn" v-model="form.useType">
+        <select class="select is-fullwidth" id="use_yn" v-model="form.useType">
           <option value="Y">예</option>
           <option value="N">아니오</option>
-        </b-select>
+        </select>
       </div>
     </div>
   </div>

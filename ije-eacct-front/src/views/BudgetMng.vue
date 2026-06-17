@@ -61,7 +61,7 @@
           <div class="search_con">
             <div class="td-s-thumb search-area" style="width: 300px">
               <div class="form-input">
-                <b-select class="select is-fullwidth" v-model="form.delegateNo">
+                <select class="select is-fullwidth" v-model="form.delegateNo">
 
                   <option v-if="this.$store.state.loginInfo.authorities[0].roleCd ==='ADMIN'" value='all'>==전체==</option>
 
@@ -72,7 +72,7 @@
                       :value="item.giveUserId"
                       v-text="item.giveUserNm"/>
                   />
-                </b-select>
+                </select>
               </div>
             </div>
           </div>

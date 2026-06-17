@@ -104,7 +104,7 @@
                 <span class="search_tit">원천</span>
               </div>
               <div class="search_con search-area">
-                  <b-select class="select is-fullwidth w100p" v-model="form.sourceNm">
+                  <select class="select is-fullwidth w100p" v-model="form.sourceNm">
                     <option value="">==전체==</option>
                     <option
                       v-for="item in sourceTypeCombo"
@@ -112,7 +112,7 @@
                       :value="item.value"
                       v-text="item.value"
                     />
-                  </b-select>
+                  </select>
               </div>
             </div>
             <div class="search_box_pop">
@@ -120,11 +120,11 @@
                   <span class="search_tit">증빙첨부</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth" v-model="form.fileYn">
+                <select class="select is-fullwidth" v-model="form.fileYn">
                   <option value="">==전체==</option>
                   <option value="Y">첨부</option>
                   <option value="N">미첨부</option>
-                </b-select>
+                </select>
               </div>
             </div>
             <div class="search_box_pop">
@@ -132,11 +132,11 @@
                   <span class="search_tit">기안서 연동</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth" v-model="form.jiniYn">
+                <select class="select is-fullwidth" v-model="form.jiniYn">
                   <option value="">==전체==</option>
                   <option value="Y">연동</option>
                   <option value="N">미연동</option>
-                </b-select>
+                </select>
               </div>
             </div>
             <div class="search_box_pop">

@@ -48,22 +48,22 @@
                   <span class="label-tit"> 카드번호</span>
                 </div>
                 <div class="desc">
-                    <b-select class="select is-fullwidth" v-model="form.crdNo">
+                    <select class="select is-fullwidth" v-model="form.crdNo">
                         <!-- <option value=''>==전체==</option> -->
                         <option
                                 v-for="item in cardNos"
                                 :key="item.crdNo"
                                 :value="item.crdNo"
                                 v-text="`${item.maskedCardNo} (${item.crdPssrNm})`"/>
-                    </b-select>
-                  <!-- <b-select class="select is-fullwidth" v-model="form.crdNo">
+                    </select>
+                  <!-- <select class="select is-fullwidth" v-model="form.crdNo">
                       <option value=''>==선택==</option>
                       <option
                               v-for="item in cardList"
                               :key="item.crdNo"
                               :value="item.crdNo"
                               v-text="item.maskedCrdNo"/>
-                  </b-select> -->
+                  </select> -->
                 </div>
               </div>
               <!-- <div class="desc-item" style="display:none;">
@@ -71,14 +71,14 @@
                     <span class="label-tit"> 카드구분</span>
                 </div>
                 <div class="desc">
-                    <b-select class="select is-fullwidth" v-model="form.crdFgCd">
+                    <select class="select is-fullwidth" v-model="form.crdFgCd">
                         <option value=''>==전체==</option>
                         <option
                                 v-for="item in crdFgCds"
                                 :key="item.key"
                                 :value="item.key"
                                 v-text="item.value"/>
-                    </b-select>
+                    </select>
                 </div>
               </div> -->
           </div>
@@ -88,13 +88,13 @@
                     <span class="label-tit">처리상태</span>
                 </div>
                 <div class="desc">
-                    <b-select class="select is-fullwidth" v-model="form.useDtlsStatCd">
+                    <select class="select is-fullwidth" v-model="form.useDtlsStatCd">
                         <option
                                 v-for="item in useDtlsStatCds"
                                 :key="item.key"
                                 :value="item.key"
                                 v-text="item.value"/>
-                    </b-select>
+                    </select>
                 </div>
             </div>
           </div>

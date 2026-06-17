@@ -96,11 +96,11 @@
                   <span class="search_tit">- 확정여부</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth" v-model="form.confirmFlag">
+                  <select class="select is-fullwidth" v-model="form.confirmFlag">
                     <option value="">전체</option>
                     <option value="Y">확정</option>
                     <option value="N">미확정</option>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 
@@ -138,11 +138,11 @@
                   <span class="search_tit">- Accounting여부</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth" v-model="form.accountingFlag">
+                  <select class="select is-fullwidth" v-model="form.accountingFlag">
                     <option value="">전체</option>
                     <option value="Y">Y</option>
                     <option value="N">N</option>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 

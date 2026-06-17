@@ -20,14 +20,14 @@
                         <span class="label-tit">- 회사</span>
                     </div>
                     <div class="desc">
-                        <b-select class="select is-fullwidth" v-model="form.compCd">
+                        <select class="select is-fullwidth" v-model="form.compCd">
                             <option value=''>==전체==</option>
                             <option
                                     v-for="item in compCds"
                                     :key="item.key"
                                     :value="item.key"
                                     v-text="item.value"/>
-                        </b-select>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -37,14 +37,14 @@
                         <span class="label-tit">- 문서유형</span>
                     </div>
                     <div class="desc">
-                        <b-select class="select is-fullwidth" v-model="form.docTypeCd">
+                        <select class="select is-fullwidth" v-model="form.docTypeCd">
                             <option value=''>==전체==</option>
                             <option
                                     v-for="item in docTypes"
                                     :key="item.key"
                                     :value="item.key"
                                     v-text="item.value"/>
-                        </b-select>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -54,11 +54,11 @@
                         <span class="label-tit">- 사용여부</span>
                     </div>
                     <div class="desc">
-                        <b-select class="select is-fullwidth" v-model="form.useYn">
+                        <select class="select is-fullwidth" v-model="form.useYn">
                             <option value=''>==전체==</option>
                             <option value='Y'>사용</option>
                             <option value='N'>미사용</option>
-                        </b-select>
+                        </select>
                     </div>
                 </div>
             </div>

@@ -61,13 +61,13 @@
 
         <label class="control-label-req">사업부</label>
         <div class="form-input">
-          <b-select class="select is-fullwidth" v-model="form.div">
+          <select class="select is-fullwidth" v-model="form.div">
             <option value="" v-if="['ACCOUNT', 'ADMIN'].includes(roleCd)">==전체==</option>
             <option value="1" selected>공통</option>
             <option value="2" v-if="['ACCOUNT', 'ADMIN', 'EX2_USER'].includes(roleCd)">중전기사업부</option>
             <option value="3" v-if="['ACCOUNT', 'ADMIN', 'EX3_USER'].includes(roleCd)">전선사업부</option>
             <option value="4" v-if="['ACCOUNT', 'ADMIN', 'EX4_USER'].includes(roleCd)">재료사업부</option>
-          </b-select>
+          </select>
         </div>
       </div>
 
@@ -197,13 +197,13 @@
 <!--                <span class="search_tit">사업부</span>-->
 <!--              </div>-->
 <!--              <div class="search_con search-area">-->
-<!--                <b-select class="select is-fullwidth" v-model="form.div">-->
+<!--                <select class="select is-fullwidth" v-model="form.div">-->
 <!--                  <option value="" v-if="['ACCOUNT', 'ADMIN'].includes(roleCd)">==전체==</option>-->
 <!--                  <option value="1">공통</option>-->
 <!--                  <option value="2" v-if="['ACCOUNT', 'ADMIN', 'EX2_USER'].includes(roleCd)">중전기사업부</option>-->
 <!--                  <option value="3" v-if="['ACCOUNT', 'ADMIN', 'EX3_USER'].includes(roleCd)">전선사업부</option>-->
 <!--                  <option value="4" v-if="['ACCOUNT', 'ADMIN', 'EX4_USER'].includes(roleCd)">재료사업부</option>-->
-<!--                </b-select>-->
+<!--                </select>-->
 <!--              </div>-->
 <!--            </div>-->
 
@@ -212,11 +212,11 @@
                 <span class="search_tit">증빙첨부</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth" v-model="form.fileYn">
+                <select class="select is-fullwidth" v-model="form.fileYn">
                   <option value="">==전체==</option>
                   <option value="Y">예</option>
                   <option value="N">아니오</option>
-                </b-select>
+                </select>
               </div>
             </div>
 

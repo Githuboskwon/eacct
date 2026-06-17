@@ -109,11 +109,11 @@
                 <span class="search_tit">증빙첨부</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth" v-model="form.fileYn">
+                <select class="select is-fullwidth" v-model="form.fileYn">
                   <option value="">==전체==</option>
                   <option value="Y">예</option>
                   <option value="N">아니오</option>
-                </b-select>
+                </select>
               </div>
             </div>
 

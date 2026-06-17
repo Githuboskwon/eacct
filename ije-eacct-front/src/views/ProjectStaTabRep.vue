@@ -124,14 +124,14 @@
                 <span class="search_tit">PJT 구분</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth" id="use_yn" v-model="form.projectGubun">
+                <select class="select is-fullwidth" id="use_yn" v-model="form.projectGubun">
                   <option value="">전체</option>
                   <option value="A">관납</option>
                   <option value="E">로컬</option>
                   <option value="B">민수</option>
                   <option value="C">해외</option>
                   <option value="D">지사</option>
-                </b-select>
+                </select>
               </div>
             </div>
 

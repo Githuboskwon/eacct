@@ -64,11 +64,11 @@
                   <span class="search_tit">- 사업자여부</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth" v-model="search.bizTypeName">
+                  <select class="select is-fullwidth" v-model="search.bizTypeName">
                     <option value="">전체</option>
                     <option value="사업자">사업자</option>
                     <option value="비사업자">비사업자</option>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 
@@ -77,7 +77,7 @@
                   <span class="search_tit">- 거래처유형</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth" v-model="search.venPayGroupLookupCd">
+                  <select class="select is-fullwidth" v-model="search.venPayGroupLookupCd">
                     <option value="">전체</option>
                     <option value="관공서">관공서</option>
                     <option value="국내업체">국내업체</option>
@@ -86,7 +86,7 @@
                     <option value="세관">세관</option>
                     <option value="임직원">임직원</option>
                     <option value="해외업체">해외업체</option>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 
@@ -96,7 +96,7 @@
                   <span class="search_tit">- 시도구분</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth" v-model="search.regionName">
+                  <select class="select is-fullwidth" v-model="search.regionName">
                     <option value="">전체</option>
                     <option value="서울">서울</option>
                     <option value="부산">부산</option>
@@ -116,7 +116,7 @@
                     <option value="경남">경남</option>
                     <option value="제주">제주</option>
                     <option value="해외">해외</option>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 

@@ -81,14 +81,14 @@
 <!--                                    <span class="search_tit">- 문서유형</span>-->
 <!--                                </div>-->
 <!--                                <div class="search_con search-area">-->
-<!--                                    <b-select class="select is-fullwidth w100p" v-model="form.docTypeCd">-->
+<!--                                    <select class="select is-fullwidth w100p" v-model="form.docTypeCd">-->
 <!--                                        <option value=''>==전체==</option>-->
 <!--                                        <option-->
 <!--                                                v-for="item in docTypes"-->
 <!--                                                :key="item.key"-->
 <!--                                                :value="item.key"-->
 <!--                                                v-text="item.value"/>-->
-<!--                                    </b-select>-->
+<!--                                    </select>-->
 <!--                                </div>-->
 <!--                            </div>-->
 
@@ -97,14 +97,14 @@
                                     <span class="search_tit">- 문서상태</span>
                                 </div>
                                 <div class="search_con search-area">
-                                    <b-select class="select is-fullwidth w100p" v-model="form.slipStatus">
+                                    <select class="select is-fullwidth w100p" v-model="form.slipStatus">
                                         <option value=''>==전체==</option>
                                         <option
                                                 v-for="item in slipStatusList"
                                                 :key="item.key"
                                                 :value="item.key"
                                                 v-text="item.value"/>
-                                    </b-select>
+                                    </select>
                                 </div>
                             </div>
 

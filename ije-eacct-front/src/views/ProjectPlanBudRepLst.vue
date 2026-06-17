@@ -73,13 +73,13 @@
                 <span class="search_tit">- PJT 구분</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth" id="use_yn" v-model="form.mainType">
+                <select class="select is-fullwidth" id="use_yn" v-model="form.mainType">
                   <option value="">관납</option>
                   <option value="">로컬</option>
                   <option value="">민수</option>
                   <option value="">해외</option>
                   <option value="">지사</option>
-                </b-select>
+                </select>
               </div>
             </div>
 

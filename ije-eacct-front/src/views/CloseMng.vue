@@ -89,14 +89,14 @@
               <span class="label-tit">- 사업영역</span>
             </div>
             <div class="desc">
-              <b-select class="select is-fullwidth" v-model="form.bizTypeCd">
+              <select class="select is-fullwidth" v-model="form.bizTypeCd">
                 <option value>==선택==</option>
                 <option
                   v-for="item in bizTypes"
                   :key="item.key"
                   :value="item.key"
                 >{{ '[' + item.key + '] ' + item.value }}</option>
-              </b-select>
+              </select>
             </div>
           </div>
         </div>

@@ -48,14 +48,14 @@
                   <span class="search_tit">검인 순서</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth w100p" v-model="form.confirmSeq">
+                  <select class="select is-fullwidth w100p" v-model="form.confirmSeq">
                     <option value=''>==전체==</option>
                     <option
                         v-for="item in confirmSeqList"
                         :key="item.key"
                         :value="item.key"
                         v-text="item.value"/>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 

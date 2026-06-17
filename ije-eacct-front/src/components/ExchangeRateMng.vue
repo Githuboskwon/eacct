@@ -36,10 +36,10 @@
           <div class="form-group">
             <label class="control-label">기준통화</label>
             <div class="form-input">
-              <b-select class="select is-fullwidth" id="fromCurrency" v-model="form.fromCurrency">
+              <select class="select is-fullwidth" id="fromCurrency" v-model="form.fromCurrency">
                 <option value=''>==전체==</option>
                 <option v-for="{ key, value } in options['CUR_CD']" :key="key" :value="key" v-text="value" />
-              </b-select>
+              </select>
             </div>
           </div>
         </div>

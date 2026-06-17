@@ -77,14 +77,14 @@
                   <span class="search_tit">위임상태</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth w100p" v-model="form.delegateStatCd">
+                  <select class="select is-fullwidth w100p" v-model="form.delegateStatCd">
                     <option value=''>==전체==</option>
                     <option
                         v-for="item in delegateStatCdList"
                         :key="item.key"
                         :value="item.key"
                         v-text="item.value"/>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 

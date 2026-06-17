@@ -39,14 +39,14 @@
       <div class="form-group">
           <label class="control-label">사용유무</label>
           <div class="form-input">
-            <b-select id="bselect" class="select is-fullwidth" v-model="params.useYn">
+            <select id="bselect" class="select is-fullwidth" v-model="params.useYn">
               <option
                 v-for="item in useYnList"
                 :key="item.key"
                 :value="item.key"
                 v-text="item.value"
               />
-            </b-select>
+            </select>
           </div>
       </div>
          
