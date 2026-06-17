@@ -4,17 +4,23 @@ import Router from 'vue-router';
 Vue.use(Router);
 
 /**
- * vue-router 3.1+는 같은 경로로 push/replace 시 NavigationDuplicated로 promise를 reject한다.
+ * 같은 경로로 push/replace 시 vue-router가 "redundant navigation"으로 promise를 reject한다.
  * 호출부마다 .catch()가 없어 unhandled rejection이 되고, vue-cli5(webpack-dev-server) 런타임
  * 오버레이에 "Avoided redundant navigation..."로 노출된다(기능 무관, dev 전용).
- * 전역에서 NavigationDuplicated만 무시하고 그 외 에러는 그대로 전파한다.
+ * ⚠️ vue-router 3.2+는 이 에러에 name이 없고(`err.name` 미작동) isNavigationFailure도
+ * 이 빌드에선 named export가 아니라 미사용. 메시지로 판별(버전 무관, 그 외 에러는 전파).
  */
+const isDuplicated = (err) => {
+  if (!err) return false;
+  if (err.name === 'NavigationDuplicated') return true; // vue-router < 3.2
+  return /redundant navigation/i.test(err.message || ''); // vue-router 3.2+ (name 없음)
+};
 ['push', 'replace'].forEach((method) => {
   const original = Router.prototype[method];
   Router.prototype[method] = function patched(location, onResolve, onReject) {
     if (onResolve || onReject) return original.call(this, location, onResolve, onReject);
     return original.call(this, location).catch((err) => {
-      if (err && err.name === 'NavigationDuplicated') return err;
+      if (isDuplicated(err)) return err;
       return Promise.reject(err);
     });
   };
