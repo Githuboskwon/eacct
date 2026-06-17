@@ -101,7 +101,7 @@ export default {
          * 모달 등 뷰어에서 공급가액/세액/합계 등이 보이지 않을 경우가 존재하여 해당 버스 이벤트를 명시해놓음.
          * 사용은 accualSlip/Approval/Bottom.vue 에서 전달해주고 있음.
          */
-        this.$bus.$on('setViewTaxAmount', (val) => {
+        this.$bus.on('setViewTaxAmount', (val) => {
             this.value = Object.assign({}, this.value, val);
         });
     },

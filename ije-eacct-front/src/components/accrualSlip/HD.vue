@@ -367,7 +367,7 @@ export default {
                         lineAttribute1, lineAttribute3, ttypeInterfaceModule,
                         taxCode, vatTaxId, deptCd, slipTypeCd, fileCnt, remark, amountToApply, evidenceDate } = data;
 
-                    this.$bus.$emit('setGridColDef', slipTypeCd);
+                    this.$bus.emit('setGridColDef', slipTypeCd);
                     
                     // this.$parent.evidFileSize = fileCnt;
                     
@@ -619,7 +619,7 @@ export default {
                             this.initialize(`initVendor`);
                             this.initialize(`initTaxBill`);
                             this.initialize(`initEvidenceVendor`);
-                            this.$bus.$emit('setGridColDef', this.value.slipTypeCd)
+                            this.$bus.emit('setGridColDef', this.value.slipTypeCd)
                             this.initialize(`initEvidence`)
                             .then(_ => {
                                 this.$message({ type: 'success', message: '초기화 되었습니다.' });

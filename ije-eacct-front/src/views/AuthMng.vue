@@ -76,6 +76,7 @@
 
 <script>
 import Vue from 'vue'
+import mitt from 'mitt';
 import _ from 'lodash'
 import assert from '@/libs/assert' 
 import GridSelect from '@/components/grid/GridSelect.vue'
@@ -88,7 +89,7 @@ import ButtonCellRenderer from '@/components/agGrid/button-cell-renderer'
 import common from '@/mixin/common';
 import { Color } from 'ag-grid-community'
 
-const bus = new Vue()
+const bus = mitt()
 
 export default {
   mixins: [common],
@@ -298,7 +299,7 @@ export default {
         }
       }).then(response => {
         this.options['COMP_CD'] = response.data
-        bus.$emit('selectBox.updated')
+        bus.emit('selectBox.updated')
       }).catch(response => {
         return response
       }).finally(() => {
@@ -313,7 +314,7 @@ export default {
         }
       }).then(response => {
         this.options['ROLE_SELECT_CD'] = response.data        
-        bus.$emit('selectBox.updated')
+        bus.emit('selectBox.updated')
       }).catch(response => {
         return response
       }).finally(() => {
@@ -520,7 +521,7 @@ export default {
 
   },
   created() {
-    bus.$on('selectBox.updated', () => {
+    bus.on('selectBox.updated', () => {
       //셀렉트 박스 안에 맵핑될 데이터가 그리드에 반영되기 위해 비동기 처리
       //this.createColumnDefs();
     })

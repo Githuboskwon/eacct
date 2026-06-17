@@ -376,7 +376,7 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 13. [x] **(완료 2026-06-17, §14.1.1 정정)** buefy PoC — 템플릿은 얕으나(`b-select` 108→native·완료 / `b-modal` 6) **`$modal`이 buefy이며 469곳/111파일 사용**(accrualSlip 포함)으로 판명 → "단독 즉시 제거" 결론 철회 (§14)
 14. [x] **(완료 2026-06-17)** `b-select`→native `<select>` 51파일 변환(buefy 비의존 cleanup, 빌드통과) — 브랜치 `refactor/remove-buefy`
 15. [ ] **(buefy 제거 선결)** `$modal.open` 드롭인 커스텀 플러그인 설계·구현(469곳 무수정) → 이후 b-modal 6 재배선 + `Vue.use(Buefy)` 교체 + buefy npm 제거
-16. [ ] `$bus`(23파일) 대체 방식(mitt vs Pinia) 결정
+16. [x] **(완료 2026-06-17)** `$bus`(new Vue() 이벤트버스) → **mitt** 전환 — 전역 prototype(accrualSlip 통신) + 로컬버스 18선언/17파일. `$on/$emit`→`on/emit`, 빌드통과 (§15, 브랜치 `refactor/bus-to-mitt`)
 17. [ ] element-ui/ag-grid 정리 후 Vue 3 빅뱅 브랜치 착수(@vue/compat + 코어 플러그인 + UI 교체)
 
 ---
@@ -610,3 +610,24 @@ npm run build        # openssl 플래그 없이 통과 확인
 - **⚠️ 단독 즉시 제거 불가** — `$modal`이 신규 accrualSlip 포함 앱 전반의 핵심이라, 플러그인 작성·전 화면 모달 런타임 회귀가 필요. Vue 3 호환 마운트로 설계하면 빅뱅과 시너지.
 
 > **PoC 산출물:** §14(인벤토리+§14.1.1 정정+매핑). b-select 변환은 `refactor/remove-buefy`에 실재(빌드통과). 다음: (a) b-select cleanup만 단독 머지 (b) `$modal` 드롭인 플러그인 설계·구현 (c) `$bus`(23)→mitt.
+
+---
+
+## 15. `$bus`(new Vue() 이벤트버스) → mitt 전환 (2026-06-17 · 브랜치 `refactor/bus-to-mitt`)
+
+> Vue 3는 `new Vue()`로 인스턴스를 못 만들어 이벤트버스 패턴이 깨진다(§3). 프레임워크 비의존 **mitt**(^3.0.1)로 교체. mitt는 Vue 버전 무관이라 **현 Vue 2.7에서 빌드 검증 완료**.
+
+### 15.1 전환 범위 (2종)
+- **전역 `Vue.prototype.$bus`** (`main.js`): `new Vue()` → `mitt()`. 사용처 = **accrualSlip 서브시스템** 내부 통신(`script.js`/`HD.vue` emit, `views/accrualSlip/index.vue`/`AssistantVAT.vue` on) — `this.$bus.$on/$emit` → `.on/.emit`.
+- **로컬 `new Vue()` 버스 18선언/17파일**: `bus`/`eventBus`/`$bus` (BdgReq·GridED·AuthMng·PgmMng·ExpendMoneyMng·HrExpendStatus·oilPcePop·Project{Cons,ExcBud,PlanBud,Super}Lst·QuickSetting·SlipLst·SlipMng·TaxMng·AcctSubMng·CertificateMng·MailSendMng). 각 파일에 `import mitt`, `new Vue()`→`mitt()`, `.$on/.$emit`→`.on/.emit`.
+
+### 15.2 API 매핑 / 안전성
+- Vue 버스 `$on/$emit/$off` → mitt `on/emit/off`. `$once`는 **사용 0건**(mitt에 once 없음 → 무영향).
+- ⚠️ mitt `emit(type, payload)`는 **단일 payload**만 — 전 호출부가 단일/무인자 emit임을 확인(다중인자 0) → 호환.
+- 컴포넌트 자체 `this.$emit`/`this.$on`은 **미변경**(버스 변수 `bus/eventBus/$bus`에 한정한 코드모드).
+- 코드모드는 일회성 Node 스크립트로 수행 후 제거(커밋 미포함).
+
+### 15.3 검증 / 잔여
+- ✅ `npm run build` 통과. 라이브 `new Vue()` 버스 잔존 0(주석/데드 제외).
+- ⚠️ **런타임 확인 필요**: accrualSlip 발생전표(그리드 컬럼 갱신·행추가·세액라인 — `$bus` 이벤트), PgmMng(트리 재구성), 기타 로컬버스 화면.
+- 참고: `EstimateList`/`ExpPriceReg`/`EstimateReg`/`ExpPriceList`/`ExchangeRateMng`는 `const bus` 선언이 **주석인데 `bus.$on`만 살아있는 기존 데드/잠재버그**(버스 미정의) → 본 작업 범위 외, 미변경.

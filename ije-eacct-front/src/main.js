@@ -2,6 +2,7 @@
 // import 'bulma-o-steps/bulma-steps.sass';
 import Buefy from 'buefy';
 import Vue from 'vue';
+import mitt from 'mitt';
 import VueCookie from 'vue-cookie';
 import VueSweetalert2 from 'vue-sweetalert2';
 import moment from 'moment';
@@ -138,7 +139,8 @@ Vue.prototype.$prompt = MessageBox.prompt;
 Vue.prototype.$notify = Notification;
 Vue.prototype.$message = Message;
 
-Vue.prototype.$bus = new Vue();
+// Vue 3 호환: new Vue() 이벤트버스 → mitt. API: $on/$emit/$off → on/emit/off
+Vue.prototype.$bus = mitt();
 
 /**
  * Regist global components

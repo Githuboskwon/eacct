@@ -266,7 +266,7 @@ export default {
     /**
      * * 버튼 활성화 이벤트 버스
      */
-    this.$bus.$on('setShowingButton', (val) => {
+    this.$bus.on('setShowingButton', (val) => {
       this.showSave = val.save;
       this.showDelete = val.delete;
       this.showApprove = val.approve;
@@ -278,7 +278,7 @@ export default {
     /**
      * * 신규 그리드 셋팅 (헤더 버스 on 이벤트)
      */
-    this.$bus.$on('setGridColDef', (val) => {
+    this.$bus.on('setGridColDef', (val) => {
       this.rowData = [];
       this.createColumnDef(val, true);
     });
@@ -286,7 +286,7 @@ export default {
      * 세금계산서 세업 이후 세금 관련 정보 세팅
      * * 초기화 후 행 추가 (헤더 버스 on 이벤트)
      */
-    this.$bus.$on('setDefaultTaxLine', (data = {}) => {
+    this.$bus.on('setDefaultTaxLine', (data = {}) => {
       this.rowData = [];
       this.addRow().then(() => {
         const rowNode = this.gridApi.getRowNode(0);
@@ -335,14 +335,14 @@ export default {
      * 세금계산서 세업 이후 세금 관련 정보 세팅
      * * 초기화 후 행 추가 (헤더 버스 on 이벤트)
      */
-    this.$bus.$on('addRow', (data = {}) => {
+    this.$bus.on('addRow', (data = {}) => {
       this.rowData = [];
       this.addRow();
     });
     /**
      * * 그리드 활성 여부 (헤더 버스 on 이벤트)
      */
-    this.$bus.$on('setGridEditingStatus', (values) => {
+    this.$bus.on('setGridEditingStatus', (values) => {
       try {
         if(!!this.columnDefs && this.columnDefs.length > 0) {
           this.columnDefs = [];
@@ -358,7 +358,7 @@ export default {
     /**
      * * 공급가액 0 으로 초기화
      */
-    this.$bus.$on('supplyAmountInit', () => {
+    this.$bus.on('supplyAmountInit', () => {
       this.rowData = this.rowData.map(data => {
         data.supplyAmount = 0;
         return data;

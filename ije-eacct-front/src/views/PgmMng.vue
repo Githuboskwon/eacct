@@ -57,6 +57,7 @@
 
 <script>
 import Vue from 'vue'
+import mitt from 'mitt';
 import assert from '@/libs/assert'
 import debug from '@/libs/debug'
 import mixinSlip from '@/mixin/slip';
@@ -65,7 +66,7 @@ import common from '@/mixin/common';
 
 import NumberInputCellRenderer from '@/components/agGrid/numberinput-cell-renderer'
 
-const bus = new Vue()
+const bus = mitt()
 const _debug = debug('PgmMng')
 
 function _constructTreeData(array) {
@@ -246,13 +247,13 @@ export default {
               let menuNumbers = this.value.filter((x, i) => i !== idx).map(x => x.menuNo)
               // Duplicate found
               if (menuNumbers.indexOf(String(event.newValue)) >= 0) {
-                bus.$emit('ERROR.MENU_NO.DUPLICATE', 200)
-                bus.$emit('REQUEST.RECONSTRUCT_TREE')
+                bus.emit('ERROR.MENU_NO.DUPLICATE', 200)
+                bus.emit('REQUEST.RECONSTRUCT_TREE')
                 return false
               }
             }
           }
-          bus.$emit('REQUEST.RECONSTRUCT_TREE')
+          bus.emit('REQUEST.RECONSTRUCT_TREE')
         }
         this.data[idx].chg = true
     },
@@ -396,7 +397,7 @@ export default {
         new: true
       })
       
-      bus.$emit('REQUEST.RECONSTRUCT_TREE')
+      bus.emit('REQUEST.RECONSTRUCT_TREE')
     },
     buttonClickEventRemoveRow() {
       //Selected Row
@@ -418,7 +419,7 @@ export default {
 
         // Delete children
         _deleteAll(this.data[rowIndx], this.data)
-        bus.$emit('REQUEST.RECONSTRUCT_TREE')
+        bus.emit('REQUEST.RECONSTRUCT_TREE')
       }
 
       function _deleteAll(root, array) {
@@ -463,14 +464,14 @@ export default {
       //this.buttonClickSave();
     }
 
-    bus.$on('REQUEST.RECONSTRUCT_TREE', delay => {
+    bus.on('REQUEST.RECONSTRUCT_TREE', delay => {
       delay = delay || 100
       setTimeout(() => {
         this.data = _constructTreeData(this.data)
       }, delay)
     })
 
-    bus.$on('ERROR.MENU_NO.DUPLICATE', delay => {
+    bus.on('ERROR.MENU_NO.DUPLICATE', delay => {
       delay = delay || 200
       setTimeout(() => {
         this.$swal({

@@ -85,6 +85,7 @@
 
 <script>
 import Vue from "vue";
+import mitt from 'mitt';
 import DhxCalendar from "@/components/DhxCalendar.vue";
 
 import mixin from "@/mixin";
@@ -97,7 +98,7 @@ import CheckboxCellRenderer from '@/components/agGrid/checkbox-cell-renderer';
 import AgGridSearchBtn from "@/components/agGrid/AgGridSearchBtn";
 import Expend from "@/components/Expend_Ag";
 
-const bus = new Vue();
+const bus = mitt();
 
 const options = {};
 const lock = {};
@@ -118,7 +119,7 @@ function queryMngItemCd() {
           .then(response => {
             options["EXPEND_MONEY_CD"] = response.data;
             delete lock["EXPEND_MONEY_CD"];
-            bus.$emit("EXPEND_MONEY_CD", response.data);
+            bus.emit("EXPEND_MONEY_CD", response.data);
             return resolve(response);
           })
           .catch(response => {

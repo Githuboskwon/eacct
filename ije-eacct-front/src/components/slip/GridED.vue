@@ -81,6 +81,7 @@
 <script>
 // For global event bus
 import Vue from 'vue';
+import mitt from 'mitt';
 import _ from 'lodash';
 import Join from '@/libs/join';
 // Import DhxGrid
@@ -110,7 +111,7 @@ import EvidAtchPop from '@/components/EvidAtchPop.vue';
 import mixin2 from '@/mixin';
 import mixinSlip from '@/mixin/slip';
 
-const eventBus = new Vue();
+const eventBus = mitt();
 const _url = Join.url;
 
 Vue.config.errorHandler = (err, vm, info) => {
@@ -160,8 +161,8 @@ function queryTpsTypeCd() {
       options['E1_tpsTypeCd'] = undefined;
       return response
     }).finally(() => {
-      eventBus.$emit('E6_tpsTypeCd.updated');
-      eventBus.$emit('E1_tpsTypeCd.updated');
+      eventBus.emit('E6_tpsTypeCd.updated');
+      eventBus.emit('E1_tpsTypeCd.updated');
       queryTpsTypeCd_run = false;
     })
   }
@@ -181,7 +182,7 @@ function queryVatAcct(){
       options['E1_vatAcctCd'] = undefined;
       return response;
     }).finally(() => {
-      eventBus.$emit('E1_vatAcctCd.updated');
+      eventBus.emit('E1_vatAcctCd.updated');
       queryVatAcct_run = false;
     })
   }
@@ -204,7 +205,7 @@ function queryTaxes() {
       options['E1_taxesCd'] = undefined;
       return response
     }).finally(() => {
-      eventBus.$emit('E1_taxesCd.updated');
+      eventBus.emit('E1_taxesCd.updated');
       queryTaxes_run = false;
     })
   }
@@ -226,8 +227,8 @@ function queryOilKinCd() {
       options['E1_oilKindCd'] = undefined;
       return response
     }).finally(() => {
-      eventBus.$emit('E6_oilKindCd.updated');
-      eventBus.$emit('E1_oilKindCd.updated');
+      eventBus.emit('E6_oilKindCd.updated');
+      eventBus.emit('E1_oilKindCd.updated');
       queryOilKinCd_run = false;
     })
   }
@@ -249,8 +250,8 @@ function queryOilPrice(baseYm) {
       options['E1_oilPrice'][baseYm] = undefined;
       return response;
     }).finally(() => {
-      eventBus.$emit('E6_oilPrice.updated', baseYm);
-      eventBus.$emit('E1_oilPrice.updated', baseYm);
+      eventBus.emit('E6_oilPrice.updated', baseYm);
+      eventBus.emit('E1_oilPrice.updated', baseYm);
       queryOilPrice_run[baseYm] = undefined;
     })
   }
@@ -274,7 +275,7 @@ function queryAccountAddon(acctCd) {
       }).then(response => {
         let filter = response.data.filter(x => x.acctCd === acctCd);
         account[acctCd] = filter.length;
-        eventBus.$emit(['account', acctCd].join('_'), filter.length);
+        eventBus.emit(['account', acctCd].join('_'), filter.length);
       }).finally(() => {
         delete account_lock[acctCd];
       })
@@ -282,7 +283,7 @@ function queryAccountAddon(acctCd) {
   })
 }
 
-const $bus = new Vue()
+const $bus = mitt()
 const budget = {};
 const bdg_mutex = {};
 
@@ -301,7 +302,7 @@ function queryRemainBudget(postDt, cctrCd, acctCd, subAcctCd) {
         budSubAcctCd: subAcctCd
       }).then(response => {
         budget[id] = this.$numeral(response.data).value()
-        $bus.$emit('BUDGET_CMPL', id)
+        $bus.emit('BUDGET_CMPL', id)
       }).finally(() => {
         delete bdg_mutex[id]
         resolve(budget[id])
@@ -328,7 +329,7 @@ function queryRemainBudget(postDt, cctrCd, acctCd) {
         }
       }).then(response => {
         budget[id] = this.$numeral(response.data).value();
-        eventBus.$emit('budget', budget[id]);
+        eventBus.emit('budget', budget[id]);
         return resolve(budget[id]);
       }).catch(response => {
         return reject(budget[id]);
@@ -569,7 +570,7 @@ export default {
                   this.value.hasAddon = this.visible
                 }
 
-                eventBus.$on(['account', this.value.acctCd].join('_'), () => {
+                eventBus.on(['account', this.value.acctCd].join('_'), () => {
                   this.visible = account[this.value.acctCd] > 0
                   this.value.hasAddon = this.visible
                 })
@@ -999,7 +1000,7 @@ export default {
                   this.value.hasAddon = this.visible
                 }
 
-                eventBus.$on(['account', this.value.acctCd].join('_'), () => {
+                eventBus.on(['account', this.value.acctCd].join('_'), () => {
                   this.visible = account[this.value.acctCd] > 0
                   this.value.hasAddon = this.visible
                 })
@@ -1145,7 +1146,7 @@ export default {
                 let id = [this.$parent.$parent.value.postDt, this.value.deptCd, this.value.acctCd, this.value.acctCdSub].join('_')
                 queryRemainBudget.apply(this, [this.$parent.$parent.value.postDt, this.value.deptCd, this.value.acctCd, this.value.acctCdSub])
 
-                $bus.$on('BUDGET_CMPL', () => {
+                $bus.on('BUDGET_CMPL', () => {
                   this.data = this.value.rmdAmt = budget[id]
                 })
 
@@ -1278,7 +1279,7 @@ export default {
             created() {
               this.options = options['E6_tpsTypeCd']
 
-              eventBus.$on('E6_tpsTypeCd.updated', () => {
+              eventBus.on('E6_tpsTypeCd.updated', () => {
                 this.options = options['E6_tpsTypeCd']
               })
             },
@@ -1321,7 +1322,7 @@ export default {
               }
               this.options = options['E6_oilKindCd']
               this.onSubmit()
-              eventBus.$on('E6_oilKindCd.updated', () => {
+              eventBus.on('E6_oilKindCd.updated', () => {
                 this.options = options['E6_oilKindCd']
                 this.onSubmit()
               })
@@ -1367,7 +1368,7 @@ export default {
               this.options = options['E6_oilPrice'] ? options['E6_oilPrice'][this.$moment(this.value.useDt).format('YYYYMM')] : []
               this.updateOilPriceInfo()
 
-              eventBus.$on('E6_oilPrice.updated', baseYm => {
+              eventBus.on('E6_oilPrice.updated', baseYm => {
                 this.options = options['E6_oilPrice'][baseYm]
                 this.updateOilPriceInfo()
               })
@@ -1761,7 +1762,7 @@ export default {
               created(){
                 this.options = options['E1_taxesCd'];
                 this.onSubmit();
-                eventBus.$on('E1_taxesCd.updated', () => {
+                eventBus.on('E1_taxesCd.updated', () => {
                   this.options = options['E1_taxesCd'];
                   this.onSubmit();
                 })
@@ -1793,7 +1794,7 @@ export default {
                       options['E1_taxesCd'] = undefined;
                       return response
                     }).finally(() => {
-                      eventBus.$emit('E1_taxesCd.updated');
+                      eventBus.emit('E1_taxesCd.updated');
                       this.queryTaxes_run = false;
                     })
                   }else {
@@ -1962,7 +1963,7 @@ export default {
               },
               created() {
                 this.options = options['E1_tpsTypeCd']
-                eventBus.$on('E1_tpsTypeCd.updated', () => {
+                eventBus.on('E1_tpsTypeCd.updated', () => {
                   this.options = options['E1_tpsTypeCd']
                 })
 
@@ -2008,7 +2009,7 @@ export default {
                 this.options = options['E1_oilKindCd']
                 this.onSubmit()
 
-                eventBus.$on('E1_oilKindCd.updated', () => {
+                eventBus.on('E1_oilKindCd.updated', () => {
                   this.options = options['E1_oilKindCd']
                   this.onSubmit()
                 })
