@@ -43,5 +43,16 @@ module.exports = {
   },
   devServer: {
     port: process.env.VUE_APP_PORT,
+    client: {
+      overlay: {
+        // 컴파일/빌드 에러는 계속 오버레이로 표시(유용)
+        errors: true,
+        warnings: false,
+        // 런타임 에러 오버레이는 끔. vue-cli5(webpack-dev-server4)가 새로 추가한 기능으로,
+        // 앱 전반의 기존 미처리 rejection/latent 에러(마이그레이션 무관)를 무더기로 노출해
+        // 검증을 방해함. vue-cli3와 동일하게 런타임 에러는 콘솔로만 확인. (MIGRATION_PLAN 참고)
+        runtimeErrors: false,
+      },
+    },
   },
 };
