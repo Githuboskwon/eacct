@@ -1720,7 +1720,7 @@ export default {
                 })
                 .finally(() => {
                     this.$store.commit('finish');
-                    this?.$refs?.subHD?.setHeaderVat();
+                    this?.$refs?.subHD?.setHeaderVat?.();
                 });
             })
         },
@@ -1766,7 +1766,7 @@ export default {
             })
             .finally(() => {
                 this.$store.commit('finish');
-                this?.$refs?.subHD?.setHeaderVat();
+                this?.$refs?.subHD?.setHeaderVat?.();
             });
 
         },
@@ -1804,7 +1804,7 @@ export default {
                         self.value.lineAttribute6 = lineAttribute6;
                         self.taxReadOnly(lineAttribute1, lineAttribute3);
 
-                        self.$refs?.subHD?.setHeaderVat();
+                        self.$refs?.subHD?.setHeaderVat?.();
                     }
                 }
             });
