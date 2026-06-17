@@ -373,10 +373,11 @@ DHTMLX 검색 원본(`Emp/Cctr/Account/...`)의 **활성(비주석) import**를 
 10. [x] **(완료 2026-06-17)** 2단계 도약판: **Vue 2.6 → 2.7.16** 브리지(`vue-template-compiler` 제거, 라이브러리 무변경), build/serve 통과 (§12, 브랜치 `migration/vue2.7`)
 11. [ ] 2단계 본체: `@vue/compat` + router4/vuex4/i18n9 + `createApp` (UI 라이브러리 교체와 묶어 진행, §12.4)
 12. [x] **(완료 2026-06-17)** element-plus 자동 치환 도구(gogocode) 검증 — 인벤토리·자동화율·전략 실측. gogocode 통짜 적용 비권장(재포맷 노이즈) → 변환종류별 스코프 코드모드 권장 (§13, 브랜치 `poc/element-plus`)
-13. [x] **(완료 2026-06-17)** buefy 흡수 PoC — 사용 2종뿐(`b-select` 108→native select / `b-modal` 활성 9→`$modal.open`), `$buefy` API 0. **Vue 2.7에서 단독 제거 가능**(b-select→select 빌드검증 완료) (§14, 브랜치 `poc/buefy`)
-14. [ ] **(권장 차순위)** buefy 단독 제거 실행 — Vue 2.7 위 단독 PR(b-select 108·b-modal 9·main.js), 빌드+런타임 검증. Vue3 블로커 3종 중 1종 선제거
-15. [ ] `$bus`(23파일) 대체 방식(mitt vs Pinia) 결정
-16. [ ] element-ui/ag-grid 정리 후 Vue 3 빅뱅 브랜치 착수(@vue/compat + 코어 플러그인 + UI 교체)
+13. [x] **(완료 2026-06-17, §14.1.1 정정)** buefy PoC — 템플릿은 얕으나(`b-select` 108→native·완료 / `b-modal` 6) **`$modal`이 buefy이며 469곳/111파일 사용**(accrualSlip 포함)으로 판명 → "단독 즉시 제거" 결론 철회 (§14)
+14. [x] **(완료 2026-06-17)** `b-select`→native `<select>` 51파일 변환(buefy 비의존 cleanup, 빌드통과) — 브랜치 `refactor/remove-buefy`
+15. [ ] **(buefy 제거 선결)** `$modal.open` 드롭인 커스텀 플러그인 설계·구현(469곳 무수정) → 이후 b-modal 6 재배선 + `Vue.use(Buefy)` 교체 + buefy npm 제거
+16. [ ] `$bus`(23파일) 대체 방식(mitt vs Pinia) 결정
+17. [ ] element-ui/ag-grid 정리 후 Vue 3 빅뱅 브랜치 착수(@vue/compat + 코어 플러그인 + UI 교체)
 
 ---
 
@@ -585,20 +586,27 @@ npm run build        # openssl 플래그 없이 통과 확인
 
 ### 14.1 사용 인벤토리 (src 전수)
 - **컴포넌트 2종뿐:** `<b-select>` **108곳** + `<b-modal>` **14곳(활성 9 / 주석 5)**. 그 외 b-* 태그 0.
-- **프로그래매틱 API `this.$buefy.*` (dialog/toast/snackbar/modal): 0건.** → JS 치환면 없음.
 - 등록: `main.js`의 `Vue.use(Buefy, {defaultModalCanCancel})` 한 곳 + `buefy/dist/buefy.css`(이미 주석).
-- `<b-modal>` 활성 5파일: `CardInfo`(2)·`SlipCrdLstModal`(3)·`ApprDtlQryPop`(1)·`ApprMndSet`(2)·`ApprRuleSet`(1).
+- `<b-modal>` 활성: **멀티라인 주석 보정 후 6곳/4파일** — `SlipCrdLstModal`(3, **죽은 경로**)·`ApprDtlQryPop`(1)·`ApprMndSet`(1)·`ApprRuleSet`(1). (`CardInfo`의 3개는 주석블록 내부 = 비활성)
 
-### 14.2 대체 매핑 + 검증
+> ### 14.1.1 ⚠️ 중대 정정 (2026-06-17) — buefy는 "얕지 않음", `$modal`이 buefy다
+> 최초 §14는 `this.$buefy.*`만 grep해 "프로그래매틱 API 0"으로 **오판**했다. 실제로 **buefy 0.7.x는 `this.$modal`/`$dialog`/`$toast` 등을 prototype에 직접 등록**(레거시 형태, `$buefy.modal`이 아님)한다.
+> - **`this.$modal.open({component, props, events, parent})` = buefy 모달 서비스이며 src 전체에서 469곳 / 111파일 사용** — **신규 `accrualSlip` 서브시스템 전체 포함.**
+> - 즉 `Vue.use(Buefy)` 제거 시 **469곳 모달 호출이 전부 깨짐.** buefy는 **앱 최심부 의존성** → "Vue 2.7에서 단독 즉시 제거" 결론은 **철회.**
+> - 사용 중인 buefy 프로그래매틱 API는 `$modal`뿐(`$dialog/$toast/$snackbar/$notification` 0). `$loading`은 element-ui(`Loading.service`)라 buefy 아님.
+> - **올바른 제거 전략:** `$modal.open({component, props, events, parent, width, fullScreen})` API를 그대로 재현하는 **커스텀 모달 플러그인을 작성**(컴포넌트 동적 마운트 + `events` 리스너 + `$parent.close()`로 닫기) → `Vue.use(Buefy)`를 이 플러그인으로 교체하면 **469개 호출부 무수정**으로 buefy 제거 가능. b-select(완료)·b-modal(6)·bulma CSS는 별도. **이 플러그인이 buefy 제거의 핵심 선결물**이며 Vue 3 호환(`h()`/`createApp` 마운트)으로 설계하면 빅뱅도 단순화.
+
+### 14.2 대체 매핑
 | buefy | 대체 | 난이도 | 비고 |
 |-------|------|--------|------|
-| `<b-select>` 108 | **native `<select>`** | 하(거의 기계적) | 내부가 이미 native `<option v-for>`. `class="select ..."`(bulma 스타일) 유지. `<b-select>`→`<select>` 태그 치환 + **`@change.native`→`@change`**(native 모디파이어). ✅ **MailSendMng.vue 1건 변환→`npm run build` 통과로 검증**(Vue 2.7에서 동작) |
-| `<b-modal>` 활성 9 | **`this.$modal.open({component, events})`** | 중 | 앱에 `$modal.open` **이미 471곳 사용** = 정착된 패턴. `:active.sync`+`@receive`(검색팝업 emit) → `$modal.open`의 `events`로 매핑(§8.6과 동일 전환). 호출처별 component/이벤트 확인 필요 |
-| `Vue.use(Buefy)` | 제거 | 하 | main.js 1곳 + (주석된) buefy css. bulma 자체 CSS는 유지 검토(레이아웃 클래스 의존) |
+| `<b-select>` 108 | **native `<select>`** | 하(기계적) | 내부가 이미 native `<option v-for>`. `<b-select>`→`<select>` + `@change.native`→`@change`(1곳). ✅ **51파일 일괄 변환 → `npm run build` 통과**(브랜치 `refactor/remove-buefy`) |
+| `<b-modal>` 활성 6 | **`$modal.open(...)`** | 중 | `:active.sync`+`@receive` → 트리거(`showX=true`)를 `$modal.open` 호출로 재배선. **단 `$modal` 자체가 buefy라 커스텀 플러그인 선행 필요**(§14.1.1) |
+| **`$modal.open` 469곳** | **커스텀 모달 플러그인(드롭인)** | **상(핵심)** | buefy `$modal` API 동등 재현 → `Vue.use` 교체로 호출부 무수정 |
+| `Vue.use(Buefy)` | 커스텀 플러그인으로 교체 | — | bulma CSS는 유지(레이아웃 의존), buefy npm 의존만 제거 |
 
-### 14.3 공수 / 권장
-- **자동화 높음:** `<b-select>`→`<select>` + `@change.native`→`@change`는 스코프 치환(108곳). b-modal 9곳은 수동(패턴 정착돼 빠름).
-- **⚠️ bulma CSS 의존 주의:** `class="select"`, `is-fullwidth` 등 **bulma 스타일 클래스**에 의존 → buefy 패키지는 제거해도 **bulma CSS는 당분간 유지**(레이아웃 전반 사용). buefy npm 의존만 제거.
-- **권장:** buefy 제거를 **Vue 3 빅뱅에서 분리해 Vue 2.7 위 단독 PR로 선처리.** 검증 가능(빌드+런타임 모두 현 스택)이고, Vue 3 블로커 3종 중 1종을 미리 제거 → 빅뱅 범위가 element-ui+ag-grid로 축소됨.
+### 14.3 공수 / 권장 (정정 후)
+- **b-select(완료)** 는 buefy 의존이 아니어도 동작하는 순수 cleanup → 별도 머지 가능.
+- **buefy 패키지 제거의 핵심 = `$modal` 드롭인 플러그인**(469곳 무수정 목표). 이게 되면 b-modal 6곳 재배선 + `Vue.use(Buefy)` 교체 + bulma 유지로 마무리.
+- **⚠️ 단독 즉시 제거 불가** — `$modal`이 신규 accrualSlip 포함 앱 전반의 핵심이라, 플러그인 작성·전 화면 모달 런타임 회귀가 필요. Vue 3 호환 마운트로 설계하면 빅뱅과 시너지.
 
-> **PoC 산출물:** 본 §14(인벤토리+매핑+빌드검증). 검증용 1파일 변환은 되돌려 문서-only 유지. 다음: (a) buefy 단독 제거 실행 PR(권장) 또는 (b) `$bus`(23파일)→mitt 결정.
+> **PoC 산출물:** §14(인벤토리+§14.1.1 정정+매핑). b-select 변환은 `refactor/remove-buefy`에 실재(빌드통과). 다음: (a) b-select cleanup만 단독 머지 (b) `$modal` 드롭인 플러그인 설계·구현 (c) `$bus`(23)→mitt.

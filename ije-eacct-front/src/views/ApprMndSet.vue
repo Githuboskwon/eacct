@@ -83,14 +83,14 @@
                                     <span class="search_tit">- 회사</span>
                                 </div>
                                 <div class="search_con search-area">
-                                    <b-select class="select is-fullwidth w100p" v-model="form.compCd">
+                                    <select class="select is-fullwidth w100p" v-model="form.compCd">
                                         <option value=''>==전체==</option>
                                         <option
                                                 v-for="item in compCds"
                                                 :key="item.key"
                                                 :value="item.key"
                                                 v-text="item.value"/>
-                                    </b-select>
+                                    </select>
                                 </div>
                             </div>
 
@@ -127,14 +127,14 @@
                                     <span class="search_tit">- 위임상태</span>
                                 </div>
                                 <div class="search_con search-area">
-                                    <b-select class="select is-fullwidth w100p" v-model="form.adlgStatCd">
+                                    <select class="select is-fullwidth w100p" v-model="form.adlgStatCd">
                                         <option value=''>==전체==</option>
                                         <option
                                                 v-for="item in adlgCds"
                                                 :key="item.key"
                                                 :value="item.key"
                                                 v-text="item.value"/>
-                                    </b-select>
+                                    </select>
                                 </div>
                             </div>
                         </div>

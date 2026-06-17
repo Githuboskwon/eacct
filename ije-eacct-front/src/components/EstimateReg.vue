@@ -86,14 +86,14 @@
                 <span class="search_tit">- 사업유형</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth" v-model="form.divisionCd">
+                <select class="select is-fullwidth" v-model="form.divisionCd">
                   <option value=''>==전체==</option>
                   <option
                       v-for="item in divisionTypes"
                       :key="item.key"
                       :value="item.key"
                       v-text="item.value"/>
-                </b-select>
+                </select>
               </div>
             </div>
             <div class="search_box_pop">

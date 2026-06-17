@@ -83,14 +83,14 @@
                                 <span class="search_tit">- 전표상태</span>
                               </div>
                               <div class="search_con search-area">
-                                <b-select class="select is-fullwidth w100p" v-model="form.slipStatCd">
+                                <select class="select is-fullwidth w100p" v-model="form.slipStatCd">
                                   <option value=''>==전체==</option>
                                   <option
                                     v-for="item in slipStats"
                                     :key="item.key"
                                     :value="item.key"
                                     v-text="item.value"/>
-                                </b-select>
+                                </select>
                               </div>
                             </div>
 

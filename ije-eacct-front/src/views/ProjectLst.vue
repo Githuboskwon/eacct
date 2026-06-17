@@ -71,13 +71,13 @@
                 <span class="search_tit">- PJT 구분</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth" id="use_yn" v-model="form.mainType">
+                <select class="select is-fullwidth" id="use_yn" v-model="form.mainType">
                   <option value="">관납</option>
                   <option value="">로컬</option>
                   <option value="">민수</option>
                   <option value="">해외</option>
                   <option value="">지사</option>
-                </b-select>
+                </select>
               </div>
             </div>
 
@@ -151,12 +151,12 @@
                 <span class="search_tit">- 진행상태</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth" id="use_yn" v-model="form.mainType">
+                <select class="select is-fullwidth" id="use_yn" v-model="form.mainType">
                   <option value="">임시저장</option>
                   <option value="">결재진행</option>
                   <option value="">결재완료</option>
                   <option value="">반려</option>
-                </b-select>
+                </select>
               </div>
             </div>
 

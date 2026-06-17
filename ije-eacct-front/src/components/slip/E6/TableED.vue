@@ -107,16 +107,16 @@
 
       <th>대변계정</th>
       <td>
-        <b-select class="select is-fullwidth" v-model="value.apAcctCd" @input="changeApAcctCd()">
+        <select class="select is-fullwidth" v-model="value.apAcctCd" @input="changeApAcctCd()">
           <option v-for="item in this.options['accounts']" :key="item.key" :value="item.key" :name="item.value" v-text="`[${item.key}] ${item.value}`" />
-        </b-select>
+        </select>
       </td>
 
       <th>지급조건</th>
       <td>
-        <b-select class="select is-fullwidth" v-model="value.payTermCd" v-if="options['payTermCd'].length" @input="resetPayDueDt(value.payTermCd)">
+        <select class="select is-fullwidth" v-model="value.payTermCd" v-if="options['payTermCd'].length" @input="resetPayDueDt(value.payTermCd)">
           <option v-for="{ detailCd, detailNm } in options['payTermCd']" :key="detailCd" :value="detailCd">{{ detailNm }}</option>
-        </b-select>
+        </select>
       </td>
     </tr>
 
@@ -156,9 +156,9 @@
 
       <th class="tp-a">지급계좌</th>
       <td>
-        <b-select class="select is-fullwidth" v-model="value.custAccount" v-if="options['ventAccts'].length > 0">
+        <select class="select is-fullwidth" v-model="value.custAccount" v-if="options['ventAccts'].length > 0">
           <option v-for="item in options['ventAccts']" :key="item.bnkCd + '|' + item.acctNo" :value="item.bnkCd + '|' + item.acctNo" v-text="item.acctNo" />
-        </b-select>
+        </select>
         <div class="select is-fullwidth" v-else>
           <select>
             <option value="" selected>== 지급계좌 없음==</option>

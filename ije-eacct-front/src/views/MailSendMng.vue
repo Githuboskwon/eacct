@@ -30,14 +30,14 @@
             <span class="search_tit">- 작업구분</span>
           </div>
           <div class="search_con" style="width: 30%">
-            <b-select class="select is-fullwidth w200p" v-model="mailTypeCd">
+            <select class="select is-fullwidth w200p" v-model="mailTypeCd">
               <option
                   v-for="item in mailTypeCombo"
                   :key="item.key"
                   :value="item.key"
                   v-text="item.value"
               />
-            </b-select>
+            </select>
           </div>
         </div>
       </div>

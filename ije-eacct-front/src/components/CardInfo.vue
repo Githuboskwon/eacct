@@ -18,24 +18,24 @@
 
                     <th>카드사</th>
                     <td>
-                        <b-select class="select is-fullwidth" v-model="form.crdCompCd">
+                        <select class="select is-fullwidth" v-model="form.crdCompCd">
                             <option
                                     v-for="item in crdCompCds"
                                     :key="item.key"
                                     :value="item.key"
                                     v-text="item.value"/>
-                        </b-select>
+                        </select>
                     </td>
 
                     <th>카드상태</th>
                     <td>
-                        <b-select class="select is-fullwidth" v-model="form.crdStatCd">
+                        <select class="select is-fullwidth" v-model="form.crdStatCd">
                             <option
                                     v-for="item in crdStatCds"
                                     :key="item.key"
                                     :value="item.key"
                                     v-text="item.value"/>
-                        </b-select>
+                        </select>
                     </td>
                 </tr>
                 <tr>
@@ -59,13 +59,13 @@
 
                     <th>카드용도</th>
                     <td>
-                        <b-select class="select is-fullwidth" v-model="form.crdUsgCd">
+                        <select class="select is-fullwidth" v-model="form.crdUsgCd">
                             <option
                                     v-for="item in crdUsgCds"
                                     :key="item.key"
                                     :value="item.key"
                                     v-text="item.value"/>
-                        </b-select>
+                        </select>
                     </td>
                 </tr>
                 <tr>
@@ -94,24 +94,24 @@
                     <th class="tp-a">유효기간</th>
                     <td colspan="2">
                         <div style="float: left">
-                            <b-select class="select" v-model="form.crdVldYy">
+                            <select class="select" v-model="form.crdVldYy">
                                 <option value="">=년도=</option>
                                 <option
                                         v-for="year in years"
                                         :value="year"
                                         v-text="year"/>
-                            </b-select>
+                            </select>
                         </div>
                         <span style="float: left; padding: 5px 3px;"></span>
                         <div style="float: left">
-                            <b-select class="select" v-model="form.crdVldMm">
+                            <select class="select" v-model="form.crdVldMm">
                                 <option value=''>=월=</option>
                                 <option
                                         v-for="item in 12"
                                         :key="item"
                                         :value="item"
                                         v-text="item"/>
-                            </b-select>
+                            </select>
                         </div>
                     </td>
 
@@ -152,25 +152,25 @@
                     <th class="tp-a">결제 은행/일</th>
                     <td>
                         <div style="float: left;width:120px">
-                        <b-select class="select" v-model="form.bnkCd">
+                        <select class="select" v-model="form.bnkCd">
                             <option value=''>==선택==</option>
                             <option
                                     v-for="item in bnkCds"
                                     :key="item.key"
                                     :value="item.key"
                                     v-text="item.value"/>
-                        </b-select>
+                        </select>
                         </div>
                         <span style="float: left; padding: 5px 3px;width:75px;display:none"></span>
                         <div style="float: left;width:75px">
-                        <b-select class="select" v-model="form.stlDd">
+                        <select class="select" v-model="form.stlDd">
                             <option value=''>=선택=</option>
                             <option
                                     v-for="item in 31"
                                     :key="item"
                                     :value="item"
                                     v-text="item"/>
-                        </b-select>
+                        </select>
                         </div>
                     </td>
                 </tr>

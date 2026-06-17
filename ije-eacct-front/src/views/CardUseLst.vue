@@ -156,14 +156,14 @@
                   <span class="search_tit">- 진행상태</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth w100p" v-model="form.status">
+                  <select class="select is-fullwidth w100p" v-model="form.status">
                     <option value=''>==전체==</option>
                     <option
                         v-for="item in progressStatusCds"
                         :key="item.key"
                         :value="item.key"
                         v-text="item.value"/>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 
@@ -172,11 +172,11 @@
                   <span class="search_tit">- 항공권내역여부</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth w100p" v-model="form.cardType">
+                  <select class="select is-fullwidth w100p" v-model="form.cardType">
                     <option value=''>==전체==</option>
                     <option value='A'>항공권 내역 제외</option>
                     <option value='F'>항공권 내역</option>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 

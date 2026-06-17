@@ -21,14 +21,14 @@
       <div class="form-group">
         <label class="control-label-req" id="compCd">회사</label>
         <div class="form-input">
-          <b-select id="bselect" class="select is-fullwidth" v-model="form.compCd" disabled = "true" lbl="compCd">
+          <select id="bselect" class="select is-fullwidth" v-model="form.compCd" disabled = "true" lbl="compCd">
             <option
                 v-for="item in compCds"
                 :key="item.key"
                 :value="item.key"
                 v-text="item.value"
             />
-          </b-select>
+          </select>
         </div>
       </div>
       <div class="form-group">

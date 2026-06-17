@@ -33,7 +33,7 @@
                     <span class="search_tit">- 위임자</span>
                   </div>
                   <div class="search_con" style="width: 30%">
-                    <b-select class="select is-fullwidth" v-model="form.delegateNo">
+                    <select class="select is-fullwidth" v-model="form.delegateNo">
 
                       <option v-if="this.$store.state.loginInfo.authorities[0].roleCd ==='ADMIN'
                                     || this.$store.state.loginInfo.authorities[0].roleCd ==='FINANCE'
@@ -47,7 +47,7 @@
                         :key="item.giveUserId"
                         :value="item.giveUserId"
                         v-text="item.giveUserNm"/>
-                    </b-select>
+                    </select>
                   </div>
                 </div>
                 <div class="search_box" style="width: 30%">
@@ -178,14 +178,14 @@
                                     <span class="search_tit">- 전표상태</span>
                                 </div>
                                 <div class="search_con search-area">
-                                    <b-select class="select is-fullwidth w100p" v-model="form.slipStatCd">
+                                    <select class="select is-fullwidth w100p" v-model="form.slipStatCd">
                                         <option value=''>==전체==</option>
                                         <option
                                                 v-for="item in slipStats"
                                                 :key="item.key"
                                                 :value="item.key"
                                                 v-text="item.value"/>
-                                    </b-select>
+                                    </select>
                                 </div>
                             </div>
 
@@ -212,14 +212,14 @@
                                 <span class="search_tit">- 통화</span>
                               </div>
                               <div class="search_con search-area">
-                                <b-select class="select is-fullwidth w100p" v-model="form.usedCur">
+                                <select class="select is-fullwidth w100p" v-model="form.usedCur">
                                   <option value=''>==전체==</option>
                                   <option
                                     v-for="item in currencyList"
                                     :key="item.key"
                                     :value="item.key"
                                     v-text="item.key"/>
-                                </b-select>
+                                </select>
                               </div>
                             </div>
 
@@ -239,12 +239,12 @@
                                 <span class="search_tit">- 지급여부</span>
                               </div>
                               <div class="search_con search-area">
-                                <b-select class="select is-fullwidth w100p" v-model="form.intStatus">
+                                <select class="select is-fullwidth w100p" v-model="form.intStatus">
                                   <option value=''>==전체==</option>
                                   <option value="Y">Y</option>
                                   <option value="N">N</option>
                                   <option value="C">C</option>
-                                </b-select>
+                                </select>
                               </div>
                             </div>
                         </div>

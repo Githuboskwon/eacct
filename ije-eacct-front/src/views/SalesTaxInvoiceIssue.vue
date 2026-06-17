@@ -96,7 +96,7 @@
                   <span class="search_tit">- 처리상태</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth" v-model="form.confirmFlag">
+                  <select class="select is-fullwidth" v-model="form.confirmFlag">
                     <option value="X">미발행</option>
                     <option value="ALL">전체</option>
                     <option value="M">공급받는자 발행취소요청</option>
@@ -109,7 +109,7 @@
                     <option value="S">저장</option>
                     <option value="O">취소완료</option>
                     <option value="I">수신미승인</option>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 

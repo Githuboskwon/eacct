@@ -75,11 +75,11 @@
                   <span class="search_tit">재직여부</span>
                 </div>
                 <div class="search_con search-area">
-                    <b-select class="select is-fullwidth" v-model="form.serveCd" lbl="serveCd">
+                    <select class="select is-fullwidth" v-model="form.serveCd" lbl="serveCd">
                       <option value=''>==전체==</option>
                       <option value='10'>재직</option>
                       <option value='20'>퇴직</option>
-                    </b-select>
+                    </select>
                 </div>
               </div>
 
@@ -88,11 +88,11 @@
                   <span class="search_tit">부서권한</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth" v-model="form.deptRoleYn" lbl="deptRoleYn">
+                  <select class="select is-fullwidth" v-model="form.deptRoleYn" lbl="deptRoleYn">
                     <option value=''>==전체==</option>
                     <option value='Y'>예</option>
                     <option value='N'>아니오</option>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 

@@ -77,14 +77,14 @@
                       <div class="item desc-right">
                         <div class="desc-item">
                           <div class="desc">
-                            <b-select class="select" id="apprGroupSelect" v-model="groupName" @change.native="selectChange()">
+                            <select class="select" id="apprGroupSelect" v-model="groupName" @change="selectChange()">
                               <option value="" selected="selected">== 개인결재선 선택 ==</option>
                               <option
                                 v-for="item in groupList"
                                 :key="item.apprLineTitle"
                                 :value="item.apprSeq"
                                 v-text="item.apprSeq + '. ' + item.apprLineTitle"/>
-                            </b-select>
+                            </select>
                           </div>
                         </div>
                       </div>

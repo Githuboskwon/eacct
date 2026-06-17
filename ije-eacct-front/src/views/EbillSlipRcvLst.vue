@@ -92,14 +92,14 @@
                                     <span class="search_tit">- 처리상태</span>
                                 </div>
                                 <div class="search_con search-area">
-                                    <b-select class="select is-fullwidth" v-model="form.searchStatus">
+                                    <select class="select is-fullwidth" v-model="form.searchStatus">
                                         <option value=''>==전체==</option>
                                         <option
                                                 v-for="item in dealStats"
                                                 :key="item.key"
                                                 :value="item.key"
                                                 v-text="item.value"/>
-                                    </b-select>
+                                    </select>
                                 </div>
                             </div>
                         </div>

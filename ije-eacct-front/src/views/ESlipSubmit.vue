@@ -92,11 +92,11 @@
                 <span class="search_tit">상신여부</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth w100p" v-model="form.reportArraign">
+                <select class="select is-fullwidth w100p" v-model="form.reportArraign">
                   <option value="">==전체==</option>
                   <option value="Y">Y</option>
                   <option value="N">N</option>
-                </b-select>
+                </select>
               </div>
             </div>
 
@@ -105,11 +105,11 @@
                 <span class="search_tit">결제여부</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth w100p" v-model="form.approvalArraign">
+                <select class="select is-fullwidth w100p" v-model="form.approvalArraign">
                   <option value="">==전체==</option>
                   <option value="Y">Y</option>
                   <option value="N">N</option>
-                </b-select>
+                </select>
               </div>
             </div>
 
@@ -118,11 +118,11 @@
                 <span class="search_tit">검인여부</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth w100p" v-model="form.sealArraign">
+                <select class="select is-fullwidth w100p" v-model="form.sealArraign">
                   <option value="">==전체==</option>
                   <option value="Y">Y</option>
                   <option value="N">N</option>
-                </b-select>
+                </select>
               </div>
             </div>
 
@@ -131,13 +131,13 @@
                 <span class="search_tit">ERP반영여부</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth w100p" v-model="form.slipIfFlag">
+                <select class="select is-fullwidth w100p" v-model="form.slipIfFlag">
                   <option value="">==전체==</option>
                   <option value="Y">Y</option>
                   <option value="N">N</option>
                   <option value="E">E</option>
                   <option value="ING">ING</option>
-                </b-select>
+                </select>
               </div>
             </div>
 
@@ -146,11 +146,11 @@
                 <span class="search_tit">ERP중간전송여부</span>
               </div>
               <div class="search_con search-area">
-                <b-select class="select is-fullwidth w100p" v-model="form.transferType">
+                <select class="select is-fullwidth w100p" v-model="form.transferType">
                   <option value="">==전체==</option>
                   <option value="Y">Y</option>
                   <option value="N">N</option>
-                </b-select>
+                </select>
               </div>
             </div>
 

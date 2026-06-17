@@ -83,24 +83,24 @@
                 </div>
                 <div class="search_con search-area">
                   <div v-if="authority==='ADMIN'" class="desc">
-                    <b-select class="select is-fullwidth w100p" v-model="form.compCd">
+                    <select class="select is-fullwidth w100p" v-model="form.compCd">
                       <option value=''>==전체==</option>
                       <option
                           v-for="item in compCds"
                           :key="item.key"
                           :value="item.key"
                           v-text="item.value"/>
-                    </b-select>
+                    </select>
                   </div>
                   <div v-else class="desc">
-                    <b-select class="select is-fullwidth w100p" v-model="form.compCd" disabled>
+                    <select class="select is-fullwidth w100p" v-model="form.compCd" disabled>
                       <option value=''>==전체==</option>
                       <option
                           v-for="item in compCds"
                           :key="item.key"
                           :value="item.key"
                           v-text="item.value"/>
-                    </b-select>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -124,14 +124,14 @@
                   <span class="search_tit">- 카드상태</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth w100p" v-model="form.crdStatCd">
+                  <select class="select is-fullwidth w100p" v-model="form.crdStatCd">
                     <option value=''>==전체==</option>
                     <option
                         v-for="item in crdStatCds"
                         :key="item.key"
                         :value="item.key"
                         v-text="item.value"/>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 
@@ -140,14 +140,14 @@
                   <span class="search_tit">- 카드사</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth w100p" v-model="form.crdCompCd">
+                  <select class="select is-fullwidth w100p" v-model="form.crdCompCd">
                     <option value=''>==전체==</option>
                     <option
                         v-for="item in crdCompCds"
                         :key="item.key"
                         :value="item.key"
                         v-text="item.value"/>
-                  </b-select>
+                  </select>
                 </div>
               </div>
 
@@ -165,14 +165,14 @@
                   <span class="search_tit">- 카드구분</span>
                 </div>
                 <div class="search_con search-area">
-                  <b-select class="select is-fullwidth w100p" v-model="form.crdFgCd">
+                  <select class="select is-fullwidth w100p" v-model="form.crdFgCd">
                     <option value=''>==전체==</option>
                     <option
                         v-for="item in crdFgCds"
                         :key="item.key"
                         :value="item.key"
                         v-text="item.value"/>
-                  </b-select>
+                  </select>
                 </div>
               </div>
             </div>

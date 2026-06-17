@@ -34,14 +34,14 @@
                                 <th class="tp-a">문서유형</th>
                                 <td>
                                     <div v-if="hiddenCheck !== 'Y'" class="td-s-thumb search-area" style="width: 200px">
-                                        <b-select class="select is-fullwidth" v-model="form.docTypeCd">
+                                        <select class="select is-fullwidth" v-model="form.docTypeCd">
                                             <option value=''>==선택==</option>
                                             <option
                                                     v-for="item in docTypes"
                                                     :key="item.key"
                                                     :value="item.key"
                                                     v-text="item.value"/>
-                                        </b-select>
+                                        </select>
                                     </div>
                                     <div v-else class="td-s-thumb search-area" style="width: 200px">
                                         {{this.form.docTypeNm}}
@@ -51,25 +51,25 @@
                                 <th class="tp-a">상세유형</th>
                                 <td v>
                                     <div v-if="hiddenCheck !== 'Y'" class="td-s-thumb search-area" style="width: 200px">
-                                        <b-select  v-if="this.form.docTypeCd === 'SLIP'" class="select is-fullwidth" v-model="form.dtlTypeCd">
+                                        <select  v-if="this.form.docTypeCd === 'SLIP'" class="select is-fullwidth" v-model="form.dtlTypeCd">
                                             <option value=''>==선택==</option>
                                             <option
                                                     v-for="item in slipTypes"
                                                     :key="item.key"
                                                     :value="item.key"
                                                     v-text="item.value"/>
-                                        </b-select>
-                                        <b-select  v-else-if="this.form.docTypeCd === 'BDGT'" class="select is-fullwidth" v-model="form.dtlTypeCd">
+                                        </select>
+                                        <select  v-else-if="this.form.docTypeCd === 'BDGT'" class="select is-fullwidth" v-model="form.dtlTypeCd">
                                             <option value=''>==선택==</option>
                                             <option
                                                     v-for="item in brwTypes"
                                                     :key="item.key"
                                                     :value="item.key"
                                                     v-text="item.value"/>
-                                        </b-select>
-                                        <b-select  v-else class="select is-fullwidth" v-model="form.dtlTypeCd">
+                                        </select>
+                                        <select  v-else class="select is-fullwidth" v-model="form.dtlTypeCd">
                                             <option value=''>==선택==</option>
-                                        </b-select>
+                                        </select>
                                     </div>
                                     <div v-else class="td-s-thumb search-area" style="width: 200px">
                                         {{this.form.dtlTypeNm}}
@@ -81,11 +81,11 @@
                                 <th class="tp-a">사용여부</th>
                                 <td>
                                     <div class="td-s-thumb search-area" style="width: 100px; float: left">
-                                        <b-select v-model="form.useYn">
+                                        <select v-model="form.useYn">
                                             <option value=''>==선택==</option>
                                             <option value='Y'>사용</option>
                                             <option value='N'>미사용</option>
-                                        </b-select>
+                                        </select>
                                     </div>
                                     <div v-if="hiddenCheck == 'Y'" style="float: left; padding-top: 4px">
                                         규정순번 : {{this.form.ruleSeq}}
@@ -94,14 +94,14 @@
                                 <th class="tp-a">통화코드</th>
                                 <td>
                                     <div v-if="hiddenCheck !== 'Y'" class="td-s-thumb search-area" style="width: 200px">
-                                        <b-select class="select is-fullwidth" v-model="form.curCd">
+                                        <select class="select is-fullwidth" v-model="form.curCd">
                                             <option value=''>==선택==</option>
                                             <option
                                                     v-for="item in curTypes"
                                                     :key="item.key"
                                                     :value="item.key"
                                                     v-text="item.value"/>
-                                        </b-select>
+                                        </select>
                                     </div>
                                     <div v-else class="td-s-thumb search-area" style="width: 200px">
                                         {{this.form.curNm}}
@@ -119,14 +119,14 @@
                                 <th class="tp-a">결재유형</th>
                                 <td>
                                     <div class="td-s-thumb search-area" style="width: 200px">
-                                        <b-select class="select is-fullwidth" v-model="form.apprTypeCd">
+                                        <select class="select is-fullwidth" v-model="form.apprTypeCd">
                                             <option value=''>==선택==</option>
                                             <option
                                                     v-for="item in apprTypes"
                                                     :key="item.key"
                                                     :value="item.key"
                                                     v-text="item.value"/>
-                                        </b-select>
+                                        </select>
                                     </div>
                                 </td>
                             </tr>
@@ -135,24 +135,24 @@
                                 <th class="tp-a">고정여부</th>
                                 <td>
                                     <div class="td-s-thumb search-area" style="width: 200px">
-                                        <b-select class="select is-fullwidth" v-model="form.fixYn">
+                                        <select class="select is-fullwidth" v-model="form.fixYn">
                                             <option value=''>==선택==</option>
                                             <option value='Y'>고정</option>
                                             <option value='N'>비고정</option>
-                                        </b-select>
+                                        </select>
                                     </div>
                                 </td>
                                 <th class="tp-a">결재자구분</th>
                                 <td>
                                     <div class="td-s-thumb search-area" style="width: 200px">
-                                        <b-select class="select is-fullwidth" v-model="form.aprverClassCd">
+                                        <select class="select is-fullwidth" v-model="form.aprverClassCd">
                                             <option value=''>==선택==</option>
                                             <option
                                                     v-for="item in aprverClassTypes"
                                                     :key="item.detailCd"
                                                     :value="item.detailCd"
                                                     v-text="item.detailNm"/>
-                                        </b-select>
+                                        </select>
                                     </div>
                                 </td>
                             </tr>

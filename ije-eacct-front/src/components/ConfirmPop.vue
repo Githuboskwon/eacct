@@ -71,21 +71,21 @@
               <td colspan="6">
                 <div style="float: left; width: 100%">
 
-                  <b-select v-if=" flag === 'I'" class="select" v-model="form.confirmSeq" style="width:80%;">
+                  <select v-if=" flag === 'I'" class="select" v-model="form.confirmSeq" style="width:80%;">
                     <option
                         v-for="item in confirmSeqList"
                         :key="item.key"
                         :value="item.key"
                         v-text="item.value"/>
-                  </b-select>
+                  </select>
 
-                  <b-select v-else class="select" v-model="form.confirmSeq" style="width:80%;" disabled>
+                  <select v-else class="select" v-model="form.confirmSeq" style="width:80%;" disabled>
                     <option
                         v-for="item in confirmSeqList"
                         :key="item.key"
                         :value="item.key"
                         v-text="item.value"/>
-                  </b-select>
+                  </select>
                 </div>
               </td>
 
