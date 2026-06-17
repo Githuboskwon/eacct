@@ -1,8 +1,13 @@
 // import 'buefy/dist/buefy.css';
 // import 'bulma-o-steps/bulma-steps.sass';
 import Buefy from 'buefy';
-import Vue, { createApp } from 'vue';
+import Vue, { createApp, configureCompat } from 'vue';
 import swal from 'sweetalert2';
+
+// element-plus 등 네이티브 Vue3 라이브러리가 :attr="false"(aria-hidden 등)에서
+// Vue2 호환 강제(ATTR_FALSE_VALUE)와 충돌해 콘솔을 도배 → Vue3 네이티브 동작으로(경고 제거).
+// (Vue3 네이티브: false면 속성 제거 = 기존 attr="false" 잠재버그도 개선)
+configureCompat({ ATTR_FALSE_VALUE: false });
 import createBus from '@/libs/eventBus';
 import VueCookie from 'vue-cookie';
 import VueSweetalert2 from 'vue-sweetalert2';
