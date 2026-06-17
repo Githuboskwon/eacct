@@ -135,7 +135,7 @@
 
 <script>
 import Vue from 'vue'
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 import assert from '@/libs/assert'
 import {
   url as _url
@@ -315,7 +315,7 @@ const DateRenderer = {
   },
 }
 
-const $bus = mitt()
+const $bus = createBus()
 
 const budget = {}
 const bdg_mutex = {}

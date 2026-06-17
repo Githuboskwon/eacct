@@ -85,7 +85,7 @@
 
 <script>
 import Vue from "vue";
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 import DhxCalendar from "@/components/DhxCalendar.vue";
 
 import mixin from "@/mixin";
@@ -98,7 +98,7 @@ import CheckboxCellRenderer from '@/components/agGrid/checkbox-cell-renderer';
 import AgGridSearchBtn from "@/components/agGrid/AgGridSearchBtn";
 import Expend from "@/components/Expend_Ag";
 
-const bus = mitt();
+const bus = createBus();
 
 const options = {};
 const lock = {};

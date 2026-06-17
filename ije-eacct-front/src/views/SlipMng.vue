@@ -282,7 +282,7 @@
 
 <script>
 import Vue from 'vue';
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 import mixin from '@/mixin';
 import mixinSlip from '@/mixin/slip';
 import slip from '@/mixin/slip-basic'
@@ -301,7 +301,7 @@ import ApprovalModal from '@/components/accrualSlip/Approval/Main.vue';
 import ApprBundlePop from "@/components/ApprBundlePop.vue";
 import ApprBundlePopDrafter from "@/components/ApprBundlePopDrafter.vue";
 
-const bus = mitt()
+const bus = createBus()
 export default {
     name: 'SlipLst',
     mixins: [mixin, mixinSlip, slip],

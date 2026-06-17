@@ -176,7 +176,7 @@
 
 <script>
 import Vue from "vue";
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 import DhxCalendar from "@/components/DhxCalendar.vue";
 
 import mixin from "@/mixin";
@@ -194,7 +194,7 @@ import Vendor from "@/components/Vendor_Ag";
 import ApprovalModal from "@/components/accrualSlip/Approval/Main";
 import SlipDetailModal from "@/components/SlipDetailModal";
 
-const bus = mitt();
+const bus = createBus();
 
 const options = {};
 const lock = {};

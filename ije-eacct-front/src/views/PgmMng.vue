@@ -57,7 +57,7 @@
 
 <script>
 import Vue from 'vue'
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 import assert from '@/libs/assert'
 import debug from '@/libs/debug'
 import mixinSlip from '@/mixin/slip';
@@ -66,7 +66,7 @@ import common from '@/mixin/common';
 
 import NumberInputCellRenderer from '@/components/agGrid/numberinput-cell-renderer'
 
-const bus = mitt()
+const bus = createBus()
 const _debug = debug('PgmMng')
 
 function _constructTreeData(array) {

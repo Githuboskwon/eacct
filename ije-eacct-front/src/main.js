@@ -2,7 +2,7 @@
 // import 'bulma-o-steps/bulma-steps.sass';
 import Buefy from 'buefy';
 import Vue from 'vue';
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 import VueCookie from 'vue-cookie';
 import VueSweetalert2 from 'vue-sweetalert2';
 import moment from 'moment';
@@ -139,8 +139,8 @@ Vue.prototype.$prompt = MessageBox.prompt;
 Vue.prototype.$notify = Notification;
 Vue.prototype.$message = Message;
 
-// Vue 3 호환: new Vue() 이벤트버스 → mitt. API: $on/$emit/$off → on/emit/off
-Vue.prototype.$bus = mitt();
+// Vue 3 호환: new Vue() 이벤트버스 → mitt(리스너 예외 격리 래퍼). API: $on/$emit → on/emit
+Vue.prototype.$bus = createBus();
 
 /**
  * Regist global components

@@ -38,13 +38,13 @@
 
 <script>
     import Vue from 'vue'
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
     import mixin from '@/mixin';
     import mixinSlip from '@/mixin/slip';
     import SelectCellRenderer from '@/components/agGrid/select-cell-renderer'
     import CheckboxCellRenderer from '@/components/agGrid/checkbox-cell-renderer'
 
-    const bus = mitt()
+    const bus = createBus()
     
     export default {
         name: 'QuickSetting',

@@ -92,7 +92,7 @@
 
 <script>
 import Vue from "vue";
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 
 import GridSelect from "@/components/grid/GridSelect.vue";
 import mixin from "@/mixin/slip-common";
@@ -108,7 +108,7 @@ import ErpAccountNew from '@/components/ErpAccount_Ag.vue';
 
 import common from '@/mixin/common';
 
-var eventBus = mitt();
+var eventBus = createBus();
 
 const options = {};
 

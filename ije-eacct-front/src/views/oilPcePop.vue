@@ -78,7 +78,7 @@
 
 <script>
 import Vue from "vue";
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 import DhxCalendar from "@/components/DhxCalendar.vue";
 
 import mixin from "@/mixin";
@@ -88,7 +88,7 @@ import SelectCellRenderer from "@/components/agGrid/select-cell-renderer";
 import NumberInputCellRenderer from "@/components/agGrid/numberinput-cell-renderer";
 import DatepickerCellRenderer from "@/components/agGrid/el-datepicker-cell-renderer";
 
-const bus = mitt();
+const bus = createBus();
 
 const options = {};
 const lock = {};

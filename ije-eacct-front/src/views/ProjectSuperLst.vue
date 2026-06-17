@@ -149,7 +149,7 @@
 
 <script>
 import Vue from "vue";
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 import DhxCalendar from "@/components/DhxCalendar.vue";
 
 import mixin from "@/mixin";
@@ -170,7 +170,7 @@ function getRowStyle(params) {
   return null;
 }
 
-const bus = mitt();
+const bus = createBus();
 
 const options = {};
 const lock = {};

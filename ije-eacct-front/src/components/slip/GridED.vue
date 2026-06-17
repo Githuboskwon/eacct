@@ -81,7 +81,7 @@
 <script>
 // For global event bus
 import Vue from 'vue';
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 import _ from 'lodash';
 import Join from '@/libs/join';
 // Import DhxGrid
@@ -111,7 +111,7 @@ import EvidAtchPop from '@/components/EvidAtchPop.vue';
 import mixin2 from '@/mixin';
 import mixinSlip from '@/mixin/slip';
 
-const eventBus = mitt();
+const eventBus = createBus();
 const _url = Join.url;
 
 Vue.config.errorHandler = (err, vm, info) => {
@@ -283,7 +283,7 @@ function queryAccountAddon(acctCd) {
   })
 }
 
-const $bus = mitt()
+const $bus = createBus()
 const budget = {};
 const bdg_mutex = {};
 

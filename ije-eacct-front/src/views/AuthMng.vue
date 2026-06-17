@@ -76,7 +76,7 @@
 
 <script>
 import Vue from 'vue'
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 import _ from 'lodash'
 import assert from '@/libs/assert' 
 import GridSelect from '@/components/grid/GridSelect.vue'
@@ -89,7 +89,7 @@ import ButtonCellRenderer from '@/components/agGrid/button-cell-renderer'
 import common from '@/mixin/common';
 import { Color } from 'ag-grid-community'
 
-const bus = mitt()
+const bus = createBus()
 
 export default {
   mixins: [common],

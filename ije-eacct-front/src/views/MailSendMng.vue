@@ -84,7 +84,7 @@
 
 <script>
 import Vue from 'vue';
-import mitt from 'mitt';
+import createBus from '@/libs/eventBus';
 import mixin from '@/mixin';
 import mixinSlip from '@/mixin/slip';
 import slip from '@/mixin/slip-basic'
@@ -96,7 +96,7 @@ import AgGridCheckbox from "@/components/agGrid/AgGridCheckbox.vue"
 import CheckboxCellRenderer from "@/components/agGrid/checkbox-cell-renderer";
 import MailSendPop from "@/components/MailSendPop.vue";
 
-const bus = mitt()
+const bus = createBus()
 export default {
   name: 'MailSendMng',
   mixins: [mixin, mixinSlip, slip],
