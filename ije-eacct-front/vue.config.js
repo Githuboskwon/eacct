@@ -1,48 +1,47 @@
+/**
+ * [DRAFT] vue-cli 5 (webpack 5) 전환용 vue.config.js 초안 (2026-06-17)
+ *
+ * 적용 방법: vue-cli 5 설치 + npm run build 통과 확인 후
+ *   이 파일 내용으로 기존 vue.config.js를 교체.
+ *
+ * 기존 대비 변경점:
+ *  - 중복 `configureWebpack` 키 제거 (객체가 함수를 덮어써 해시 파일명 설정이 사문화돼 있었음)
+ *  - 죽은 `ts-loader` 규칙 제거 (프로젝트에 .ts/.tsx 파일 0)
+ *  - 수동 `HtmlWebpackPlugin` 제거 (vue-cli 5가 public/index.html 자동 주입)
+ *  - 수동 postcss-loader+sass-loader 규칙 제거 (vue-cli 5 내장 CSS 파이프라인 사용;
+ *    대신 package.json의 sass-loader를 webpack5 호환 버전(^12)으로 상향)
+ *  - `transpileDependencies: [ansiRegex]` 제거 (ansi-regex 직접 의존 불필요; 필요 시 재추가)
+ *  - alias `@`→src 는 vue-cli 5 기본 제공이나 명시 유지(안전)
+ *  - runtimeCompiler 유지 (ag-grid 셀렌더러 Vue.extend({template}) 의존)
+ */
 const path = require('path');
-const ansiRegex = require('ansi-regex');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  productionSourceMap: process.env.NODE_ENV !== 'production', //운영 배포시 디버깅 close
+  productionSourceMap: process.env.NODE_ENV !== 'production', // 운영 배포 시 디버깅 close
   runtimeCompiler: true,
-  transpileDependencies: [ansiRegex],
+  // 빌드 시 eslint-loader 비활성화. 기존 코드는 airbnb v3 기준으로 작성됐는데
+  // cli5가 요구하는 eslint 7/8과 호환되는 airbnb v6은 스타일 규칙이 엄격해
+  // (max-len/indent/quotes 등) 빌드를 막는다. 빌드 툴체인 교체 단계에서는
+  // 전체 재포맷을 보류하고 lint는 `npm run lint` 수동 실행으로 분리. (MIGRATION_PLAN §11.5)
+  lintOnSave: false,
   filenameHashing: true,
-  configureWebpack: config => {
-    config.output.filename = "[name].[hash].js";
-    config.output.chunkFilename = "[name].[hash].js";
-  },
-  configureWebpack: {
-    module: {
-      rules: [
-        {
-          test: /\.tsx?$/,
-          use: 'ts-loader',
-          exclude: /node_modules/,
-        },
-        {
-          test: /\.(sa|sc|c)ss$/,
-          use: ["postcss-loader", "sass-loader"]
-        }
-      ]
-    },
-    plugins: [
-      new HtmlWebpackPlugin({
-        template: 'public/index.html'
-      })
-    ],
-    resolve: {
-      extensions: [
-        ".d.ts"
-      ]
-    }
-  },
-  outputDir: path.resolve(__dirname, 'dist'),
-  chainWebpack: config => {
-    config.resolve.alias
-    .set('@', path.resolve(__dirname, 'src/'));
-  },
   publicPath: '/',
+  outputDir: path.resolve(__dirname, 'dist'),
+  css: {
+    loaderOptions: {
+      // webpack5/css-loader는 SCSS의 루트절대경로 url(/img/...) (public 폴더 참조)을
+      // 모듈로 해석하려다 실패한다. webpack4에선 그대로 두던 동작 → `/` 시작 URL은 해석 제외.
+      css: {
+        url: {
+          filter: (url) => !url.startsWith('/'),
+        },
+      },
+    },
+  },
+  chainWebpack: (config) => {
+    config.resolve.alias.set('@', path.resolve(__dirname, 'src/'));
+  },
   devServer: {
-    port: process.env.VUE_APP_PORT
-  }
+    port: process.env.VUE_APP_PORT,
+  },
 };

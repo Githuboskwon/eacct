@@ -22,9 +22,7 @@ import _ from 'lodash'
 import $ from 'jquery'
 // use uuid generator
 import uuid from '@/libs/uuid'
-import {
-  setInterval
-} from 'timers';
+// setInterval은 브라우저 전역. webpack5는 node 'timers' 폴리필을 자동 제공하지 않으므로 import 제거(전역 사용)
 import debug from '@/libs/debug'
 
 // 그리드 기본 옵션 설정
