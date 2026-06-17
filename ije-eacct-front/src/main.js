@@ -148,14 +148,12 @@ import SearchAccount from './components/SearchAccount.vue'
 import SearchEmp from './components/SearchEmp.vue'
 import SearchComp from './components/SearchComp.vue'
 import {AgGridVue} from 'ag-grid-vue'
-import {TheMask} from 'vue-the-mask'
 
 Vue.component('SearchCctr', SearchCctr)
 Vue.component('SearchAccount', SearchAccount)
 Vue.component('SearchEmp', SearchEmp)
 Vue.component('SearchComp', SearchComp)
 Vue.component('AgGridVue', AgGridVue)
-Vue.component('TheMask', TheMask)
 
 /**
  * Integrate NumeralJS
