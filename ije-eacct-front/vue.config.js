@@ -50,7 +50,11 @@ module.exports = {
       .tap((options) => {
         options.compilerOptions = {
           ...(options.compilerOptions || {}),
-          compatConfig: { MODE: 2 },
+          // MODE 2(전반 Vue2 호환)이되, v-model은 Vue3 네이티브로 컴파일.
+          // 이유: element-plus(네이티브 Vue3)는 modelValue/update:modelValue를 쓰는데
+          // 컴파일러 v-model 호환(Vue2 value/input)이면 element-plus v-model이 동작 안 함.
+          // ⚠️ 커스텀 Vue2 컴포넌트(value/input)는 modelValue로 별도 전환 필요.
+          compatConfig: { MODE: 2, COMPILER_V_MODEL: false },
         };
         return options;
       });
