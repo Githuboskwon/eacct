@@ -19,7 +19,7 @@
                           placeholder="경조기준일"
                           v-model="form.basicDate"
                           style="width: 60%;"
-                          value-format="yyyy-MM-dd">
+                          value-format="YYYY-MM-DD">
           </el-date-picker>
         </div>
       </div>

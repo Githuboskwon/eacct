@@ -11,8 +11,8 @@
                         <el-date-picker
                             v-model="value.expend.expendDt"
                             type="date"
-                            format="yyyyMMdd"
-                            value-format="yyyyMMdd"
+                            format="YYYYMMDD"
+                            value-format="YYYYMMDD"
                             @change="expendInit"
                             :disabled="readOnly">
                         </el-date-picker>

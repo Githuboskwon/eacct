@@ -29,8 +29,8 @@
                                 unlink-panels
                                 :pickerOptions="posdtPickerOptions"
                                 type="date"
-                                format="yyyyMMdd"
-                                value-format="yyyyMMdd"
+                                format="YYYYMMDD"
+                                value-format="YYYYMMDD"
                                 :readonly="editabledState"
                                 @change="exchangeRateEvent"
                                 style="width: 100%;">
@@ -114,8 +114,8 @@
                             <el-date-picker
                                 class="mr3"
                                 type="date"
-                                format="yyyyMMdd"
-                                value-format="yyyyMMdd"
+                                format="YYYYMMDD"
+                                value-format="YYYYMMDD"
                                 style="width: 60%"
                                 v-model="value.exchangeDate"
                                 @change="exchangeUpdate(value, false)"
@@ -211,8 +211,8 @@
                             <el-date-picker
                                 v-model="value.termDueDate"
                                 type="date"
-                                format="yyyyMMdd"
-                                value-format="yyyyMMdd"
+                                format="YYYYMMDD"
+                                value-format="YYYYMMDD"
                                 :readonly="(value.termDueDateChangeFlag == 'N' || editabledState) && !(value.termId == '10295') && !(value.slipTypeCd == 'TRIP' && ['33011', '22041'].includes(value.deptCd))"
                                 style="width: 100%;">
                               <!-- 결재예정일 예외사항
@@ -244,9 +244,9 @@
                             <el-date-picker
                                 v-model="value.maturityDate"
                                 type="date"
-                                format="yyyyMMdd"
+                                format="YYYYMMDD"
                                 :readonly="editabledState"
-                                value-format="yyyyMMdd"
+                                value-format="YYYYMMDD"
                                 style="width: 100%;">
                             </el-date-picker>
                         </td>
@@ -269,9 +269,9 @@
                             <el-date-picker
                                 v-model="value.repaymentDueDate"
                                 type="date"
-                                format="yyyyMMdd"
+                                format="YYYYMMDD"
                                 :readonly="editabledState"
-                                value-format="yyyyMMdd"
+                                value-format="YYYYMMDD"
                                 style="width: 100%;">
                             </el-date-picker>
                         </td>

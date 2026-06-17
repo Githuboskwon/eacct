@@ -27,8 +27,8 @@
                             <el-date-picker
                                 v-model="value.postingDt"
                                 type="date"
-                                format="yyyy-MM-dd"
-                                value-format="yyyyMMdd"
+                                format="YYYY-MM-DD"
+                                value-format="YYYYMMDD"
                                 :readonly="true"
                                 style="width: 100%;">
                             </el-date-picker>
@@ -99,8 +99,8 @@
                             <el-date-picker
                                 class="mr3"
                                 type="date"
-                                format="yyyy-MM-dd"
-                                value-format="yyyyMMdd"
+                                format="YYYY-MM-DD"
+                                value-format="YYYYMMDD"
                                 style="width: 60%"
                                 v-model="value.exchangeDate"
                                 :readonly="true">
@@ -186,8 +186,8 @@
                             <el-date-picker
                                 v-model="value.termDueDate"
                                 type="date"
-                                format="yyyy-MM-dd"
-                                value-format="yyyyMMdd"
+                                format="YYYY-MM-DD"
+                                value-format="YYYYMMDD"
                                 :readonly="true">
                             </el-date-picker>
                         </td>
@@ -212,8 +212,8 @@
                             <el-date-picker
                                 v-model="value.maturityDate"
                                 type="date"
-                                format="yyyy-MM-dd"
-                                value-format="yyyyMMdd"
+                                format="YYYY-MM-DD"
+                                value-format="YYYYMMDD"
                                 disabled>
                             </el-date-picker>
                         </td>
@@ -236,8 +236,8 @@
                             <el-date-picker
                                 v-model="value.repaymentDueDate"
                                 type="date"
-                                format="yyyy-MM-dd"
-                                value-format="yyyyMMdd"
+                                format="YYYY-MM-DD"
+                                value-format="YYYYMMDD"
                                 disabled>
                             </el-date-picker>
                         </td>

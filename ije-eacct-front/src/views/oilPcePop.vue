@@ -20,8 +20,8 @@
           <el-date-picker
               v-model="form.baseYm"
               type="month"
-              format="yyyy-MM"
-              value-format="yyyyMM"
+              format="YYYY-MM"
+              value-format="YYYYMM"
               style="width: 60%;">
           </el-date-picker>
         </div>

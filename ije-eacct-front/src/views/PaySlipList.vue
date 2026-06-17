@@ -129,7 +129,7 @@
               </div>
               <div class="search_con search-area">
                 <div class="form-input">
-                  <el-date-picker type="date" placeholder="만기일" v-model="form.futurePayDueDt" value-format="yyyy-MM-dd HH:mm:ss" style="width: 40%; "></el-date-picker>
+                  <el-date-picker type="date" placeholder="만기일" v-model="form.futurePayDueDt" value-format="YYYY-MM-DD HH:mm:ss" style="width: 40%; "></el-date-picker>
 <!--                  <div class="datepicker w-type-ymd">-->
 <!--                    <dhx-calendar class="input" v-model="form.futurePayDueDt" :config="config"/>-->
 <!--                  </div>-->

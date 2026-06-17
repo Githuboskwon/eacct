@@ -38,8 +38,8 @@
                         <el-date-picker
                             v-model="value.evidenceDate"
                             type="date"
-                            format="yyyyMMdd"
-                            value-format="yyyyMMdd"
+                            format="YYYYMMDD"
+                            value-format="YYYYMMDD"
                             :disabled="value.isTaxReadOnly || readOnly">
                         </el-date-picker>
                     </td>

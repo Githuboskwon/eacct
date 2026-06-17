@@ -35,7 +35,7 @@
                                 align="left"
                                 range-separator="~"
                                 unlink-panels
-                                format="yyyyMMdd"
+                                format="YYYYMMDD"
                                 start-placeholder="시작일"
                                 end-placeholder="종료일"
                                 style="float: left; width: 100%;">

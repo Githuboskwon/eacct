@@ -22,8 +22,8 @@
             <el-date-picker
                 v-model="form.acctmonthsFrom"
                 type="month"
-                format="yyyy-MM"
-                value-format="yyyyMM"
+                format="YYYY-MM"
+                value-format="YYYYMM"
                 style="width: 150px;">
             </el-date-picker>
           </div>
@@ -35,8 +35,8 @@
             <el-date-picker
                 v-model="form.acctmonthsTo"
                 type="month"
-                format="yyyy-MM"
-                value-format="yyyyMM"
+                format="YYYY-MM"
+                value-format="YYYYMM"
                 style="width: 150px;">
             </el-date-picker>
           </div>
@@ -76,8 +76,8 @@
               <el-date-picker
                   v-model="form.acctmonth"
                   type="month"
-                  format="yyyy-MM"
-                  value-format="yyyyMM"
+                  format="YYYY-MM"
+                  value-format="YYYYMM"
                   style="width: 40%;">
               </el-date-picker>
             </div>

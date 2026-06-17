@@ -697,3 +697,14 @@ npm run build        # openssl 플래그 없이 통과 확인
 - 메뉴/레이아웃/달력 **렌더 복구** 여부(= `$el` 크래시 해소).
 - `$message/$confirm/$alert` 동작(196/43/40곳).
 - ⚠️ 그리드는 아직 안 보이는 게 정상(ag-grid epic 대기).
+
+### 17.4 날짜 토큰 수정 + 팝업(buefy $modal) 블로커 발견 (2026-06-17)
+- **el-date-picker 날짜 토큰**: 런타임서 "날짜 선택해도 input에 안 들어감" = element-plus(dayjs)가 `yyyy/dd` 토큰 미인식. **`format`/`value-format` 속성의 `yyyy→YYYY`, `dd→DD` 일괄 변환(92곳/26파일, 템플릿 한정)** → 빌드 GREEN. (MM/HH/mm/ss 동일 유지, JS moment 문자열 미변경)
+- **⚠️ 팝업 안 뜸 = buefy `$modal` 블로커 확인**: accrualSlip `trxOpenModal` 등은 `this.$modal.open({component})`(=buefy) 사용. (1) 전제조건 `postingDt`(날짜) 미설정으로 early-return(날짜 수정으로 해소) + (2) **buefy `$modal` 자체가 Vue3 compat에서 모달 마운트 실패 추정** → §14의 `$modal` 469곳 블로커가 런타임서 현실화. **커스텀 $modal 플러그인이 다음 핵심 epic.**
+
+### 17.5 Vue3 런타임 남은 블로커 (현재)
+| 블로커 | 상태 | 다음 작업 |
+|--------|------|----------|
+| element-plus 컴포넌트/날짜 | ✅ 동작(레이아웃·달력 복구) | 아이콘 `el-icon-*`·`slot=` 구문·CSS 정리(소) |
+| **buefy `$modal` 469곳** | ❌ 팝업 안 열림 | **커스텀 $modal 드롭인 플러그인(§14.1.1)** |
+| **ag-grid-vue v25** | ❌ 그리드 미렌더 | **ag-grid-vue3 전환(166파일)** |

@@ -88,8 +88,8 @@
                         <el-date-picker
                             v-model="value.bond.maturityDt"
                             type="date"
-                            format="yyyyMMdd"
-                            value-format="yyyyMMdd"
+                            format="YYYYMMDD"
+                            value-format="YYYYMMDD"
                             :readonly="readOnly">
                         </el-date-picker>
                     </td>

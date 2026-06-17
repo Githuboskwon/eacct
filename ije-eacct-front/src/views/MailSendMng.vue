@@ -20,8 +20,8 @@
                 v-model="form.searchDt"
                 unlink-panels
                 type="date"
-                format="yyyyMMdd"
-                value-format="yyyyMMdd">
+                format="YYYYMMDD"
+                value-format="YYYYMMDD">
             </el-date-picker>
           </div>
         </div>

@@ -27,8 +27,8 @@
                         <el-date-picker
                             v-model="periodYearM"
                             type="year"
-                            format="yyyy"
-                            value-format="yyyy"
+                            format="YYYY"
+                            value-format="YYYY"
                             style="width: 80%;">
                         </el-date-picker>
 <!--                        v-on:change.native="changeYm()"-->

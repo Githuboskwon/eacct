@@ -25,8 +25,8 @@
               <el-date-picker
                   v-model="form.startDate"
                   type="month"
-                  format="yyyy-MM"
-                  value-format="yyyy-MM"
+                  format="YYYY-MM"
+                  value-format="YYYY-MM"
                   style="width: 80%;">
               </el-date-picker>
             </div>
@@ -35,8 +35,8 @@
               <el-date-picker
                   v-model="form.endDate"
                   type="month"
-                  format="yyyy-MM"
-                  value-format="yyyy-MM"
+                  format="YYYY-MM"
+                  value-format="YYYY-MM"
                   style="width: 80%;">
               </el-date-picker>
             </div>
@@ -70,8 +70,8 @@
                     <el-date-picker
                         v-model="form.startDate"
                         type="month"
-                        format="yyyy-MM"
-                        value-format="yyyy-MM"
+                        format="YYYY-MM"
+                        value-format="YYYY-MM"
                         style="width: 100%;">
                     </el-date-picker>
                   </div>
@@ -80,8 +80,8 @@
                     <el-date-picker
                         v-model="form.endDate"
                         type="month"
-                        format="yyyy-MM"
-                        value-format="yyyy-MM"
+                        format="YYYY-MM"
+                        value-format="YYYY-MM"
                         style="width: 100%;">
                     </el-date-picker>
                   </div>

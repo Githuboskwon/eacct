@@ -16,8 +16,8 @@
             <el-date-picker
                 v-model="form.standardYymm"
                 type="month"
-                format="yyyy-MM"
-                value-format="yyyyMM"
+                format="YYYY-MM"
+                value-format="YYYYMM"
             >
             </el-date-picker>
 <!--            <div class="datepicker w-type-ymd">-->

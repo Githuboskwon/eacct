@@ -19,8 +19,8 @@
             <el-date-picker
                 v-model="form.searchMonth"
                 type="month"
-                format="yyyy-MM"
-                value-format="yyyyMM"
+                format="YYYY-MM"
+                value-format="YYYYMM"
                 style="width: 260px;">
             </el-date-picker>
           </div>
@@ -56,8 +56,8 @@
               <el-date-picker
                   v-model="form.searchMonth"
                   type="month"
-                  format="yyyy-MM"
-                  value-format="yyyyMM"
+                  format="YYYY-MM"
+                  value-format="YYYYMM"
                   style="width: 40%">
               </el-date-picker>
             </div>

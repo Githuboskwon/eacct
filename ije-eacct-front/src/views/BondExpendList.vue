@@ -140,8 +140,8 @@
                   v-model="form.openingDt"
                   unlink-panels
                   type="date"
-                  format="yyyyMMdd"
-                  value-format="yyyyMMdd">
+                  format="YYYYMMDD"
+                  value-format="YYYYMMDD">
                 </el-date-picker>
               </div>
             </div>
@@ -154,8 +154,8 @@
                   v-model="form.localMaturityDt"
                   unlink-panels
                   type="date"
-                  format="yyyyMMdd"
-                  value-format="yyyyMMdd">
+                  format="YYYYMMDD"
+                  value-format="YYYYMMDD">
                 </el-date-picker>
               </div>
             </div>
@@ -168,8 +168,8 @@
                   v-model="form.overseasMaturityDt"
                   unlink-panels
                   type="date"
-                  format="yyyyMMdd"
-                  value-format="yyyyMMdd">
+                  format="YYYYMMDD"
+                  value-format="YYYYMMDD">
                 </el-date-picker>
               </div>
             </div>

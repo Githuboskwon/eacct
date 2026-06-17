@@ -16,7 +16,7 @@
                                 type="daterange"
                                 align="right"
                                 unlink-panels
-                                format="yyyyMMdd"
+                                format="YYYYMMDD"
                                 range-separator="~"
                                 start-placeholder="시작일"
                                 end-placeholder="종료일"

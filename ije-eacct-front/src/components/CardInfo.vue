@@ -74,7 +74,7 @@
 <!--                        <div class="datepicker w-type-ymd">-->
 <!--                            <dhx-calendar class="input ddate sDate" v-model="form.crdPubcDt" />-->
 <!--                        </div>-->
-                      <el-date-picker type="date" placeholder="발급일자" v-model="form.crdPubcDt" style="width: 90%;" value-format="yyyy-MM-dd"></el-date-picker>
+                      <el-date-picker type="date" placeholder="발급일자" v-model="form.crdPubcDt" style="width: 90%;" value-format="YYYY-MM-DD"></el-date-picker>
                     </td>
 
                     <th>해지일자</th>
@@ -82,7 +82,7 @@
 <!--                        <div class="datepicker w-type-ymd">-->
 <!--                            <dhx-calendar class="input ddate sDate" v-model="form.crdAbltDt" />-->
 <!--                        </div>-->
-                      <el-date-picker type="date" placeholder="해지일자" v-model="form.crdAbltDt" style="width: 90%;" value-format="yyyy-MM-dd"></el-date-picker>
+                      <el-date-picker type="date" placeholder="해지일자" v-model="form.crdAbltDt" style="width: 90%;" value-format="YYYY-MM-DD"></el-date-picker>
                     </td>
 
                     <th class="tp-a">한도금액</th>
@@ -184,8 +184,8 @@
 <!--                        <div class="datepicker w-type-ymd02" style="float: left;">-->
 <!--                            <dhx-calendar class="input ddate sDate" v-model="form.crdUseEndDt" />-->
 <!--                        </div>-->
-                      <el-date-picker type="date" placeholder="시작일자" v-model="form.crdUseStrDt" style="width: 20%;" value-format="yyyy-MM-dd"></el-date-picker>
-                      <el-date-picker type="date" placeholder="종료일자" v-model="form.crdUseEndDt" style="width: 20%;" value-format="yyyy-MM-dd"></el-date-picker>
+                      <el-date-picker type="date" placeholder="시작일자" v-model="form.crdUseStrDt" style="width: 20%;" value-format="YYYY-MM-DD"></el-date-picker>
+                      <el-date-picker type="date" placeholder="종료일자" v-model="form.crdUseEndDt" style="width: 20%;" value-format="YYYY-MM-DD"></el-date-picker>
                     </td>
 
                     <th>결제계좌</th>
