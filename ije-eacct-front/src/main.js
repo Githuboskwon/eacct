@@ -1,7 +1,8 @@
 // import 'buefy/dist/buefy.css';
 // import 'bulma-o-steps/bulma-steps.sass';
 import Buefy from 'buefy';
-import Vue from 'vue';
+import Vue, { createApp } from 'vue';
+import swal from 'sweetalert2';
 import createBus from '@/libs/eventBus';
 import VueCookie from 'vue-cookie';
 import VueSweetalert2 from 'vue-sweetalert2';
@@ -187,76 +188,55 @@ Vue.directive('focus', {
 
 import { _url as url } from './libs/join'
 
-new Vue({
-  router,
-  store,
-  i18n,
-  $,
-  render: h => h(App),
-  created() {
-    //console.log(this.$cookie.get('sessionAlive'));
-    /**
-     * HTTP Request Interceptor
-     */
-    this.$http.interceptors.request.use((config) => {
+// Vue 3: new Vue({...}).$mount() → createApp + app.use(plugins) + mount
+const app = createApp(App);
+app.use(store);
+app.use(router);
+app.use(i18n);
 
-      /**
-       * check current session alive.
-       * using by browser cookie(life-time: session)
-       */
-      //console.log(this.$cookie.get('sessionAlive'));
-      if(this.$cookie.get('sessionAlive') === null) {
-        //console.log(this.$cookie.get('sessionAlive'));
-        console.log('this is null');
-        this.$store.commit('logout');
-        this.$cookie.delete('loginInfo');
-      }
-      
-      /**
-       * Session auto-injection
-       */
-      if (this.$store && this.$store.state && this.$store.state.loginInfo) {
-        var session = this.$store.state.loginInfo
-        /**
-         * compCd가 없는 경우, 자동으로 Injection
-         */
-        switch (String(config.method || '').toLowerCase()) {
-          case 'get':
-          case 'delete':
-            if (config.params !== undefined && typeof config.params === 'object' && !config.params.compCd) {
-              config.params.compCd = session.compCd
-            }
-            break
-          case 'post':
-          case 'put':
-            if (config.data !== undefined && typeof config.data === 'object' && !config.data.compCd) {
-              config.data.compCd = session.compCd
-            }
-            break
-        }
-      } else {
-        config.data.compCd = process.env.VUE_APP_COMP_CODE
-      }
-      return config
-    })
-
-    this.$http.interceptors.response.use(response => {
-      
-      return response
-    }, error => {
-      
-      if (error.response && error.response.data && error.response.data.message) {
-        
-        if(error.response.data.status===403){
-          this.$router.push({path: `/login`});
-        }else{
-          this.$swal({
-            type: 'error',
-            text: error.response.data.message
-          })
-        }
-      }
-      return Promise.reject(error)
-    })
+/**
+ * HTTP 인터셉터 (구 root created에서 이관). 컴포넌트 밖이라 this 대신
+ * store/router/axios/VueCookie/swal 인스턴스를 직접 참조.
+ */
+axios.interceptors.request.use((config) => {
+  // 세션 쿠키 확인
+  if (VueCookie.get('sessionAlive') === null) {
+    console.log('this is null');
+    store.commit('logout');
+    VueCookie.delete('loginInfo');
   }
-}).$mount('#app');
+  // 세션 자동 주입 (compCd)
+  if (store && store.state && store.state.loginInfo) {
+    var session = store.state.loginInfo;
+    switch (String(config.method || '').toLowerCase()) {
+      case 'get':
+      case 'delete':
+        if (config.params !== undefined && typeof config.params === 'object' && !config.params.compCd) {
+          config.params.compCd = session.compCd;
+        }
+        break;
+      case 'post':
+      case 'put':
+        if (config.data !== undefined && typeof config.data === 'object' && !config.data.compCd) {
+          config.data.compCd = session.compCd;
+        }
+        break;
+    }
+  } else {
+    config.data.compCd = process.env.VUE_APP_COMP_CODE;
+  }
+  return config;
+});
+
+axios.interceptors.response.use((response) => response, (error) => {
+  if (error.response && error.response.data && error.response.data.message) {
+    if (error.response.data.status === 403) {
+      router.push({ path: `/login` });
+    } else {
+      swal({ type: 'error', text: error.response.data.message });
+    }
+  }
+  return Promise.reject(error);
+});
+
+app.mount('#app');

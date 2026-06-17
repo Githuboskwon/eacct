@@ -631,3 +631,36 @@ npm run build        # openssl 플래그 없이 통과 확인
 - ✅ `npm run build` 통과. 라이브 `new Vue()` 버스 잔존 0(주석/데드 제외).
 - ⚠️ **런타임 확인 필요**: accrualSlip 발생전표(그리드 컬럼 갱신·행추가·세액라인 — `$bus` 이벤트), PgmMng(트리 재구성), 기타 로컬버스 화면.
 - 참고: `EstimateList`/`ExpPriceReg`/`EstimateReg`/`ExpPriceList`/`ExchangeRateMng`는 `const bus` 선언이 **주석인데 `bus.$on`만 살아있는 기존 데드/잠재버그**(버스 미정의) → 본 작업 범위 외, 미변경.
+
+---
+
+## 16. Vue 3 빅뱅 착수 — @vue/compat foundation (2026-06-17 · 브랜치 `migration/vue3-compat`)
+
+> **전략(사용자 승인):** Vue 3는 element-ui/buefy/ag-grid와 동시 전환(빅뱅)이 불가피(§5·§7) → **@vue/compat 마이그레이션 빌드(MODE 2)** 로 기존 Vue2 코드를 경고와 함께 동작시키며 점진 전환. **격리 브랜치, master(2.7)는 무영향.**
+
+### 16.1 이번 증분 = foundation (코어 부트스트랩 전환 + 에러 지형 파악)
+- **의존성:** `vue` 2.7 → **3.5.38**, **`@vue/compat`** 3.5.38·**`@vue/compiler-sfc`** 추가, `vue-router` 3 → **4.6**, `vuex` 3 → **4.1**, `vue-i18n` 8 → **9.14**.
+- **`vue.config.js`:** `vue`/`vue$` → `@vue/compat` alias + vue-loader `compilerOptions.compatConfig = { MODE: 2 }`.
+- **`src/i18n.js`:** `new VueI18n()` → `createI18n({ legacy: true, globalInjection: true })` (v8 `$t` 호환).
+- **`src/store.js`:** `new Vuex.Store()` → `createStore()`, `Vue.use(Vuex)`·store 내 `Vue.use(VueMomentJS)` 제거.
+- **`src/router.js`:** `new Router({mode:'history'})` → `createRouter({history: createWebHistory(base)})`, `Vue.use(Router)`·중복내비 가드 제거(v4는 reject 안 함).
+- **`src/main.js`:** `new Vue({router,store,i18n,render,created}).$mount()` → `createApp(App).use(store).use(router).use(i18n).mount()`. HTTP 인터셉터(구 root `created`)는 `store`/`router`/`axios`/`VueCookie`/`swal` 직접 참조로 이관. **전역 `Vue.use`/`Vue.prototype`/`Vue.component`/`Vue.filter`/`Vue.directive`는 compat MODE 2가 전역 동작시키므로 그대로 유지.**
+
+### 16.2 첫 빌드 결과 — ✅ 라이브러리 캐스케이드 없음, 템플릿 컴파일 에러 24건만
+- **핵심:** 우려했던 element-ui(99)/buefy/ag-grid-vue v25 **전역 API·플러그인 에러가 0건.** compat MODE 2가 `Vue.use`/프로토타입/필터/디렉티브/`$on·$emit`(버스) 등을 모두 흡수.
+- 남은 빌드 차단 = **Vue 3 템플릿 컴파일러 strict 에러 24건 / 14파일**(compat로 안 풀리는 진짜 수정):
+
+| 유형 | 건수 | 내용 / 대응 |
+|------|------|-------------|
+| `v-model cannot be used on a prop` | **19** | 받은 prop을 자식에 `v-model` 양방향 바인딩(Vue3 금지). 컴포넌트별 로컬 data 복사 또는 computed(get/set+emit)로 수정 — **판단 필요** |
+| `Element is missing end tag` / `Invalid end tag` | 3 | 닫는 태그 누락/오류(Vue2 관대, Vue3 엄격) — 템플릿 수정 |
+| `v-model` 표현식 | 1 | `v-model="form.a - b"` → `:value`로 (TaxInvoiceAmtModifyPop) |
+| v-if/else 동일 key | 1 | 고유 key 부여 (MonthlyPicker) |
+
+**대상 14파일:** `HrExcelUploadPop`·`MonthlyPicker`·`Prepay`·`TaxInvoiceAmtModifyPop`·`accrualSlip/Approval/Top`·`accrualSlip/Print/Top`·`costBudget/{AcctTypeSumPop,PerformanceCheck,PerformanceCheckDetail,YearPlanPop}`·`slip/SlipTable`·`ConfirmPop`·`SlipGlDetailModal`·`views/CardInfoMng`.
+
+### 16.3 다음 증분
+1. **[다음] 템플릿 컴파일 에러 24건 수정** → 빌드 GREEN 달성(최우선).
+2. 빌드 통과 후 **dev 런타임 기동** → compat **deprecation 경고** 수집(element-ui/buefy/ag-grid의 Vue3 비호환 런타임 지점 파악).
+3. 경고 기반으로 **element-ui→element-plus / ag-grid-vue3 / buefy($modal) 순차 교체** + `compatConfig` MODE를 파일별 3으로 좁히기.
+> ⚠️ 현 브랜치는 **빌드 미통과 WIP**. master(Vue 2.7)는 정상.

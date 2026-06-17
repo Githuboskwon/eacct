@@ -40,6 +40,20 @@ module.exports = {
   },
   chainWebpack: (config) => {
     config.resolve.alias.set('@', path.resolve(__dirname, 'src/'));
+    // Vue 3 마이그레이션 빌드: vue → @vue/compat 별칭 + 전체 호환모드(MODE 2).
+    // 기존 Vue 2 코드(Vue.use/Vue.prototype/$on 등)를 경고와 함께 동작시키며 점진 전환.
+    config.resolve.alias.set('vue', '@vue/compat');
+    config.resolve.alias.set('vue$', '@vue/compat'); // runtimeCompiler의 vue$ alias 덮어쓰기 방지
+    config.module
+      .rule('vue')
+      .use('vue-loader')
+      .tap((options) => {
+        options.compilerOptions = {
+          ...(options.compilerOptions || {}),
+          compatConfig: { MODE: 2 },
+        };
+        return options;
+      });
   },
   devServer: {
     port: process.env.VUE_APP_PORT,

@@ -1,18 +1,15 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 import moment from 'moment';
-import VueMomentJS from 'vue-momentjs';
 
-Vue.use(VueMomentJS, moment);
-Vue.use(Vuex);
+// (vuex4) Vue.use(Vuex) 불필요. VueMomentJS 등록은 main.js의 app.use로 이관.
 
 const defaultOpenDate = {
     localMonthDate: moment().subtract(3, 'month').format('YYYY-MM-DD'),
     nextMonthDate: moment(),
 };
 
-export default new Vuex.Store({
+export default createStore({
     plugins: [createPersistedState()],
     state: {
         loginInfo: {

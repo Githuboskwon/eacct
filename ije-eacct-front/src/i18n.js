@@ -1,7 +1,4 @@
-import Vue from 'vue'
-import VueI18n from 'vue-i18n'
-
-Vue.use(VueI18n)
+import { createI18n } from 'vue-i18n'
 
 function loadLocaleMessages () {
   const locales = require.context('./locales', true, /[A-Za-z0-9-_,\s]+\.json$/i)
@@ -16,7 +13,10 @@ function loadLocaleMessages () {
   return messages
 }
 
-export default new VueI18n({
+// vue-i18n 9: legacy 모드로 v8 API($t 등) 호환 유지하며 점진 전환
+export default createI18n({
+  legacy: true,
+  globalInjection: true,
   locale: process.env.VUE_APP_I18N_LOCALE || 'ko',
   fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'ko',
   messages: loadLocaleMessages()
