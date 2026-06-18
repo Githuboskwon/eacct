@@ -734,3 +734,29 @@ element-plus를 Vue3 네이티브로 돌리려면 **전역 MODE 3**가 필수인
 - **전역 MODE 2로 복귀**(앱 부팅 가능 상태 유지). per-component `compatConfig:{MODE:2}`(269개)는 MODE2 하에서 무해하므로 유지(향후 MODE3 전환 시 재사용).
 - 이 통합은 **flag 한 줄이 아니라 부트스트랩 재작성+필터 검증이 묶인 작업**이며 각 단계가 런타임 라운드트립 검증을 요함 → 원격 증상-디버그 루프로는 비효율.
 - **다음 후보:** (a) `main.js` app-level 전환부터 단계적 진행(전역 MODE3 준비) (b) 또는 Vue3 네이티브 부트스트랩을 먼저 완성한 뒤 element-plus 도입. master(2.7)는 정상이므로 일정 압박 없음.
+
+---
+
+## 19. 🏁 체크포인트 (2026-06-18) — Vue3 WIP 보존, master는 2.7로 운영
+
+> 사용자 결정: Vue3 element-plus 통합이 상호 얽힌 대형 작업(§18)이라 **여기서 체크포인트**. WIP는 `migration/vue3-compat`에 전부 커밋·푸시 보존, master(Vue 2.7)로 운영 지속.
+
+### 19.1 전체 진척 (master 머지 완료)
+- ✅ 그리드 DHTMLX→ag-grid 통합(선행), 0단계 정리, **1단계 vue-cli5(webpack5)**, **2단계 도약판 Vue 2.7**, b-select→native, **$bus→mitt**, router redundant-nav 가드, dev 오버레이 정리 — **전부 master 반영, 정상 운영 중**.
+
+### 19.2 Vue3 WIP 상태 (`migration/vue3-compat`, 미머지)
+- ✅ @vue/compat foundation: createApp + router4/vuex4/i18n9, 템플릿 컴파일 에러 25건 수정 → **빌드 GREEN**.
+- ✅ element-ui→element-plus 등록 전환, 날짜토큰 yyyy→YYYY(92곳), 269 SFC `compatConfig:{MODE:2}` 주입.
+- ✅ 런타임 부팅·로그인·레이아웃/메뉴 렌더 확인.
+- ❌ **미해결 핵심 블로커 = §18**: element-plus(네이티브 Vue3) v-model이 전역 compat MODE2서 미동작. 전역 MODE3는 main.js 전역 Vue API 의존으로 부팅 불가. 현재 **전역 MODE2로 복귀(부팅 가능 상태)**.
+- ❌ buefy `$modal`(팝업 469곳)·ag-grid(그리드 166파일)도 Vue3 런타임 미동작(별 epic).
+- 임시: `/eptest` 진단 라우트(EpTest.vue) 잔존 — 재개 시 제거.
+
+### 19.3 재개 가이드 (Vue3 이어서 할 때)
+1. **`main.js` app-level 전환**: `Vue.prototype.*`→`app.config.globalProperties.*`, `Vue.use/component/directive`→`app.*`, `Vue.config.*` 제거, `Vue.filter` 처리방안 확정.
+2. 전역 **`configureCompat({MODE:3})`** + per-component MODE2(주입됨)로 element-plus 네이티브화 → `/eptest`로 el-input/date/select v-model 검증.
+3. 통과 시: 아이콘(`el-icon-*`)·`el-radio label→value`·CSS 정리 → 그 후 **buefy $modal 커스텀 플러그인**, **ag-grid-vue3** epic.
+4. ⚠️ 깊은 런타임 디버깅이라 **빠른 로컬 피드백 루프** 권장.
+
+### 19.4 로컬 환경 복귀
+- master(2.7)로 운영하려면: `git switch master` → **`npm install --legacy-peer-deps`**(deps가 Vue3↔2.7로 다름) → `npm run serve:local`.
