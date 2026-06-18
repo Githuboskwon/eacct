@@ -200,6 +200,7 @@ import ApprLineSet from '@/components/ApprLineSet.vue'
 import Emp from "@/components/Emp_Ag.vue";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "appLineMng",
   components: {
     AgGridVue,

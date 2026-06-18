@@ -369,6 +369,7 @@ import createBus from '@/libs/eventBus';
 
     const bus = createBus()
     export default {
+  compatConfig: { MODE: 2 },
         name: 'SlipLst',
         mixins: [mixin, mixinSlip, slip],
         components: {Cctr, Emp, DhxCalendar, AgGridVue,AgGridCheckbox, Dff},

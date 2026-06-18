@@ -95,6 +95,7 @@ import VatModal from '@/components/accrualSlip/GridModal/VatModal'; /** 부가�
 import TaxIssueModal from '@/components/accrualSlip/Modals/TaxIssueModal.vue'; /** 발행구분 */
 
 export default {
+  compatConfig: { MODE: 2 },
     props: ['value', 'readOnly'],
     created() {
         /**

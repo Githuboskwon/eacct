@@ -20,6 +20,7 @@
     import SlipGr from '@/components/SlipGr.vue'
 
     export default {
+  compatConfig: { MODE: 2 },
         props: {
             title: {
                 type: String,

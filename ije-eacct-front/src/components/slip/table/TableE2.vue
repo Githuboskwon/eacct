@@ -85,6 +85,7 @@
 import slip_table from '@/mixin/slip-table-new'
 
 export default {
+  compatConfig: { MODE: 2 },
   mixins: [slip_table],
   //2020.08.14 기본정보 소수점 변경
   data(){

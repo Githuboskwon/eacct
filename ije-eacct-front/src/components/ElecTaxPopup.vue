@@ -27,6 +27,7 @@ import Layout from '@/components/ModalSlot.vue'
 import EtaxScreen from '@/components/EtaxScreen/EtaxScreen.vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'erpAccount',
   props: {
     eTaxNo: {

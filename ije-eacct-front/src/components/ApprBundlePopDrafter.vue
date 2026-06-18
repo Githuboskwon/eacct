@@ -51,6 +51,7 @@ import Layout from '@/components/ModalSlot.vue'
 import mixin from '@/mixin';
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'ApprActPopDrafter',
   props: {
     docTitleNm:{

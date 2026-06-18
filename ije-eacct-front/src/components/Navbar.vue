@@ -18,6 +18,7 @@
 import menual from '@/components/Menual.vue';
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'Navbar',
   components: {
     menual

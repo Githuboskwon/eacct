@@ -278,6 +278,7 @@ import Emp from "@/components/Emp_Ag";
 import TaxInvoiceAmtModifyPop from "@/components/TaxInvoiceAmtModifyPop";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'SalesTaxInvoiceLst',
   mixins: [mixin, mixinSlip],
   components: {

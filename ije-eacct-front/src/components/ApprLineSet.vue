@@ -145,6 +145,7 @@
     import Emp from '@/components/Emp_Ag.vue';
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'ApprLineSet',
         mixins: [mixin, mixinSlip],
         components: {Layout, Emp, AgGridVue},

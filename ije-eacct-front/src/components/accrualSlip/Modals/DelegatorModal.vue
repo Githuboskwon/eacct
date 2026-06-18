@@ -56,6 +56,7 @@ import mixin from '@/mixin';
 import {AgGridVue} from 'ag-grid-vue';
 
 export default {
+  compatConfig: { MODE: 2 },
     props: {
         schTxt: {
             Type: String,

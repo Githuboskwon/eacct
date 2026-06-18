@@ -47,6 +47,7 @@
     import mixinSlip from '@/mixin/slip';
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'ApprHeader',
         props: {
             'value': {

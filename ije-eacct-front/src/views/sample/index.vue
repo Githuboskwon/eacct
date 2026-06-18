@@ -63,6 +63,7 @@
   
   
   export default {
+  compatConfig: { MODE: 2 },
       name:'Sample',
       mixins: [slip, common],
       components:{ AgGridVue},

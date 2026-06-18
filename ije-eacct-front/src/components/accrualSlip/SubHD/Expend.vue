@@ -71,6 +71,7 @@
 import ExpendGubunModal from '@/components/accrualSlip/Modals/ExpendGubunModal.vue'; /** 경조금 구분 */
 
 export default {
+  compatConfig: { MODE: 2 },
     props: ['value', 'readOnly'],
     data() {
         return {

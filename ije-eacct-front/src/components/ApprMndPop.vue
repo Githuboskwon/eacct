@@ -138,6 +138,7 @@
     import Emp from '@/components/Emp_Ag.vue';
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'ApprMndPop',
         props: ['adlgId', 'adlgNm', 'actId', 'actNm', 'adlgSeq', 'hiddenDtmFr', 'hiddenDtmTo', 'hiddenCheck'],
         mixins: [mixin, mixinSlip],

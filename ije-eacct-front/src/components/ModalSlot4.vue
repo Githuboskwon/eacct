@@ -16,6 +16,7 @@
 
 <script>
 export default {
+  compatConfig: { MODE: 2 },
   name: "ModalSlot4",
   data() {
     return {

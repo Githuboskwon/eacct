@@ -152,6 +152,7 @@ import { AgGridVue } from 'ag-grid-vue'
   } from '@/libs/join'
   
   export default {
+  compatConfig: { MODE: 2 },
     name: 'SlipCrdLst',
     props: {
         params: {

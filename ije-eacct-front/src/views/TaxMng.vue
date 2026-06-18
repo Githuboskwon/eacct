@@ -139,6 +139,7 @@ function queryTpsTypeCd() {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "taxMng",
   mixins: [mixin, mixinSlip,common],
   data() {

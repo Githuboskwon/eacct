@@ -38,6 +38,7 @@ import Layout from '@/components/ModalSlot.vue'
 import DhxGrid from '@/components/DhxGrid.vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     slipTypeCd: {
       type: String,

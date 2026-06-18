@@ -344,6 +344,7 @@ function queryRemainBudget(postDt, cctrCd, acctCd) {
 */
 
 export default {
+  compatConfig: { MODE: 2 },
   props: ['slipType', 'value', 'status', 'lnk'],
   mixins: [mixin, mixin2, mixinSlip],
   components: {

@@ -291,6 +291,7 @@ const numFormats = (curCd, decimal) => {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
     components: {
         EXPEND, TRAFFIC, TRIP, BOND, AWT, ETCAWT, CARD, PO, IM, AssistantVAT, HR
     },

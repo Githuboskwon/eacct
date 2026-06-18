@@ -60,6 +60,7 @@ import {AgGridVue} from 'ag-grid-vue';
 import Cctr2Modal from '@/components/accrualSlip/GridModal/Cctr2Modal'; /** 예산부서 조회 */
 
 export default {
+  compatConfig: { MODE: 2 },
     props: {
         dept: {
             Type: Object,

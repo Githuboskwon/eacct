@@ -180,6 +180,7 @@
     import EtaxTrx from "@/components/EtaxTrxSearchPop";
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'SlipList',
         mixins: [mixin, mixinSlip],
         components: {DhxCalendar, AgGridVue},

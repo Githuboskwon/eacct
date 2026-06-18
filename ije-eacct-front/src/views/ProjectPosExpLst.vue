@@ -62,6 +62,7 @@ import AccountPop from '@/components/AccountPop.vue';
 import { AgGridVue } from 'ag-grid-vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'ProjectPosExpLst',
   mixins: [mixin, mixinSlip, common],
   components: {

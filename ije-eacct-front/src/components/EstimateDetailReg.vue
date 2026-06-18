@@ -77,6 +77,7 @@ import DhxCalendar from '@/components/DhxCalendar.vue'
 import {AgGridVue} from "ag-grid-vue";
 
 export default {
+  compatConfig: { MODE: 2 },
   components: {DhxCalendar, AgGridVue},
   name: 'EstimateDetailReg',
   props: [],

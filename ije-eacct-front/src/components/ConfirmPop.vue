@@ -154,6 +154,7 @@ function _url(...args) {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   mixins: [],
   props: {
     data: {

@@ -77,6 +77,7 @@ const ScanCtRenderer = Vue.extend({
 })
 
 export default {
+  compatConfig: { MODE: 2 },
   props: ['value', 'status'],
   components: {
     AgGridVue

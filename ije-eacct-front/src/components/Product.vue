@@ -29,6 +29,7 @@ import Layout from '@/components/ModalSlot.vue'
 import mixin from '@/mixin';
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'Product',
   props: ['searchStr','slipTypeCd'],
   mixins: [ mixin ],

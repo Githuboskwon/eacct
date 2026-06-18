@@ -229,6 +229,7 @@ function queryMngItemCd() {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "HrExpendStatus",
   mixins: [mixin, mixinSlip],
   components: {

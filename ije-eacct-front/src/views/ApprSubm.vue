@@ -56,6 +56,7 @@ import ApprBundlePopDrafter from "@/components/ApprBundlePopDrafter.vue";
 import Layout from '@/components/ModalSlot.vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     docMngNo: {
       type: String,

@@ -76,6 +76,7 @@
     }
 
     export default {
+  compatConfig: { MODE: 2 },
         props: {
             docMngNo: {
                 type: String,

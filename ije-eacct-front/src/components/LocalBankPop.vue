@@ -37,6 +37,7 @@ import mixin from '@/mixin';
 import { AgGridVue } from 'ag-grid-vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'LocalBankPop',
   props: ['param', 'header'],
   mixins: [ mixin ],

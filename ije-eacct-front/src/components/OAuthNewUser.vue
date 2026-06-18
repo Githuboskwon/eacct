@@ -8,6 +8,7 @@
 <script>
 /* eslint-disable */
 export default {
+  compatConfig: { MODE: 2 },
     name: 'OAuthNewUser.vue',
     mounted() {
         //this.$store.commit('register', '');

@@ -195,6 +195,7 @@ function queryMngItemCd() {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "ProjectPlanBudLst",
   mixins: [mixin, mixinSlip],
   components: {

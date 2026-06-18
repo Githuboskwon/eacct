@@ -66,6 +66,7 @@
 
 <script>
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     loginId: {
       type: String,

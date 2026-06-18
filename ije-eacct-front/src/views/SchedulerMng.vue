@@ -72,6 +72,7 @@ import CheckboxCellRenderer from '@/components/agGrid/checkbox-cell-renderer'
 import { AgGridVue } from 'ag-grid-vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'schedulerMng',
   mixins: [mixin, mixinSlip, common],
   components: {

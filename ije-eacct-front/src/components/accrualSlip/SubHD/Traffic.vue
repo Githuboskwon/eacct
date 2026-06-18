@@ -52,6 +52,7 @@
 
 
 export default {
+  compatConfig: { MODE: 2 },
     props: ['value', 'readOnly'],
     data() {
         return {

@@ -270,6 +270,7 @@ import dealTypePoP from "@/components/dealTypePoP";
 import ApprovalModal from "@/components/accrualSlip/Approval/Main";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'PurSlipList',
   mixins: [mixin, mixinSlip, common],
   components: {

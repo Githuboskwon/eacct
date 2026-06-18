@@ -230,6 +230,7 @@ import SlipBondDetailModal from "@/components/SlipBondDetailModal.vue";
 // import ApprSubm from "@/views/ApprSubm";
 
 export default {
+  compatConfig: { MODE: 2 },
     name: 'ApprCompLst',
     mixins: [mixin, mixinSlip],
     components: {Emp, DhxCalendar, AgGridVue},

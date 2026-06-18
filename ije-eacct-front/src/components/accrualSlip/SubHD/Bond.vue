@@ -120,6 +120,7 @@
 import BondRefNoModal from '@/components/accrualSlip/Modals/BondRefNoModal.vue';
 
 export default {
+  compatConfig: { MODE: 2 },
     props: ['value', 'readOnly'],
     components: {
         

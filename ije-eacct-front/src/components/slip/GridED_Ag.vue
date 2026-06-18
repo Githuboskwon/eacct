@@ -128,6 +128,7 @@ const ScanCtRenderer = Vue.extend({
 })
 
 export default {
+  compatConfig: { MODE: 2 },
   props: ['slipType', 'value', 'status', 'lnk'],
   mixins: [mixin, mixin2, mixinSlip],
   components: { AgGridVue },

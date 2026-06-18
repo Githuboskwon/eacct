@@ -13,6 +13,7 @@ const defaultOptions = {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   replace: true,
   props: ['value', 'config', 'disabled'],
   data() {

@@ -302,6 +302,7 @@ import main from '@/components/accrualSlip/script.js';
     return format;
 }
 export default {
+  compatConfig: { MODE: 2 },
     // mixins: [main],
     extends: main,
     computed: {

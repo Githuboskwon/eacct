@@ -205,6 +205,7 @@ import JiniAtchPop from "@/components/JiniAtchPop";
 import EvidAtchPopModeless from "@/components/EvidAtchPopModeless.vue";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'SalesSlipLst',
   mixins: [mixin, mixinSlip, common],
   components: {

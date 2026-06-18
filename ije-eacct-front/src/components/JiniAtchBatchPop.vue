@@ -70,6 +70,7 @@ const JiniLinkRenderer = Vue.extend({
 
 //['docMngNo', 'value', 'readonly']
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     slipNo: {
       type: Array,

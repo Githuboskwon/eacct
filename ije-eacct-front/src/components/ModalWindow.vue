@@ -13,6 +13,7 @@
 </template>
 <script>
 export default {
+  compatConfig: { MODE: 2 },
   name: "ModalWindow",
   data() {
     return {

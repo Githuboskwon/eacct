@@ -203,6 +203,7 @@ import EvidAtchPopModeless from "@/components/EvidAtchPopModeless";
 import WingsAtchPop from "@/components/JiniAtchPop";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'SlipDetailModal',
   props: {
     slipNo: {

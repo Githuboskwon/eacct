@@ -83,6 +83,7 @@ import { isThisISOWeek } from 'date-fns';
 
 
 export default {
+  compatConfig: { MODE: 2 },
     props: {
         'value': {
             type: Object,

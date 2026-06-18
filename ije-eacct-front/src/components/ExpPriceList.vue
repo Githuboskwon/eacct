@@ -213,6 +213,7 @@ function cellStyle(params){
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   mixins: [common],
   components: {Emp, DhxCalendar, AgGridVue},
   name: "codeMng",

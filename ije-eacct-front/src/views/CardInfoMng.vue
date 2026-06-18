@@ -270,6 +270,7 @@ import CardInfo from '@/components/CardInfo.vue';
 import CheckboxCellRenderer from "@/components/agGrid/checkbox-cell-renderer";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'CardInfoMng',
   mixins: [mixin, mixinSlip],
   components: {Emp, CardInfo, DhxCalendar},

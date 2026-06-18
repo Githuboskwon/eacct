@@ -101,6 +101,7 @@ import ApprBundleSubmTemp from "@/views/ApprBundleSubmTemp";
 import JiniAtchPop from "@/components/JiniAtchPop.vue";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'CollectionSlipLst',
   mixins: [mixin, mixinSlip, common],
   components: {

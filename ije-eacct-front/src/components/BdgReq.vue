@@ -345,6 +345,7 @@ function queryRemainBudget(postDt, cctrCd, acctCd, subAcctCd) {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     id: {
       type: String,

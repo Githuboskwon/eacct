@@ -117,6 +117,7 @@
     import _ from 'lodash'
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'CardMndPop',
         props: {
             apprNo: {

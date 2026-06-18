@@ -275,6 +275,7 @@ import CctrDel from "@/components/CctrDelegate";
 import AgGridSearchBtn from "@/components/agGrid/AgGridSearchBtn";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'CardUseLst',
   mixins: [mixin, mixinSlip],
   components: {Emp, DhxCalendar, AgGridVue},

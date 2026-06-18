@@ -11,6 +11,7 @@
     import ApprLineSet from '@/components/ApprLineSet.vue'
 
     export default {
+  compatConfig: { MODE: 2 },
         props: {
             title: {
                 type: String,

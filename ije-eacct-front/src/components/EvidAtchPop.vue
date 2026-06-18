@@ -88,6 +88,7 @@ import Layout from '@/components/ModalSlot.vue'
 import PdfViewer from '@/components/PdfViewer'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     title: {
       type: String,

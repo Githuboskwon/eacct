@@ -47,6 +47,7 @@ import createBus from '@/libs/eventBus';
     const bus = createBus()
     
     export default {
+  compatConfig: { MODE: 2 },
         name: 'QuickSetting',
         mixins: [mixin, mixinSlip],
         data() {

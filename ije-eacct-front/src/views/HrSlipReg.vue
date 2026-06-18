@@ -102,6 +102,7 @@ import SelectCellRenderer from "@/components/agGrid/select-cell-renderer";
 import HrExcelUploadPop from "@/components/HrExcelUploadPop.vue"
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'HrSlipReg',
   components: {
     AgGridVue,

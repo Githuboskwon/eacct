@@ -19,6 +19,7 @@
 import Layout from '@/components/ModalSlot3.vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   components: {
     Layout
   },

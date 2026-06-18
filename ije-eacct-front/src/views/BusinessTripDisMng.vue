@@ -90,6 +90,7 @@ import MonthlyPickerCellRenderer from '@/components/grid/GridMonthlyPicker.vue'
 import { AgGridVue } from 'ag-grid-vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'businessTripDisMng',
   mixins: [mixin, mixinSlip, common],
   components: {

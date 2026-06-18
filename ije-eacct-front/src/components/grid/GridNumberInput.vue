@@ -4,6 +4,7 @@
 
 <script>
 export default {
+  compatConfig: { MODE: 2 },
   props: ['index', 'value', 'field'],
   data() {
     return {

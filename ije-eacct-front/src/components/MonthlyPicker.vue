@@ -44,6 +44,7 @@
 import moment from 'moment'
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'vue-monthly-picker',
   props: {
     'value': {

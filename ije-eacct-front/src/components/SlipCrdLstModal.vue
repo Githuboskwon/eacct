@@ -249,6 +249,7 @@ import {
 //'./grid/GridCheckbox.vue'
 //['param','slipTypeCd'],
 export default {
+  compatConfig: { MODE: 2 },
   name: 'SlipCrdLst',
   props: {
     param: {

@@ -91,6 +91,7 @@ import Layout from '@/components/ModalWindow.vue'
 import PdfViewer from '@/components/PdfViewer.vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     title: {
       type: String,

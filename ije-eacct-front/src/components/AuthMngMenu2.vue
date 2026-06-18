@@ -47,6 +47,7 @@
 import CheckboxCellRenderer from '@/components/agGrid/ap_checkbox-cell-renderer'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     'roleCd': {
       type: String,

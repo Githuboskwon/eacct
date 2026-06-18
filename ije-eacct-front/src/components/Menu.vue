@@ -26,6 +26,7 @@
 
 <script>
 export default {
+  compatConfig: { MODE: 2 },
   name: 'Menu',
   data() {
     return {

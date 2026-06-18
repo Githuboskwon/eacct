@@ -324,6 +324,7 @@ import DatepickerCellRenderer from "@/components/agGrid/datepicker-cell-renderer
 import EtaxModify from "@/components/EtaxInvoiceModifyPop";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'SalesTaxInvoiceLst',
   mixins: [mixin, mixinSlip],
   components: {

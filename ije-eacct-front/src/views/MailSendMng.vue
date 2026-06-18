@@ -98,6 +98,7 @@ import MailSendPop from "@/components/MailSendPop.vue";
 
 const bus = createBus()
 export default {
+  compatConfig: { MODE: 2 },
   name: 'MailSendMng',
   mixins: [mixin, mixinSlip, slip],
   components: {DhxCalendar, AgGridVue,AgGridCheckbox},

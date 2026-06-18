@@ -71,6 +71,7 @@ import DhxCalendar from '@/components/DhxCalendar.vue'
 import common from '@/mixin/common';
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "taxMonitoring",
   mixins: [mixin, mixinSlip, common],
   components: {DhxCalendar},

@@ -224,6 +224,7 @@ import ProjectPop from '@/components/ProjectPop.vue';
 import { AgGridVue } from 'ag-grid-vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'ProjectPlanBudRepLst',
   mixins: [mixin, mixinSlip, common],
   components: {

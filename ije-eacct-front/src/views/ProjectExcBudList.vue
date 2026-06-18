@@ -233,6 +233,7 @@ function queryMngItemCd() {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "ProjectExcBudList",
   mixins: [mixin, mixinSlip],
   components: {

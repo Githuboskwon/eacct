@@ -116,6 +116,7 @@ import slip_table from '@/mixin/slip-table-new'
 import _ from 'lodash'
 
 export default {
+  compatConfig: { MODE: 2 },
   mixins: [slip_table],
   data(){
     return{

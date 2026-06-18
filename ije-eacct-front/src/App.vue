@@ -64,6 +64,7 @@
     import 'vue-loading-overlay/dist/vue-loading.css';
 
     export default {
+  compatConfig: { MODE: 2 },
         name: "App",
         components: {Navbar, Menu, Login, MyMain, Loading},
         computed: {

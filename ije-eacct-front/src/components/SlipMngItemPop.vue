@@ -52,6 +52,7 @@ import DffDetail from "@/components/SlipMngDetailPop"
 
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     applicationShortCd: {
       type: String,

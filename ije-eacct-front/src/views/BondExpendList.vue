@@ -251,6 +251,7 @@ import BondProjectPop from "@/components/BondProjectPop.vue";
 import ApprovalModal from "@/components/accrualSlip/Approval/Main.vue";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'BondExpendList',
   mixins: [mixin, mixinSlip, common],
   components: {

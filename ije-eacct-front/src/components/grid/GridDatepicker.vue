@@ -6,6 +6,7 @@
 import DhxCalendar from '@/components/DhxCalendar.vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: ['index', 'value', 'field'],
   components: {
     DhxCalendar

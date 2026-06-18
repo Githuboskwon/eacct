@@ -162,6 +162,7 @@ import NumberInput from '@/components/NumberInput.vue'
 import ElecTaxPopup from '@/components/ElecTaxPopup.vue';
 
 export default {
+  compatConfig: { MODE: 2 },
   props: ['value', 'eventBus', 'isNew', 'readonly'],
   mixins: [mixin],
   components: {

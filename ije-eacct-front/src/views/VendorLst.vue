@@ -419,6 +419,7 @@ import Vendor from "@/components/Vendor_Ag";
 import BenCountryPop from '@/components/BenCountryPop.vue';
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'VendorLst',
   mixins: [mixin, mixinSlip],
   components: {

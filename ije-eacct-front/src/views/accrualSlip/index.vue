@@ -194,6 +194,7 @@ const numFormats = (curCd, decimal) => {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'accrualSlip',
   components: {
     accrlHd,

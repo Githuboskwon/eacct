@@ -118,6 +118,7 @@ import EvidAtchPopModeless from '@/components/EvidAtchPopModeless'; /** 증빙�
 import html2canvas from 'html2canvas';
 
 export default {
+  compatConfig: { MODE: 2 },
     components: {
         Layout,
         Top,

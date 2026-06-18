@@ -90,6 +90,7 @@ import AgGridCheckbox from "@/components/agGrid/AgGridCheckbox.vue"
 const _debug = debug('AcctMng')
 
 export default {
+  compatConfig: { MODE: 2 },
   components: {
     TableCheckBox, AgGridVue
   },

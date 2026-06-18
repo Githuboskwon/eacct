@@ -112,6 +112,7 @@ import SlipDetailModal from "@/components/SlipDetailModal";
 
 //['docMngNo', 'value', 'readonly']
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     periodYm: {
       type: String,

@@ -33,6 +33,7 @@ const def_props = {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     value: {
       type: Object,

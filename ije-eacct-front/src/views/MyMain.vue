@@ -312,6 +312,7 @@ import router from '@/router';
 
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'MyMain',
   components: {
     menual,

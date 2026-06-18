@@ -6,6 +6,7 @@
 import $ from 'jquery'
 
 export default {
+  compatConfig: { MODE: 2 },
   replace: true,
   props: ['value', 'format'],
   data() {

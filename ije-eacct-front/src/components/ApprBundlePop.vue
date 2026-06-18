@@ -36,6 +36,7 @@
   import mixin from '@/mixin';
 
   export default {
+  compatConfig: { MODE: 2 },
       name: 'ApprActPop',
       props: {
         apprList : {

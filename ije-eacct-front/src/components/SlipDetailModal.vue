@@ -260,6 +260,7 @@ import EvidAtchPopModeless from "@/components/EvidAtchPopModeless.vue";
 import WingsAtchPop from "@/components/JiniAtchPop";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'SlipDetailModal',
   /**
    * props

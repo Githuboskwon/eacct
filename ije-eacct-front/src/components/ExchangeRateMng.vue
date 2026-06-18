@@ -114,6 +114,7 @@
     }
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'CardUseLst',
         mixins: [mixin, mixinSlip, common],
         components: {DhxCalendar},

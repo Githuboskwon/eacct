@@ -176,6 +176,7 @@ const options = {};
 const lock = {};
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "ProjectConsLst",
   mixins: [mixin, mixinSlip],
   components: {

@@ -144,6 +144,7 @@ import common from '@/mixin/common';
 import CheckboxCellRenderer from "@/components/agGrid/checkbox-cell-renderer";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "closeMng",
   mixins: [common],
   components: {

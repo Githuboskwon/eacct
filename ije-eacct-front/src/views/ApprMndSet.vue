@@ -224,6 +224,7 @@
     // import ApprMndPop from '@/components/ApprMndPop.vue';
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'ApprMndSet',
         mixins: [mixin, mixinSlip],
         components: {Emp, AgGridVue, DhxCalendar},

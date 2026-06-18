@@ -19,6 +19,7 @@
 import slip_table from '@/mixin/slip-table-new'
 
 export default {
+  compatConfig: { MODE: 2 },
   mixins: [slip_table],
   created() {
     this.evdTypeChangeEvent()

@@ -89,6 +89,7 @@ import MonthlyPicker from "@/components/MonthlyPicker";
 
 //['docMngNo', 'value', 'readonly']
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     periodYm: {
       type: String,

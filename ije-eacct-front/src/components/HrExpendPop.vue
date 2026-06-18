@@ -131,6 +131,7 @@ import Emp from "@/components/Emp_Ag";
 }
 
 export default {
+  compatConfig: { MODE: 2 },
     mixins: [],
     props: {
         data: {

@@ -6,6 +6,7 @@
 import MonthlyPicker from '@/components/MonthlyPicker.vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: ['index', 'value', 'field'],
   components: {
     MonthlyPicker

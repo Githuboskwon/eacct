@@ -282,6 +282,7 @@
     }
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'CardInfo',
         props: ['cardDetail'],
         mixins: [mixin, mixinSlip],

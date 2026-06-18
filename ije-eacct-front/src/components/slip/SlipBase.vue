@@ -117,6 +117,7 @@ function queryOption(url, type, params) {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   /**
    * Properties include
    */

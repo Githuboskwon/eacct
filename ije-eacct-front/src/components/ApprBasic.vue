@@ -199,6 +199,7 @@
     import SlipGrid from '@/components/SlipGridRO.vue';
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'ApprBasic',
         props: ['apprHeader', 'apprDetails'],
         mixins: [mixin, mixinSlip],

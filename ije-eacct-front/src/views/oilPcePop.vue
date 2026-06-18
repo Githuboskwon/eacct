@@ -123,6 +123,7 @@ function queryMngItemCd() {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "oilPcePop",
   mixins: [mixin, mixinSlip],
   components: {

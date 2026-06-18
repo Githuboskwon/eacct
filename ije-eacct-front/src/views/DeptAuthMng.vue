@@ -194,6 +194,7 @@ import Emp from '@/components/Emp_Ag.vue'
 import AgGridSearchBtn from "@/components/agGrid/AgGridSearchBtn";
 
 export default {
+  compatConfig: { MODE: 2 },
   mixins: [common],
   name: "deptAuthMng",
   data() {

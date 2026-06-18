@@ -41,6 +41,7 @@
 import CardAirSlipModal from '@/components/accrualSlip/Modals/CardAirSlipModal'; /** 작성전표 조회 */
 
 export default {
+  compatConfig: { MODE: 2 },
     props: ['value', 'readOnly'],
     data() {
         return {

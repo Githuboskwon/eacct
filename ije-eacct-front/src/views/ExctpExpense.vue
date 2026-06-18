@@ -68,6 +68,7 @@ import _ from 'lodash'
 import assert from '@/libs/assert'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     grSlipNo: {
       type: String,

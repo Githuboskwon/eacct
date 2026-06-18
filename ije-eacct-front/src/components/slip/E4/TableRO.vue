@@ -116,6 +116,7 @@ import DhxCalendar from '@/components/DhxCalendar.vue'
 import NumberInput from '@/components/NumberInput.vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: ['value', 'eventBus', 'isNew', 'readonly'],
   mixins: [mixin],
   components: {

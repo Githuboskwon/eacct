@@ -113,6 +113,7 @@ function _resort(array, result) {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   mixins: [mixinSlip,common],
   components: {},
   data() {

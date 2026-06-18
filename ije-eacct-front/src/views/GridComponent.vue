@@ -108,6 +108,7 @@
     import ButtonCellRenderer from '@/components/agGrid/button-cell-renderer'    
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'CardUseLst',
         mixins: [mixin, mixinSlip, common],
         components: {DhxCalendar},

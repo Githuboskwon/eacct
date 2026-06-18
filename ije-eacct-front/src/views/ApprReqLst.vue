@@ -215,6 +215,7 @@ import DraftPop from "@/components/costBudget/SlipBudgetDetailModal.vue";
 import SlipBondDetailModal from "@/components/SlipBondDetailModal.vue";
 
 export default {
+  compatConfig: { MODE: 2 },
     name: 'ApprReqLst',
     mixins: [mixin, mixinSlip],
     components: {Emp, DhxCalendar, AgGridVue},

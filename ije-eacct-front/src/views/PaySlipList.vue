@@ -254,6 +254,7 @@ import EvidAtchPopModeless from "@/components/EvidAtchPopModeless.vue";
 import JiniAtchPop from "@/components/JiniAtchPop.vue";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'paySlipList',
   mixins: [mixin, mixinSlip, common],
   components: {

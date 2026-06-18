@@ -113,6 +113,7 @@ var eventBus = createBus();
 const options = {};
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "acctSubMng",
   mixins: [mixin, mixinSlip,common],
   data() {

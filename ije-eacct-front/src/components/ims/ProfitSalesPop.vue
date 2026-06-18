@@ -50,6 +50,7 @@ import {AgGridVue} from "ag-grid-vue";
 
 //['docMngNo', 'value', 'readonly']
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     projectNumber: {
       type: String,

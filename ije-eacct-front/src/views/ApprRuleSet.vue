@@ -122,6 +122,7 @@
     // import ApprRulePop from '@/components/ApprRulePop.vue'
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'ApprRuleSet',
         mixins: [mixin, mixinSlip],
         components: {AgGridVue},

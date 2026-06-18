@@ -188,6 +188,7 @@
     import mixinSlip from '@/mixin/slip';
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'ApprRulePop',
         props: ['docTypeNm',
                 'docTypeCd',

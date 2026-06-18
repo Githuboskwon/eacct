@@ -256,6 +256,7 @@ import SlipBondDetailModal from "@/components/SlipBondDetailModal.vue";
 
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "ApprPendLst",
   mixins: [mixin, mixinSlip],
   components: { AgGridVue },

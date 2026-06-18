@@ -283,6 +283,7 @@ function _url(...args) {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   mixins: [common],
   components: {Emp, DhxCalendar, AgGridVue},
   name: "codeMng",

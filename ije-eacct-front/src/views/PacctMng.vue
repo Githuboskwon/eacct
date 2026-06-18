@@ -72,6 +72,7 @@ import { AgGridVue } from 'ag-grid-vue'
 import AgGridCheckbox from "@/components/agGrid/AgGridCheckbox.vue"
 
 export default {
+  compatConfig: { MODE: 2 },
   components: {
     AgGridVue
   },

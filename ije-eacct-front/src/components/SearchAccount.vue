@@ -74,6 +74,7 @@ function _defQueryFunction(searchStr) {
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     title: {
       type: String,

@@ -192,6 +192,7 @@ import CollectionPop from "@/components/ims/CollectionPop";
 import TotalAmtPop from "@/components/ims/TotalAmtPop";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'ProjectBudActRep',
   mixins: [mixin, mixinSlip, common],
   components: {

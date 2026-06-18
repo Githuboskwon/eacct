@@ -284,6 +284,7 @@ import menual from '@/components/Menual.vue';
 import router from '@/router';
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'MyMain',
   mixins: [ mixinSlip],
   components: {

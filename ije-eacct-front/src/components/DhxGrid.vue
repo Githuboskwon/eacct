@@ -105,6 +105,7 @@ const _debug = debug('DhxGrid')
 let length = 0
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     value: {
       type: Array,

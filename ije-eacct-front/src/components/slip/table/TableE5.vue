@@ -44,6 +44,7 @@ import slip_table from '@/mixin/slip-table-new'
 import slip from '@/mixin/slip';
 
 export default {
+  compatConfig: { MODE: 2 },
   mixins: [slip_table,slip],
   created() {    
     if(!this.value.aplFgCd) this.value.aplFgCd = 'N'

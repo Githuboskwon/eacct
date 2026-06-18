@@ -52,6 +52,7 @@
     import GridRO from '@/components/slip/GridRO.vue'
 
     export default {
+  compatConfig: { MODE: 2 },
         name: 'ApprDtlQry',
         props: {
             docNo: {

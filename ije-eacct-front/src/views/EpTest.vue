@@ -25,6 +25,7 @@
 </template>
 <script>
 export default {
+  compatConfig: { MODE: 2 },
   name: 'EpTest',
   data() {
     return { text: '', nativeText: '', date: '', sel: '' };

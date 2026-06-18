@@ -41,6 +41,7 @@ import mixin from '@/mixin';
 import {AgGridVue} from 'ag-grid-vue';
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'dealTypePoP',
   props: ['param','slipTypeCd'],
   mixins: [ mixin ],

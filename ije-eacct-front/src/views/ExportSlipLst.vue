@@ -309,6 +309,7 @@ import EvidAtchPopModeless from "@/components/EvidAtchPopModeless.vue";
 import Cctr from "@/components/Cctr_Ag.vue";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'SalesSlipLst',
   mixins: [mixin, mixinSlip, common],
   components: {

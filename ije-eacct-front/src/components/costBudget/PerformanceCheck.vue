@@ -90,6 +90,7 @@ import PerformerChkDetail from "@/components/costBudget/PerformanceCheckDetail";
 
 //['docMngNo', 'value', 'readonly']
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     periodYm: {
       type: String,

@@ -280,6 +280,7 @@ function cellStyle(params){
 }
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'ProjectStaTabRep',
   mixins: [mixin, mixinSlip, common],
   components: {

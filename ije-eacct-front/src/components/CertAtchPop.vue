@@ -41,6 +41,7 @@
 import Layout from '@/components/ModalSlot.vue'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     title: {
       type: String,

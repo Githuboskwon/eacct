@@ -29,6 +29,7 @@ import TableE5_BTM from '@/components/slip/table/TableE5_BTM.vue'
 
 
 export default {
+  compatConfig: { MODE: 2 },
   props: ['slipType', 'value', 'status'],
   components: {
     TableE1,

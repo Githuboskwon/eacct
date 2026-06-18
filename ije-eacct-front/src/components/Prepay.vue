@@ -56,6 +56,7 @@ import NumberInput from '@/components/NumberInput.vue'
 import assert from '@/libs/assert'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     totAmt: {
       type: Number,

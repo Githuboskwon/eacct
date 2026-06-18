@@ -48,6 +48,7 @@ import Layout from '@/components/ModalSlot.vue'
 import {AgGridVue} from 'ag-grid-vue';
 
 export default {
+  compatConfig: { MODE: 2 },
     props: {
         trxTypeCd: {    //거래유형
             Type: String,

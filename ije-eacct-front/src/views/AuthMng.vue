@@ -92,6 +92,7 @@ import { Color } from 'ag-grid-community'
 const bus = createBus()
 
 export default {
+  compatConfig: { MODE: 2 },
   mixins: [common],
   data() {
     return {

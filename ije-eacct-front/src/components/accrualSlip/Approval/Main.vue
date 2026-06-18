@@ -146,6 +146,7 @@ import EvidAtchPopModeless from '@/components/EvidAtchPopModeless';
 import EvidAtchPopGroupware from "@/components/EvidAtchPopGroupware"; /** 증빙첨부 파일 */
 
 export default {
+  compatConfig: { MODE: 2 },
     components: {
         Layout,
         Top,

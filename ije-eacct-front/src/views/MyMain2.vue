@@ -211,6 +211,7 @@ import menual from '@/components/Menual.vue';
 
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'MyMain2',
   components: {
     menual

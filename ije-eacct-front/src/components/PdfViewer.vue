@@ -9,6 +9,7 @@ import _ from 'lodash'
 import pdf from 'vue-pdf'
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     src: {
       type: String,

@@ -50,6 +50,7 @@ const SearchButtonRenderer = Vue.extend({
 });
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'GridEDPoc',
   components: { AgGridVue },
   data() {

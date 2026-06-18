@@ -93,6 +93,7 @@ var eventBus = createBus();
 const options = {};
 
 export default {
+  compatConfig: { MODE: 2 },
   name: "certificateMng",
   mixins: [mixin, mixinSlip, common],
   components: {DhxCalendar},

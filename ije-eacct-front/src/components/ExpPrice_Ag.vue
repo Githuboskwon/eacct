@@ -111,6 +111,7 @@ import {AgGridVue} from 'ag-grid-vue';
 import _ from "lodash";
 
 export default {
+  compatConfig: { MODE: 2 },
   props: {
     title: {
       type: String,

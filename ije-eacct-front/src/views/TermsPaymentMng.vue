@@ -109,6 +109,7 @@ import AgGridSearchBtn from "@/components/agGrid/AgGridSearchBtn";
 // import AgDhxCalendar from "@/components/agGrid/AgDhxCalendar.vue";
 
 export default {
+  compatConfig: { MODE: 2 },
   name: 'payrollSlipLst',
   mixins: [mixin, mixinSlip],
   components: {AgGridVue},
