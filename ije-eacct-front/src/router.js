@@ -7,6 +7,12 @@ export default createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes: [
         {
+            // Vue3 element-plus v-model 격리 진단용 (임시)
+            path: '/eptest',
+            name: 'eptest',
+            component: () => import('./views/EpTest.vue'),
+        },
+        {
             path: '/quickSetting',
             name: 'quickSetting',
             component: () =>
