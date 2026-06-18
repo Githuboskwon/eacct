@@ -4,10 +4,11 @@ import Buefy from 'buefy';
 import Vue, { createApp, configureCompat } from 'vue';
 import swal from 'sweetalert2';
 
-// element-plus 등 네이티브 Vue3 라이브러리가 :attr="false"(aria-hidden 등)에서
-// Vue2 호환 강제(ATTR_FALSE_VALUE)와 충돌해 콘솔을 도배 → Vue3 네이티브 동작으로(경고 제거).
-// (Vue3 네이티브: false면 속성 제거 = 기존 attr="false" 잠재버그도 개선)
-configureCompat({ ATTR_FALSE_VALUE: false });
+// [실험] 런타임 전역 기본을 Vue3 네이티브(MODE 3)로. 이유: element-plus는 네이티브 Vue3
+// 라이브러리라 전역 compat MODE 2(Vue2 런타임) 하에선 입력/이벤트 처리가 깨진다(el-input
+// v-model 미동작). 우리 SFC는 vue-loader compatConfig(MODE 2)로 '컴파일 시점' 호환이 render
+// 함수에 적용되므로 필터 등은 유지된다. ⚠️ 단, 런타임 Vue2 동작(beforeDestroy 등)은 영향 받을 수 있음.
+configureCompat({ MODE: 3 });
 import createBus from '@/libs/eventBus';
 import VueCookie from 'vue-cookie';
 import VueSweetalert2 from 'vue-sweetalert2';
