@@ -631,3 +631,132 @@ npm run build        # openssl 플래그 없이 통과 확인
 - ✅ `npm run build` 통과. 라이브 `new Vue()` 버스 잔존 0(주석/데드 제외).
 - ⚠️ **런타임 확인 필요**: accrualSlip 발생전표(그리드 컬럼 갱신·행추가·세액라인 — `$bus` 이벤트), PgmMng(트리 재구성), 기타 로컬버스 화면.
 - 참고: `EstimateList`/`ExpPriceReg`/`EstimateReg`/`ExpPriceList`/`ExchangeRateMng`는 `const bus` 선언이 **주석인데 `bus.$on`만 살아있는 기존 데드/잠재버그**(버스 미정의) → 본 작업 범위 외, 미변경.
+
+---
+
+## 16. Vue 3 빅뱅 착수 — @vue/compat foundation (2026-06-17 · 브랜치 `migration/vue3-compat`)
+
+> **전략(사용자 승인):** Vue 3는 element-ui/buefy/ag-grid와 동시 전환(빅뱅)이 불가피(§5·§7) → **@vue/compat 마이그레이션 빌드(MODE 2)** 로 기존 Vue2 코드를 경고와 함께 동작시키며 점진 전환. **격리 브랜치, master(2.7)는 무영향.**
+
+### 16.1 이번 증분 = foundation (코어 부트스트랩 전환 + 에러 지형 파악)
+- **의존성:** `vue` 2.7 → **3.5.38**, **`@vue/compat`** 3.5.38·**`@vue/compiler-sfc`** 추가, `vue-router` 3 → **4.6**, `vuex` 3 → **4.1**, `vue-i18n` 8 → **9.14**.
+- **`vue.config.js`:** `vue`/`vue$` → `@vue/compat` alias + vue-loader `compilerOptions.compatConfig = { MODE: 2 }`.
+- **`src/i18n.js`:** `new VueI18n()` → `createI18n({ legacy: true, globalInjection: true })` (v8 `$t` 호환).
+- **`src/store.js`:** `new Vuex.Store()` → `createStore()`, `Vue.use(Vuex)`·store 내 `Vue.use(VueMomentJS)` 제거.
+- **`src/router.js`:** `new Router({mode:'history'})` → `createRouter({history: createWebHistory(base)})`, `Vue.use(Router)`·중복내비 가드 제거(v4는 reject 안 함).
+- **`src/main.js`:** `new Vue({router,store,i18n,render,created}).$mount()` → `createApp(App).use(store).use(router).use(i18n).mount()`. HTTP 인터셉터(구 root `created`)는 `store`/`router`/`axios`/`VueCookie`/`swal` 직접 참조로 이관. **전역 `Vue.use`/`Vue.prototype`/`Vue.component`/`Vue.filter`/`Vue.directive`는 compat MODE 2가 전역 동작시키므로 그대로 유지.**
+
+### 16.2 첫 빌드 결과 — ✅ 라이브러리 캐스케이드 없음, 템플릿 컴파일 에러 24건만
+- **핵심:** 우려했던 element-ui(99)/buefy/ag-grid-vue v25 **전역 API·플러그인 에러가 0건.** compat MODE 2가 `Vue.use`/프로토타입/필터/디렉티브/`$on·$emit`(버스) 등을 모두 흡수.
+- 남은 빌드 차단 = **Vue 3 템플릿 컴파일러 strict 에러 24건 / 14파일**(compat로 안 풀리는 진짜 수정):
+
+| 유형 | 건수 | 내용 / 대응 |
+|------|------|-------------|
+| `v-model cannot be used on a prop` | **19** | 받은 prop을 자식에 `v-model` 양방향 바인딩(Vue3 금지). 컴포넌트별 로컬 data 복사 또는 computed(get/set+emit)로 수정 — **판단 필요** |
+| `Element is missing end tag` / `Invalid end tag` | 3 | 닫는 태그 누락/오류(Vue2 관대, Vue3 엄격) — 템플릿 수정 |
+| `v-model` 표현식 | 1 | `v-model="form.a - b"` → `:value`로 (TaxInvoiceAmtModifyPop) |
+| v-if/else 동일 key | 1 | 고유 key 부여 (MonthlyPicker) |
+
+**대상 14파일:** `HrExcelUploadPop`·`MonthlyPicker`·`Prepay`·`TaxInvoiceAmtModifyPop`·`accrualSlip/Approval/Top`·`accrualSlip/Print/Top`·`costBudget/{AcctTypeSumPop,PerformanceCheck,PerformanceCheckDetail,YearPlanPop}`·`slip/SlipTable`·`ConfirmPop`·`SlipGlDetailModal`·`views/CardInfoMng`.
+
+### 16.3 다음 증분
+1. **[다음] 템플릿 컴파일 에러 24건 수정** → 빌드 GREEN 달성(최우선).
+2. 빌드 통과 후 **dev 런타임 기동** → compat **deprecation 경고** 수집(element-ui/buefy/ag-grid의 Vue3 비호환 런타임 지점 파악).
+3. 경고 기반으로 **element-ui→element-plus / ag-grid-vue3 / buefy($modal) 순차 교체** + `compatConfig` MODE를 파일별 3으로 좁히기.
+> ⚠️ 현 브랜치는 **빌드 미통과 WIP**. master(Vue 2.7)는 정상.
+
+### 16.4 ✅ 템플릿 컴파일 에러 수정 완료 — 빌드 GREEN (2026-06-17)
+- 24건(+연쇄 1건 `CardInfo.vue`) 전부 수정 → **`npm run build` 통과**(Vue3+compat).
+- **v-model on prop 19건:**
+  - 표시용 disabled/readonly 11건 → `v-model` → `:value`(단방향): Prepay(totAmt)·Approval/Print Top(refUserId)·costBudget 4팝업의 cctrCd/cctrNm.
+  - 편집형 6건 → **로컬 data 복사(`<prop>M`)** + 참조(템플릿/`this.x`/watch키) 일괄 rename: HrExcelUploadPop(periodYM)·AcctTypeSumPop/PerformanceCheck/PerformanceCheckDetail(periodYm)·PerformanceCheckDetail(acctCd)·YearPlanPop(periodYear).
+  - SlipTable 2건(`<component v-model="value">`, value=prop) → `:value` + `@input="$emit('input',$event)"` passthrough.
+- **태그/표현식/key 5건:** ConfirmPop·SlipGlDetailModal·CardInfo의 누락 `</tr>`/중복 `<tr>` 보정, CardInfoMng 잉여 `</div>` 제거, TaxInvoiceAmtModifyPop `v-model` 표현식 → `:value`, MonthlyPicker v-if/else 고유 key.
+- 경고는 번들 크기 2건뿐(compat 컴파일 에러 0).
+- **다음:** dev 런타임 기동 → compat **deprecation 경고**(런타임) 수집 → element-plus/ag-grid-vue3/buefy 순차 교체.
+
+---
+
+## 17. element-ui → element-plus 교체 (2026-06-17 · `migration/vue3-compat`)
+
+> 런타임 검증서 element-ui가 Vue3 compat에서 mount 시 `$el` 접근 실패 → 달력·메뉴·레이아웃 연쇄 차단 확인(§16 후속). element-plus로 교체.
+
+### 17.1 1차 증분: 등록 전환 (main.js)
+- `element-plus` 2.14 + `@element-plus/icons-vue` 설치. **element-ui는 deps 유지**(`element-variables.scss`가 참조 → 빌드 깨짐 방지, 추후 정리).
+- `main.js`: element-ui 개별 `Vue.use(컴포넌트)` 27종 제거 → **`app.use(ElementPlus, {locale: ko, size:'small', zIndex:3000})`** + 아이콘 전역 등록. `$message/$msgbox/$alert/$confirm/$prompt/$notify/$loading` → `ElMessage/ElMessageBox/ElNotification/ElLoading`로 재매핑.
+- `<el-*>` 태그는 element-plus에 동명 컴포넌트 존재 → 대부분 그대로 resolve. `npm run build` 통과.
+
+### 17.2 알려진 후속(이번 증분 범위 밖)
+1. **날짜 포맷 토큰**: el-date-picker `value-format="yyyyMMdd"` → element-plus는 dayjs 토큰(`yyyy→YYYY`, `dd→DD`) 필요. ~90곳 스코프 치환(§13.3).
+2. **아이콘**: `icon="el-icon-search"` 문자열 → element-plus는 컴포넌트(`:icon="Search"`). 아이콘 전역등록은 했으나 문자열 구문은 미동작 → 코드모드 필요(§13.2).
+3. **size 시각차**: medium/mini 제거, large 유효(§13.3).
+4. **CSS 충돌 가능**: element-ui 테마(element-variables.scss) + element-plus CSS 동시 로드 → 정리 필요.
+5. **ag-grid 별개**: 그리드는 ag-grid-vue3 전환 전까지 여전히 미렌더.
+
+### 17.3 런타임 검증 포인트
+- 메뉴/레이아웃/달력 **렌더 복구** 여부(= `$el` 크래시 해소).
+- `$message/$confirm/$alert` 동작(196/43/40곳).
+- ⚠️ 그리드는 아직 안 보이는 게 정상(ag-grid epic 대기).
+
+### 17.4 날짜 토큰 수정 + 팝업(buefy $modal) 블로커 발견 (2026-06-17)
+- **el-date-picker 날짜 토큰**: 런타임서 "날짜 선택해도 input에 안 들어감" = element-plus(dayjs)가 `yyyy/dd` 토큰 미인식. **`format`/`value-format` 속성의 `yyyy→YYYY`, `dd→DD` 일괄 변환(92곳/26파일, 템플릿 한정)** → 빌드 GREEN. (MM/HH/mm/ss 동일 유지, JS moment 문자열 미변경)
+- **⚠️ 팝업 안 뜸 = buefy `$modal` 블로커 확인**: accrualSlip `trxOpenModal` 등은 `this.$modal.open({component})`(=buefy) 사용. (1) 전제조건 `postingDt`(날짜) 미설정으로 early-return(날짜 수정으로 해소) + (2) **buefy `$modal` 자체가 Vue3 compat에서 모달 마운트 실패 추정** → §14의 `$modal` 469곳 블로커가 런타임서 현실화. **커스텀 $modal 플러그인이 다음 핵심 epic.**
+
+### 17.5 Vue3 런타임 남은 블로커 (현재)
+| 블로커 | 상태 | 다음 작업 |
+|--------|------|----------|
+| element-plus 컴포넌트/날짜 | ✅ 동작(레이아웃·달력 복구) | 아이콘 `el-icon-*`·`slot=` 구문·CSS 정리(소) |
+| **buefy `$modal` 469곳** | ❌ 팝업 안 열림 | **커스텀 $modal 드롭인 플러그인(§14.1.1)** |
+| **ag-grid-vue v25** | ❌ 그리드 미렌더 | **ag-grid-vue3 전환(166파일)** |
+
+---
+
+## 18. ⚠️ 핵심 난관 — @vue/compat ↔ element-plus 양립 불가 (2026-06-18)
+
+### 18.1 정밀 진단(격리 테스트 `/eptest`로 확정)
+로컬 data에 바인딩한 순수 `<el-input v-model>`도 **타이핑이 모델에 안 들어감**(blur 시 마지막 글자만). prop/mixin 무관 → **element-plus(네이티브 Vue3)가 우리 @vue/compat 설정에서 근본적으로 안 맞음.**
+
+### 18.2 단일 전역 모드로 양립 불가 (실측)
+| 전역 설정 | 앱 부팅 | element-plus | 이유 |
+|-----------|--------|--------------|------|
+| `configureCompat({MODE:2})` | ✅ 뜸 | ❌ v-model 깨짐 | element-plus는 네이티브 Vue3인데 Vue2 런타임 호환이 입력/이벤트 처리 방해 |
+| `configureCompat({MODE:3})` | ❌ 백지 | ✅ 동작 | **main.js의 전역 `Vue.prototype`/`Vue.use`/`Vue.filter`/`Vue.component`가 MODE2 전역 API에 의존** → MODE3서 부팅 불가 |
+| MODE3 전역 + SFC별 `compatConfig:{MODE:2}` | ❌ 백지 | — | per-component compat은 컴포넌트 인스턴스만 적용, **main.js 전역 API는 여전히 MODE2 필요** |
+
+### 18.3 결론: element-plus 정상화에 필요한 묶음 작업
+element-plus를 Vue3 네이티브로 돌리려면 **전역 MODE 3**가 필수인데, 그러려면 동시에:
+1. **`main.js` 부트스트랩을 app-level API로 전환**: `Vue.prototype.*`→`app.config.globalProperties.*`, `Vue.use`→`app.use`, `Vue.component`→`app.component`, `Vue.directive`→`app.directive`, `Vue.config.*` 제거.
+2. **전역 `configureCompat({MODE:3})`** + 우리 SFC는 `compatConfig:{MODE:2}`(269개 주입 완료).
+3. **`Vue.filter` 처리**: Vue3엔 전역 필터 없음 → `{{x|amt}}`(COMPILER_FILTERS 컴파일) 런타임 해석을 per-component MODE2에서 어떻게 줄지 검증 필요(미확정 리스크).
+4. agGrid 셀 컴포넌트 3종 compatConfig 누락분 처리(ag-grid epic과 함께).
+
+### 18.4 현재 조치 / 권고
+- **전역 MODE 2로 복귀**(앱 부팅 가능 상태 유지). per-component `compatConfig:{MODE:2}`(269개)는 MODE2 하에서 무해하므로 유지(향후 MODE3 전환 시 재사용).
+- 이 통합은 **flag 한 줄이 아니라 부트스트랩 재작성+필터 검증이 묶인 작업**이며 각 단계가 런타임 라운드트립 검증을 요함 → 원격 증상-디버그 루프로는 비효율.
+- **다음 후보:** (a) `main.js` app-level 전환부터 단계적 진행(전역 MODE3 준비) (b) 또는 Vue3 네이티브 부트스트랩을 먼저 완성한 뒤 element-plus 도입. master(2.7)는 정상이므로 일정 압박 없음.
+
+---
+
+## 19. 🏁 체크포인트 (2026-06-18) — Vue3 WIP 보존, master는 2.7로 운영
+
+> 사용자 결정: Vue3 element-plus 통합이 상호 얽힌 대형 작업(§18)이라 **여기서 체크포인트**. WIP는 `migration/vue3-compat`에 전부 커밋·푸시 보존, master(Vue 2.7)로 운영 지속.
+
+### 19.1 전체 진척 (master 머지 완료)
+- ✅ 그리드 DHTMLX→ag-grid 통합(선행), 0단계 정리, **1단계 vue-cli5(webpack5)**, **2단계 도약판 Vue 2.7**, b-select→native, **$bus→mitt**, router redundant-nav 가드, dev 오버레이 정리 — **전부 master 반영, 정상 운영 중**.
+
+### 19.2 Vue3 WIP 상태 (`migration/vue3-compat`, 미머지)
+- ✅ @vue/compat foundation: createApp + router4/vuex4/i18n9, 템플릿 컴파일 에러 25건 수정 → **빌드 GREEN**.
+- ✅ element-ui→element-plus 등록 전환, 날짜토큰 yyyy→YYYY(92곳), 269 SFC `compatConfig:{MODE:2}` 주입.
+- ✅ 런타임 부팅·로그인·레이아웃/메뉴 렌더 확인.
+- ❌ **미해결 핵심 블로커 = §18**: element-plus(네이티브 Vue3) v-model이 전역 compat MODE2서 미동작. 전역 MODE3는 main.js 전역 Vue API 의존으로 부팅 불가. 현재 **전역 MODE2로 복귀(부팅 가능 상태)**.
+- ❌ buefy `$modal`(팝업 469곳)·ag-grid(그리드 166파일)도 Vue3 런타임 미동작(별 epic).
+- 임시: `/eptest` 진단 라우트(EpTest.vue) 잔존 — 재개 시 제거.
+
+### 19.3 재개 가이드 (Vue3 이어서 할 때)
+1. **`main.js` app-level 전환**: `Vue.prototype.*`→`app.config.globalProperties.*`, `Vue.use/component/directive`→`app.*`, `Vue.config.*` 제거, `Vue.filter` 처리방안 확정.
+2. 전역 **`configureCompat({MODE:3})`** + per-component MODE2(주입됨)로 element-plus 네이티브화 → `/eptest`로 el-input/date/select v-model 검증.
+3. 통과 시: 아이콘(`el-icon-*`)·`el-radio label→value`·CSS 정리 → 그 후 **buefy $modal 커스텀 플러그인**, **ag-grid-vue3** epic.
+4. ⚠️ 깊은 런타임 디버깅이라 **빠른 로컬 피드백 루프** 권장.
+
+### 19.4 로컬 환경 복귀
+- master(2.7)로 운영하려면: `git switch master` → **`npm install --legacy-peer-deps`**(deps가 Vue3↔2.7로 다름) → `npm run serve:local`.
