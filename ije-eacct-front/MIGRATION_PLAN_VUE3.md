@@ -708,3 +708,29 @@ npm run build        # openssl 플래그 없이 통과 확인
 | element-plus 컴포넌트/날짜 | ✅ 동작(레이아웃·달력 복구) | 아이콘 `el-icon-*`·`slot=` 구문·CSS 정리(소) |
 | **buefy `$modal` 469곳** | ❌ 팝업 안 열림 | **커스텀 $modal 드롭인 플러그인(§14.1.1)** |
 | **ag-grid-vue v25** | ❌ 그리드 미렌더 | **ag-grid-vue3 전환(166파일)** |
+
+---
+
+## 18. ⚠️ 핵심 난관 — @vue/compat ↔ element-plus 양립 불가 (2026-06-18)
+
+### 18.1 정밀 진단(격리 테스트 `/eptest`로 확정)
+로컬 data에 바인딩한 순수 `<el-input v-model>`도 **타이핑이 모델에 안 들어감**(blur 시 마지막 글자만). prop/mixin 무관 → **element-plus(네이티브 Vue3)가 우리 @vue/compat 설정에서 근본적으로 안 맞음.**
+
+### 18.2 단일 전역 모드로 양립 불가 (실측)
+| 전역 설정 | 앱 부팅 | element-plus | 이유 |
+|-----------|--------|--------------|------|
+| `configureCompat({MODE:2})` | ✅ 뜸 | ❌ v-model 깨짐 | element-plus는 네이티브 Vue3인데 Vue2 런타임 호환이 입력/이벤트 처리 방해 |
+| `configureCompat({MODE:3})` | ❌ 백지 | ✅ 동작 | **main.js의 전역 `Vue.prototype`/`Vue.use`/`Vue.filter`/`Vue.component`가 MODE2 전역 API에 의존** → MODE3서 부팅 불가 |
+| MODE3 전역 + SFC별 `compatConfig:{MODE:2}` | ❌ 백지 | — | per-component compat은 컴포넌트 인스턴스만 적용, **main.js 전역 API는 여전히 MODE2 필요** |
+
+### 18.3 결론: element-plus 정상화에 필요한 묶음 작업
+element-plus를 Vue3 네이티브로 돌리려면 **전역 MODE 3**가 필수인데, 그러려면 동시에:
+1. **`main.js` 부트스트랩을 app-level API로 전환**: `Vue.prototype.*`→`app.config.globalProperties.*`, `Vue.use`→`app.use`, `Vue.component`→`app.component`, `Vue.directive`→`app.directive`, `Vue.config.*` 제거.
+2. **전역 `configureCompat({MODE:3})`** + 우리 SFC는 `compatConfig:{MODE:2}`(269개 주입 완료).
+3. **`Vue.filter` 처리**: Vue3엔 전역 필터 없음 → `{{x|amt}}`(COMPILER_FILTERS 컴파일) 런타임 해석을 per-component MODE2에서 어떻게 줄지 검증 필요(미확정 리스크).
+4. agGrid 셀 컴포넌트 3종 compatConfig 누락분 처리(ag-grid epic과 함께).
+
+### 18.4 현재 조치 / 권고
+- **전역 MODE 2로 복귀**(앱 부팅 가능 상태 유지). per-component `compatConfig:{MODE:2}`(269개)는 MODE2 하에서 무해하므로 유지(향후 MODE3 전환 시 재사용).
+- 이 통합은 **flag 한 줄이 아니라 부트스트랩 재작성+필터 검증이 묶인 작업**이며 각 단계가 런타임 라운드트립 검증을 요함 → 원격 증상-디버그 루프로는 비효율.
+- **다음 후보:** (a) `main.js` app-level 전환부터 단계적 진행(전역 MODE3 준비) (b) 또는 Vue3 네이티브 부트스트랩을 먼저 완성한 뒤 element-plus 도입. master(2.7)는 정상이므로 일정 압박 없음.

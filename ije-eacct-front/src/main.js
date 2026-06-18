@@ -4,11 +4,10 @@ import Buefy from 'buefy';
 import Vue, { createApp, configureCompat } from 'vue';
 import swal from 'sweetalert2';
 
-// [실험] 런타임 전역 기본을 Vue3 네이티브(MODE 3)로. 이유: element-plus는 네이티브 Vue3
-// 라이브러리라 전역 compat MODE 2(Vue2 런타임) 하에선 입력/이벤트 처리가 깨진다(el-input
-// v-model 미동작). 우리 SFC는 vue-loader compatConfig(MODE 2)로 '컴파일 시점' 호환이 render
-// 함수에 적용되므로 필터 등은 유지된다. ⚠️ 단, 런타임 Vue2 동작(beforeDestroy 등)은 영향 받을 수 있음.
-configureCompat({ MODE: 3 });
+// 전역 MODE 2(Vue2 호환) 유지 — main.js의 전역 Vue.prototype/use/filter/component가
+// MODE 2 전역 API에 의존하므로 MODE 3 전역은 부팅 불가. element-plus 정상화는
+// 전역 MODE3 + main.js app-level 전환 + 필터 처리까지 묶은 별도 작업으로(§18).
+configureCompat({ ATTR_FALSE_VALUE: false });
 import createBus from '@/libs/eventBus';
 import VueCookie from 'vue-cookie';
 import VueSweetalert2 from 'vue-sweetalert2';
