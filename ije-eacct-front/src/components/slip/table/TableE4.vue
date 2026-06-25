@@ -139,11 +139,11 @@ export default {
 table {
   table-layout: fixed;
 
-  :global(th) {
+  ::v-deep th {
     width: 88px;
   }
 
-  :global(td) {
+  ::v-deep td {
     width: 180px;
   }
 }

@@ -46,7 +46,7 @@ export default {
 .checkbox-wrapper {
   position: relative;
 
-  :global(label) {
+  label {
     position: absolute;
     left: 50%;
     top: 50%;

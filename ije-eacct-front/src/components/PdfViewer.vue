@@ -60,8 +60,8 @@ export default {
   overflow-y: scroll;
   background-color: #757575;
 
-  :global(span),
-  :global(div) {
+  ::v-deep span,
+  ::v-deep div {
     background-color: transparent;
   }
 }

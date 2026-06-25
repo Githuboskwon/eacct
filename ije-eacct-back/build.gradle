@@ -87,7 +87,21 @@ dependencies {
 	implementation 'de.codecentric:spring-boot-admin-starter-client:3.3.6'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-	implementation fileTree(include: ['*.jar'], dir: 'libs')
+	// libs/ 에는 SSO·암호화 등 Maven 미존재 전용 jar가 들어있음.
+	// 단, 레거시 logback 1.2.10 / slf4j 1.7.36 / 기타 로깅 jar 가 Spring Boot 3.3.5 의
+	// logback 1.5.x 와 충돌해 SpringBootJoranConfigurator VerifyError 를 유발하므로 제외.
+	// Maven 의존성과 중복되는 jar(commons-lang3, thumbnailator 등)도 함께 제외.
+	implementation fileTree(dir: 'libs', include: ['*.jar'], exclude: [
+		'logback-classic-*.jar',
+		'logback-core-*.jar',
+		'logback-access-*.jar',
+		'slf4j-api-*.jar',
+		'jcl-over-slf4j-*.jar',
+		'commons-logging-*.jar',
+		'commons-lang3-*.jar',
+		'thumbnailator-*.jar',
+		'commons-httpclient-*.jar'
+	])
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -106,6 +120,9 @@ sourceSets {
 
 bootJar {
 	archiveFileName = 'eacct-back.jar'
+	// libs/ fileTree 와 Maven 의존성에 동일 jar(commons-httpclient 등)가 중복 포함되어
+	// Gradle 8.x 에서 빌드 실패 → 첫 항목만 포함하고 중복은 제외
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 bootRun {

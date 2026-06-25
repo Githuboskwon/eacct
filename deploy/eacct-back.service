@@ -1,0 +1,35 @@
+[Unit]
+Description=eAcct Backend (Spring Boot 3.3.5 / Java 21)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# 실행 사용자 — 운영 계정에 맞게 변경 (예: iljin). 파일/로그 권한과 일치해야 함
+User=iljin
+Group=iljin
+
+# WorkingDirectory 는 반드시 jar 가 있는 디렉토리로 지정해야 함
+# application-linux.properties 의 상대경로(./app/uploads, ./app/decoded, ./logs)가 이 위치 기준으로 생성됨
+WorkingDirectory=/data/apps/ije-eacct
+
+# Java 21 경로는 `update-alternatives --config java` 결과 또는 `which java` 로 확인 후 절대경로 권장
+ExecStart=/usr/bin/java -jar /data/apps/ije-eacct/eacct-back.jar --spring.profiles.active=linux
+
+# Spring Boot 정상 종료 시 종료코드 143(SIGTERM) 을 성공으로 처리
+SuccessExitStatus=143
+
+# 비정상 종료 시 자동 재시작
+Restart=on-failure
+RestartSec=10
+
+# 표준 출력/에러는 journald 로 (journalctl -u eacct-back 으로 조회)
+StandardOutput=journal
+StandardError=journal
+
+# (선택) JVM 메모리 옵션이 필요하면 ExecStart 에 추가:
+# ExecStart=/usr/bin/java -Xms512m -Xmx2g -jar /data/apps/ije-eacct/eacct-back.jar --spring.profiles.active=linux
+
+[Install]
+WantedBy=multi-user.target

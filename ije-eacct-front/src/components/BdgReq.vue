@@ -1387,14 +1387,12 @@ export default {
 }
 
 .table-area {
-  :global(table) {
-    :global(th) {
-      vertical-align: middle !important;
-    }
+  ::v-deep table th {
+    vertical-align: middle !important;
+  }
 
-    :global(td) {
-      vertical-align: middle !important;
-    }
+  ::v-deep table td {
+    vertical-align: middle !important;
   }
 }
 

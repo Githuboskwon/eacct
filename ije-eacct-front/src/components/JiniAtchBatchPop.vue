@@ -177,7 +177,7 @@ function _url(...args) {
 }
 
 .display-area {
-  :global(img) {
+  ::v-deep img {
     width: 100%;
   }
 }

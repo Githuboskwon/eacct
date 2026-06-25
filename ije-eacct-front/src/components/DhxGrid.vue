@@ -1002,63 +1002,65 @@ export default {
 <style lang="scss" scoped>
 .gridbox {
     background-color: #f3f5f9;
-    :global(.objbox) {
+    // dhtmlx 가 동적 생성하는 DOM 을 대상으로 하되, .gridbox 하위로만 한정(전역 누수 방지).
+    // 기존 :global(...) 은 scoping 을 통째로 제거해 앱 전역 table/td/img 규칙으로 새어나갔음 → ::v-deep 으로 교체.
+    ::v-deep .objbox {
         overflow-y: scroll !important;
         padding-right: 1px;
     }
 
-    :global(.xhdr) {
+    ::v-deep .xhdr {
         width: calc(100% - 17px) !important;
         border-right: 1px solid #dfdfdf;
         padding: 0;
         max-height: 100% !important;
     }
 
-    :global(table tr td[align="left"]) {
+    ::v-deep table tr td[align="left"] {
         text-align: left !important;
         padding-left: 10px !important;
-        :global(.dhx-component) {
+        .dhx-component {
             margin-left: -10px;
         }
     }
 
-    :global(table tr td[align="right"]) {
+    ::v-deep table tr td[align="right"] {
         text-align: right !important;
         padding-right: 10px !important;
-        :global(.dhx-component) {
+        .dhx-component {
             margin-right: -10px;
         }
     }
 
-    :global(table tr td) {
+    ::v-deep table tr td {
         border: 1px solid #ededed ;
     }
 
-    :global(table tr td[align="center"]) {
+    ::v-deep table tr td[align="center"] {
         text-align: center !important;
     }
 
-    :global(table tr td[excell="ch"] img[src="/dhtmlx/imgs/dhxgrid_material/item_chk0.gif"]) {
+    ::v-deep table tr td[excell="ch"] img[src="/dhtmlx/imgs/dhxgrid_material/item_chk0.gif"] {
         content: url("/img/check_off.png");
     }
 
-    :global(table tr td[excell="ch"] img[src="/dhtmlx/imgs/dhxgrid_material/item_chk1.gif"]) {
+    ::v-deep table tr td[excell="ch"] img[src="/dhtmlx/imgs/dhxgrid_material/item_chk1.gif"] {
         content: url("/img/check_on.png");
     }
 
-    :global(table tr td[excell="ch"] img:hover) {
+    ::v-deep table tr td[excell="ch"] img:hover {
         cursor: pointer;
     }
 
-    :global(table) {
+    ::v-deep table {
         border-collapse: collapse;
         margin: 0 !important;
         border: none;
     }
 
-    :global(td[excell]) {
+    ::v-deep td[excell] {
         position: relative;
-        :global(img) {
+        img {
             position: absolute;
             left: 50%;
             top: 50%;
@@ -1066,30 +1068,30 @@ export default {
         }
     }
 
-    :global(.objbox table tr td .align-right) {
+    ::v-deep .objbox table tr td .align-right {
         text-align: right !important;
     }
 
-    :global(.objbox table tr td .align-right *) {
+    ::v-deep .objbox table tr td .align-right * {
         text-align: right !important;
     }
 
-    :global(.objbox table tr td .align-right span) {
+    ::v-deep .objbox table tr td .align-right span {
         display: block;
         padding-right: 10px;
     }
 
-    :global(.objbox table tr td .icon) {
+    ::v-deep .objbox table tr td .icon {
         margin: 6px 0;
     }
 
-    :global(.objbox table tr td .dhx-component) {
+    ::v-deep .objbox table tr td .dhx-component {
         display: block;
         height: 100%;
         padding: 1px;
     }
 
-    :global(.objbox table tr td .dhx-component .input) {
+    ::v-deep .objbox table tr td .dhx-component .input {
         width: 100%;
         border-radius: 0;
         height: 34px;
@@ -1100,19 +1102,19 @@ export default {
         background-color: transparent;
     }
 
-    :global(.objbox table tr td .dhx-component .input:focus) {
+    ::v-deep .objbox table tr td .dhx-component .input:focus {
         box-shadow: none;
     }
 
-    :global(.objbox table tr td .dhx-component .number) {
+    ::v-deep .objbox table tr td .dhx-component .number {
         text-align: right !important;
     }
 
-    :global(.dhx-component .btn-wrapper) {
+    ::v-deep .dhx-component .btn-wrapper {
         position: relative;
         height: 100%;
         margin: 0 10px;
-        :global(.btn) {
+        .btn {
             background: #646464;
             color: #fff;
             padding: 5px 15px;
@@ -1124,22 +1126,22 @@ export default {
             font-family: 'NotoM';
         }
 
-        :global(.btn.btn-default) {
+        .btn.btn-default {
             background: #646464;
             color: #fff;
         }
 
-        :global(.btn.btn-primary) {
+        .btn.btn-primary {
             background: #4f9de1;
             color: #fff;
         }
 
-        :global(.btn.btn-danger) {
+        .btn.btn-danger {
             background: #f04c2b;
             color: #fff;
         }
 
-        :global(.btn.btn-block) {
+        .btn.btn-block {
             width: 100%;
         }
     }
