@@ -1,6 +1,8 @@
 package com.iljin.apiServer.ijeas.slip.tax;
 
 import com.google.gson.Gson;
+import com.iljin.apiServer.support.AuthenticatedControllerTest;
+import com.iljin.apiServer.support.TestGson;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-public class TaxDtiNtsMainControllerTest {
+public class TaxDtiNtsMainControllerTest extends AuthenticatedControllerTest {
 
     private MockMvc mockMvc;
 
@@ -59,7 +61,7 @@ public class TaxDtiNtsMainControllerTest {
         searchTaxDtiNtsDto.setSearchSuId("135-86-29442");
 
 
-        Gson gson = new Gson();
+        Gson gson = TestGson.create();
         String json = gson.toJson(searchTaxDtiNtsDto);
         this.mockMvc.perform(MockMvcRequestBuilders.post("/api/tax/dtiNtsMain/list")
                 .header("Host", "localhost:8081")

@@ -420,6 +420,10 @@ public class EmployeeServiceImpl implements EmployeeService {
             userId = user.get().getId();
         }
 
+        if(userId == null) {
+            return "삭제되었습니다.";
+        }
+
         Optional<UserRole> userRole = userRoleRepository.findByUserId(userId);
 
         /* 3. on A_USER */

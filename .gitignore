@@ -4,3 +4,6 @@ ije-eacct-back/src/main/resources/ij-eas-415a0-firebase-adminsdk-88yn0-a3c441acb
 
 # Claude Code 로컬 설정 (개인 환경별 설정, 공유 안 함)
 .claude/settings.local.json
+
+# 라이브 FRONT 빌드 산출물 (단순 참조용, 커밋 안 함)
+.claude/dist_prod/

@@ -2,6 +2,7 @@ package com.iljin.apiServer.ijeas.system;
 
 import com.google.gson.Gson;
 import com.iljin.apiServer.ijeas.system.menu.MenuDto;
+import com.iljin.apiServer.support.AuthenticatedControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-public class ProgramMngControllerTest {
+public class ProgramMngControllerTest extends AuthenticatedControllerTest {
 
     private MockMvc mockMvc;
 

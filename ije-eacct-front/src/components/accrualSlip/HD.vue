@@ -40,7 +40,7 @@
                         <td>
                             <el-input class="mr3" type="text" v-model="value.empNo" style="width: 30%" disabled></el-input>
                             <div class="ip-box ip-box-w02 rs-mt2 mb2" style="width:calc(70% - 3px);">
-                                <el-input type="text" v-model="value.empNm" clearable @keypress.native.enter="empOpenEnterModal(value.empNm)" :readonly="value.slipStatus || value.slipStatus !== ''">
+                                <el-input type="text" v-model="value.empNm" clearable @keypress.native.enter="empOpenEnterModal(value.empNm)" :readonly="value.slipStatus !== ''">
                                     <i v-if="!value.slipStatus" class="el-icon-search el-input__icon" slot="suffix" @click="empOpenModal(value.empNm)"></i>
                                 </el-input>
                             </div>

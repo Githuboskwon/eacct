@@ -180,9 +180,22 @@ export default {
         });
 
       })
-      .catch(() => {{
-        this.loginFail();
-      }})
+      .catch((error) => {
+        // 서버가 응답하지 않음: 네트워크 단절 / 백엔드 미기동 / 타임아웃
+        if (!error || !error.response) {
+          this.$swal({
+            animation: false,
+            type: 'error',
+            text: `서버에 연결할 수 없습니다. 네트워크 상태 또는 서버 구동 여부를 확인해 주세요.`,
+          });
+          return;
+        }
+        // 서버가 응답함(인증 실패 등). data.message가 있으면 전역 인터셉터(main.js)가
+        // 이미 메시지를 띄우므로 중복 얼럿을 막고, 없을 때만 ID/PW 안내를 표시한다.
+        if (!(error.response.data && error.response.data.message)) {
+          this.loginFail();
+        }
+      })
       .finally(() => {
         this.$store.commit('finish');
       });

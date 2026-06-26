@@ -358,9 +358,9 @@ public class ApprovalRepositoryCustomImpl implements ApprovalRepositoryCustom {
 
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT " + "    DL.ADLG_SEQ" + "    , DL.ADLG_ID"
-                + "    , (SELECT CONCAT(EMP.EMP_NM, ' / ', EMP.DEPT_NM) FROM TB_MST_EMP EMP WHERE EMP.EMP_NO = DL.ADLG_ID) AS ADLG_NM"
+                + "    , (SELECT EMP.EMP_NM || ' / ' || EMP.DEPT_NM FROM TB_MST_EMP EMP WHERE EMP.EMP_NO = DL.ADLG_ID) AS ADLG_NM"
                 + "    , DL.ACT_ID"
-                + "    , (SELECT CONCAT(EMP.EMP_NM, ' / ', EMP.DEPT_NM) FROM TB_MST_EMP EMP WHERE EMP.EMP_NO = DL.ACT_ID) AS ACT_NM"
+                + "    , (SELECT EMP.EMP_NM || ' / ' || EMP.DEPT_NM FROM TB_MST_EMP EMP WHERE EMP.EMP_NO = DL.ACT_ID) AS ACT_NM"
                 + "    , DL.COMP_CD" + "    , DL.ADLG_STAT_CD"
                 + "    , (SELECT CD.DETAIL_NM FROM TB_CODE_DT CD WHERE CD.GROUP_CD = 'ADLG_STAT_CD' AND CD.DETAIL_CD = DL.ADLG_STAT_CD) AS ADLG_STAT_NM"
                 + "    , DL.ADLG_STR_DT" + "    , DL.ADLG_END_DT" + "    , DL.ADLG_RSN" + "    , DL.ADLG_EXE_DTM"

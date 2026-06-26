@@ -15,16 +15,22 @@ const isDuplicated = (err) => {
   if (err.name === 'NavigationDuplicated') return true; // vue-router < 3.2
   return /redundant navigation/i.test(err.message || ''); // vue-router 3.2+ (name 없음)
 };
-['push', 'replace'].forEach((method) => {
-  const original = Router.prototype[method];
-  Router.prototype[method] = function patched(location, onResolve, onReject) {
-    if (onResolve || onReject) return original.call(this, location, onResolve, onReject);
-    return original.call(this, location).catch((err) => {
-      if (isDuplicated(err)) return err;
-      return Promise.reject(err);
-    });
-  };
-});
+
+// push/replace 프로토타입 패치는 제거한다. 과거 패치는 중복 네비게이션 reject를
+// resolve로 바꿔 삼켜서, 호출부의 .catch(중복 → window.location.reload()/폴백 push)가
+// 동작하지 않게 만들었다(ERROR_FIXES.md #1). 네이티브 reject 동작을 복원해 .catch가
+// 의도대로 발화하도록 한다.
+//
+// 패치 도입 사유였던 "dev 런타임 오버레이에 노출"은 .catch 없는 호출부의 unhandled
+// rejection만 전역에서 골라 억제해 해결한다. .catch가 있는 호출부의 의미는 보존되고,
+// 중복 네비게이션 외의 진짜 네비게이션 에러는 그대로 전파된다.
+if (typeof window !== 'undefined') {
+  window.addEventListener('unhandledrejection', (event) => {
+    if (isDuplicated(event.reason)) {
+      event.preventDefault(); // 중복 네비게이션 미처리 reject만 조용히 무시
+    }
+  });
+}
 
 export default new Router({
     mode: 'history',
@@ -195,12 +201,6 @@ export default new Router({
             name: 'expPriceList',
             component: () =>
                 import ('./components/ExpPriceList.vue'),
-        },
-        {
-            path: '/certificateMng',
-            name: 'certificateMng',
-            props: true,
-            component: () => import('./views/CertificateMng.vue')
         },
         {
             path: '/businessTripDisMng',

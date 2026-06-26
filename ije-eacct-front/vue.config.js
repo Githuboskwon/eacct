@@ -43,6 +43,13 @@ module.exports = {
   },
   devServer: {
     port: process.env.VUE_APP_PORT,
+    // SPA history 폴백: 딥 경로(/accrualSlip/:id 등) 직접 진입·새로고침 시
+    // 404 대신 index.html을 반환해 vue-router가 클라이언트 라우팅하도록 한다.
+    // (이게 없으면 루트 '/' 외 모든 경로가 "Cannot GET ..." 404가 난다.)
+    // disableDotRule: slipNo 등 경로에 점(.)이 들어가도 폴백되도록.
+    historyApiFallback: {
+      disableDotRule: true,
+    },
     client: {
       overlay: {
         // 컴파일/빌드 에러는 계속 오버레이로 표시(유용)

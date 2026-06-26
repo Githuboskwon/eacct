@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
                         user.enableFlag,
                         "",
                         user.getRoles().stream().map(
-                                roles -> roles.getRole().toString()
+                                roles -> Optional.ofNullable(roles.getRole()).orElse("")
                         ).collect(toList())
                 )).collect(toList());
     }

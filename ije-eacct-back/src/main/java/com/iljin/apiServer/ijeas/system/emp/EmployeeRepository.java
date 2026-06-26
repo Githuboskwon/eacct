@@ -59,9 +59,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, EmployeeKey>
             " where " +
             " 	COMP_CD = :compCd " +
             " 	and SERVE_CD in (10, 20) " +
-            " 	and (EMP_NO like concat(ifnull(:value,''),'%') " +
-            " 	or EMP_NM like concat('%',ifnull(:value,''),'%') " +
-            " 	or DEPT_NM like concat('%',ifnull(:value,''),'%')) ", nativeQuery=true)
+            " 	and (EMP_NO like nvl(:value,'') || '%' " +
+            " 	or EMP_NM like '%' || nvl(:value,'') || '%' " +
+            " 	or DEPT_NM like '%' || nvl(:value,'') || '%') ", nativeQuery=true)
     List<Map> getByEmpNoOrEmpNmOrDeptNmContaining(@Param("compCd") String compCd, @Param("value") String value);
 
     List<Employee> findByCompCdAndDeptCdOrderByEmpNmAsc(String compCd, String deptCd);

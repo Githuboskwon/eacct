@@ -349,10 +349,11 @@ export default {
           this.createColumnDef(values.slipTypeCd, values.editable);
         } else {
           // this.$message.error({ type: '알림', message: '거래유형을 선택해주세요.' });
-          this.$refs.hd.value.prepaymentApplyFlag = 'N';
+          // $refs.hd가 아직 마운트되지 않은 타이밍 가드 (미준비 시 무시)
+          if (this.$refs.hd && this.$refs.hd.value) this.$refs.hd.value.prepaymentApplyFlag = 'N';
         }
       } catch (e) {
-        this.$refs.hd.value.prepaymentApplyFlag = 'N';
+        if (this.$refs.hd && this.$refs.hd.value) this.$refs.hd.value.prepaymentApplyFlag = 'N';
       }
     });
     /**
@@ -1107,7 +1108,7 @@ export default {
      */
     handleRowDataChanged(event) {
       const index = this.rowData.length - 1;
-      if (this.stayScrolledToEnd) {
+      if (this.stayScrolledToEnd && index >= 0) {
         this.gridOptions.api.ensureIndexVisible(index, 'bottom');
       }
     },
@@ -4033,7 +4034,14 @@ export default {
         cancelButtonText: '아니오',
         type: 'warning',
       }).then(() => {
-        this.$router.push({path: `/accrualSlip`}).catch(_ => window.location.reload())
+        // 이미 /accrualSlip(파라미터 없음)이면 경로가 동일해 재마운트되지 않으므로 강제 새로고침으로 초기화.
+        // (router.js 전역 패치가 중복 네비게이션 reject를 삼켜 .catch reload가 동작하지 않음)
+        if (this.$route.path === '/accrualSlip') {
+          window.location.reload()
+        } else {
+          // 기존 전표(/accrualSlip/:id)를 보던 중이면 라우팅만으로 :key(fullPath) 변경 → 재마운트 → 초기화
+          this.$router.push({path: `/accrualSlip`})
+        }
       }).catch(() => {
         this.$message({
           type: 'info',

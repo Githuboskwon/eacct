@@ -176,6 +176,11 @@ function _url(...args) {
   width: 1200px;
 }
 
+/* 떠 있는(float:right) 버튼 바(.btn-wrap.fl_right) 아래로 그리드를 떨어뜨림 — DHTMLX→ag-grid 전환 회귀 수정 */
+.table-b {
+  clear: both;
+}
+
 .display-area {
   ::v-deep img {
     width: 100%;

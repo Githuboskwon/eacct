@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.iljin.apiServer.core.security.role.UserRoleDto;
 import com.iljin.apiServer.core.security.user.User;
 import com.iljin.apiServer.core.security.user.UserDto;
+import com.iljin.apiServer.support.AuthenticatedControllerTest;
+import com.iljin.apiServer.support.TestGson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-public class UserControllerTest {
+public class UserControllerTest extends AuthenticatedControllerTest {
     private final String host = "localhost:9081";
 
     private MockMvc mockMvc;
@@ -74,7 +76,7 @@ public class UserControllerTest {
         userDto.setDeptCd("department");
         userDto.setRole("USER");
 
-        Gson gson = new Gson();
+        Gson gson = TestGson.create();
         String userDtoInfo = gson.toJson(userDto);
 
         this.mockMvc.perform(post("/api/v1/user/add")
@@ -103,7 +105,7 @@ public class UserControllerTest {
         userDto.setEnableFlag(false);
         userDto.setRole("ADMIN");
 
-        Gson gson = new Gson();
+        Gson gson = TestGson.create();
         String userDtoInfo = gson.toJson(userDto);
 
         this.mockMvc.perform(put("/api/v1/user/update")
